@@ -1,0 +1,30 @@
+MYFINANCE VISUAL UPGRADE — SAFE INSTALLATION
+
+Upload ONLY these two files to the root of your GitHub repository MyFinance:
+1. index.html
+2. styles.css
+
+IMPORTANT:
+- Do NOT replace config.js. It contains your live Google Apps Script Web App URL.
+- Do NOT replace app.js. Your existing working functions remain unchanged.
+- Do NOT change Code.gs or redeploy Apps Script for this visual update.
+
+GITHUB STEPS
+1. Open your MyFinance repository on GitHub.
+2. Click Add file > Upload files.
+3. Drag index.html and styles.css from this package.
+4. Select "Commit directly to the main branch".
+5. Click Commit changes.
+6. Wait for GitHub Pages deployment to finish.
+7. Open https://saradasutar.github.io/MyFinance/
+8. On Mac Chrome press Command + Shift + R for a hard refresh.
+
+WHAT CHANGES
+- Premium dark-gradient login screen
+- Colourful, eye-soothing dashboard theme
+- Dark professional sidebar
+- Larger and clearer headings and values
+- Stronger KPI cards with distinct colours
+- Improved tables, buttons, forms and modals
+- Better mobile navigation
+- No external design libraries, so the page remains fast
