@@ -1,25 +1,32 @@
-MYFINANCE PORTFOLIO FILTERS V6
+MYFINANCE PERSONAL NOTES V7
 
-WHAT IS NEW
-- Two-level filtering:
-  1) Combined / Sarada / Niharika
-  2) All Investments / Mutual Funds / Stocks & ETFs
-- Separate MF and Stock/ETF summary cards showing:
-  Invested, Current Value, Gain/Loss and Return %
-- Click the MF or Stocks & ETFs card to filter the entire dashboard.
-- Holdings, allocation, top holdings and investor comparison follow the selected investment type.
-- Existing right-side vertical investment detail drawer is retained.
-- No Apps Script change is required for this UI upgrade.
+NEW FEATURES
+1. A new "Personal Note" column in Holdings.
+2. Existing saved Notes are shown in that column.
+3. Click a Personal Note cell to immediately edit that investment and update the note.
+4. New "📝 All notes" button in Holdings.
+5. All Notes window can:
+   - show the entire portfolio or only the current dashboard view,
+   - show all investments, only investments with notes, or investments without notes,
+   - search by investment, investor, symbol/code, or note text,
+   - open the investment detail drawer,
+   - add/edit a personal note.
+6. Personal Note is also shown in the right-side investment detail drawer.
+7. Export CSV now includes a "Personal Note" column.
+
+BACKEND
+No Apps Script change is required. The current V3 backend already stores Notes in the Holdings sheet.
 
 GITHUB INSTALL
-1. Keep your existing config.js unchanged (with the NEW Apps Script /exec URL).
-2. Replace index.html with this version.
-3. Replace styles.css with this version.
-4. Upload app-v6.js as a new file.
+1. Keep config.js exactly as it is.
+2. Replace index.html with this V7 file.
+3. Replace styles.css with this V7 file.
+4. Upload app-v7.js as a NEW file.
 5. Commit changes.
-6. Open https://saradasutar.github.io/MyFinance/?v=1200
-7. Press Command + Shift + R on Mac.
+6. Open:
+   https://saradasutar.github.io/MyFinance/?v=1300
+7. On Mac press Command + Shift + R.
 
-IMPORTANT
-Do not delete config.js.
-Do not change the Apps Script backend just for this V6 UI feature.
+DO NOT
+- Do not change config.js.
+- Do not redeploy Apps Script just for this notes feature.

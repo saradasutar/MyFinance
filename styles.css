@@ -1084,3 +1084,135 @@ body.drawer-open { overflow: hidden; }
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+
+/* V7 — personal investment notes */
+.personal-note-head { min-width: 230px; }
+.personal-note-cell {
+  min-width: 230px;
+  max-width: 320px;
+  cursor: pointer;
+}
+.note-preview {
+  display: block;
+  max-width: 290px;
+  padding: 8px 10px;
+  border: 1px solid #e5e8f3;
+  border-radius: 10px;
+  color: #3f4b61;
+  background: #f8f9fd;
+  font-size: 12px;
+  line-height: 1.42;
+  white-space: normal;
+}
+.note-preview:hover {
+  border-color: #cdd3ee;
+  background: #f2f4ff;
+}
+.note-empty {
+  display: inline-flex;
+  padding: 7px 10px;
+  border: 1px dashed #cfd5e7;
+  border-radius: 9px;
+  color: #7a849a;
+  background: #fbfcff;
+  font-size: 11px;
+  font-weight: 800;
+}
+.note-empty:hover {
+  color: var(--brand);
+  border-color: #aeb7e8;
+  background: #f5f6ff;
+}
+.drawer-notes-empty {
+  color: #8490a4;
+  font-style: italic;
+}
+.notes-modal {
+  width: min(980px, calc(100vw - 28px));
+  max-height: min(86vh, 860px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.notes-modal.hidden { display: none; }
+.notes-toolbar {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.notes-summary {
+  padding: 2px 2px 12px;
+  font-size: 12px;
+}
+.notes-list {
+  min-height: 180px;
+  overflow: auto;
+  display: grid;
+  gap: 12px;
+  padding: 2px 4px 8px 2px;
+}
+.investment-note-card {
+  border: 1px solid #e3e7f1;
+  border-radius: 16px;
+  padding: 15px;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(42,51,94,.05);
+}
+.investment-note-card.has-note {
+  border-left: 4px solid #6d63e8;
+}
+.investment-note-card.no-note {
+  border-left: 4px solid #d8dce9;
+}
+.note-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.note-card-value {
+  white-space: nowrap;
+  font-size: 13px;
+}
+.note-card-body {
+  margin-top: 12px;
+  padding: 12px 13px;
+  border-radius: 12px;
+  background: #f7f8fc;
+  color: #334158;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.note-card-body.empty {
+  color: #8a94a7;
+  font-style: italic;
+}
+.note-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 11px;
+}
+@media (max-width: 760px) {
+  .notes-toolbar {
+    grid-template-columns: 1fr;
+  }
+  .notes-modal {
+    width: calc(100vw - 18px);
+    max-height: 92vh;
+  }
+  .note-card-top {
+    display: grid;
+  }
+  .note-card-value {
+    margin-left: 51px;
+  }
+  .personal-note-head,
+  .personal-note-cell {
+    min-width: 190px;
+  }
+}

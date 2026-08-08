@@ -99,12 +99,12 @@
         <article class="panel table-panel">
           <div class="panel-head responsive-head">
             <div><p class="eyebrow">PORTFOLIO DETAILS</p><h3 id="holdingsHeading">Mutual funds, stocks and ETFs</h3></div>
-            <div class="table-tools"><input id="holdingSearch" class="search-input" type="search" placeholder="Search holdings…"><select id="holdingTypeFilter" class="compact-select"><option value="ALL">All assets</option><option value="MF">Mutual funds</option><option value="STOCK">Stocks</option><option value="ETF">ETFs</option><option value="OTHER">Other</option></select><button id="bulkImportBtn" class="secondary-button">⇧ Import</button><button id="addInvestmentTableBtn" class="primary-button">+ Add</button></div>
+            <div class="table-tools"><input id="holdingSearch" class="search-input" type="search" placeholder="Search holdings…"><select id="holdingTypeFilter" class="compact-select"><option value="ALL">All assets</option><option value="MF">Mutual funds</option><option value="STOCK">Stocks</option><option value="ETF">ETFs</option><option value="OTHER">Other</option></select><button id="viewAllNotesBtn" class="secondary-button">📝 All notes</button><button id="bulkImportBtn" class="secondary-button">⇧ Import</button><button id="addInvestmentTableBtn" class="primary-button">+ Add</button></div>
           </div>
           <div class="performance-note">1D–10Y columns show the asset/scheme price or NAV performance for that period. XIRR is available for mutual funds imported from transaction statements.</div>
           <div class="table-wrap wide-table">
             <table class="holdings-table">
-              <thead><tr><th class="sticky-col owner-col">Investor</th><th class="sticky-col asset-col">Asset</th><th>Qty / Units</th><th>Avg Buy</th><th>Invested</th><th>Current Price / NAV</th><th>Current Value</th><th>Gain / Loss</th><th>Gain %</th><th>XIRR</th><th>1D</th><th>1W</th><th>1M</th><th>6M</th><th>1Y</th><th>3Y</th><th>5Y</th><th>10Y</th><th></th></tr></thead>
+              <thead><tr><th class="sticky-col owner-col">Investor</th><th class="sticky-col asset-col">Asset</th><th>Qty / Units</th><th>Avg Buy</th><th>Invested</th><th>Current Price / NAV</th><th>Current Value</th><th>Gain / Loss</th><th>Gain %</th><th>XIRR</th><th>1D</th><th>1W</th><th>1M</th><th>6M</th><th>1Y</th><th>3Y</th><th>5Y</th><th>10Y</th><th class="personal-note-head">Personal Note</th><th></th></tr></thead>
               <tbody id="holdingsBody"></tbody>
             </table>
           </div>
@@ -137,7 +137,7 @@
         <label>Total invested / current cost<input id="holdingInvested" type="number" min="0" step="0.01" required placeholder="25000"></label>
         <label>Manual current price <small>(optional)</small><input id="holdingManualPrice" type="number" min="0" step="0.0001" placeholder="Automatic when blank"></label>
         <label>Purchase date <small>(optional)</small><input id="holdingBuyDate" type="date"></label>
-        <label class="span-2">Notes<textarea id="holdingNotes" rows="3" maxlength="500"></textarea></label>
+        <label class="span-2">Personal Note <small>(optional)</small><textarea id="holdingNotes" rows="4" maxlength="500" placeholder="Example: Hold for 5+ years; add more below ₹1,200; review after Q3 results…"></textarea></label>
         <div id="mfHelp" class="info-box span-2 hidden">For manual MF entry, use the numeric AMFI scheme code. For statement import, mapping is attempted automatically.</div>
         <div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveInvestmentBtn" type="submit" class="primary-button">Save investment</button></div>
       </form>
@@ -155,6 +155,32 @@
         <div id="bulkImportStatus" class="import-status muted">No file selected.</div>
         <div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="runBulkImportBtn" type="submit" class="primary-button" disabled>Import</button></div>
       </form>
+    </div>
+
+
+    <div id="notesModal" class="modal notes-modal hidden" role="dialog" aria-modal="true" aria-labelledby="notesModalTitle">
+      <div class="modal-head">
+        <div><p class="eyebrow">PERSONAL INVESTMENT JOURNAL</p><h2 id="notesModalTitle">All investment notes</h2></div>
+        <button class="modal-close" data-close-modal aria-label="Close notes">×</button>
+      </div>
+      <div class="notes-toolbar">
+        <input id="notesSearch" class="search-input" type="search" placeholder="Search investment or note…">
+        <select id="notesScope" class="compact-select">
+          <option value="ALL">Entire portfolio</option>
+          <option value="CURRENT">Current dashboard view</option>
+        </select>
+        <select id="notesFilter" class="compact-select">
+          <option value="ALL">All investments</option>
+          <option value="WITH_NOTES">With notes only</option>
+          <option value="WITHOUT_NOTES">Without notes</option>
+        </select>
+      </div>
+      <div id="notesSummary" class="notes-summary muted"></div>
+      <div id="notesList" class="notes-list"></div>
+      <div id="notesEmpty" class="empty-state hidden">No investments match this notes view.</div>
+      <div class="form-actions">
+        <button type="button" class="secondary-button" data-close-modal>Close</button>
+      </div>
     </div>
 
     <div id="watchModal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">FUTURE INVESTMENT</p><h2>Add to watchlist</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="watchForm" class="form-grid"><input id="watchId" type="hidden"><label>Asset type<select id="watchType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label><label>Asset name<input id="watchName" required maxlength="160"></label><label><span id="watchCodeLabel">Ticker symbol</span><input id="watchCode" required maxlength="40"></label><label id="watchExchangeLabel">Exchange<select id="watchExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label><label>Target buy price<input id="watchTarget" type="number" min="0" step="0.0001"></label><label>Manual current price <small>(optional)</small><input id="watchManualPrice" type="number" min="0" step="0.0001"></label><label>Priority<select id="watchPriority"><option value="HIGH">High</option><option value="MEDIUM" selected>Medium</option><option value="LOW">Low</option></select></label><label class="span-2">Reason / notes<textarea id="watchNotes" rows="3" maxlength="500"></textarea></label><div id="watchMfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code.</div><div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveWatchBtn" type="submit" class="primary-button">Save watch item</button></div></form></div>
@@ -188,6 +214,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v6.js?v=20260808-6" defer></script>
+  <script src="app-v7.js?v=20260808-7" defer></script>
 </body>
 </html>
