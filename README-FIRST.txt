@@ -1,19 +1,25 @@
-MYFINANCE INVESTMENT DETAIL DRAWER V5
+MYFINANCE PORTFOLIO FILTERS V6
 
-What this adds
-- Click any investment row in Holdings to open a vertical right-side detail drawer.
-- Click any Top Holding on Overview to open the same drawer.
-- Drawer shows investor, units, invested value, average cost, current NAV/price, current value, gain/loss, total return, MF XIRR, 1D/1W/1M/6M/1Y/3Y/5Y/10Y performance, codes, price source/date and notes.
-- Edit Investment button is available inside the drawer.
-- Works on desktop and mobile; on mobile it becomes a full-width vertical panel.
+WHAT IS NEW
+- Two-level filtering:
+  1) Combined / Sarada / Niharika
+  2) All Investments / Mutual Funds / Stocks & ETFs
+- Separate MF and Stock/ETF summary cards showing:
+  Invested, Current Value, Gain/Loss and Return %
+- Click the MF or Stocks & ETFs card to filter the entire dashboard.
+- Holdings, allocation, top holdings and investor comparison follow the selected investment type.
+- Existing right-side vertical investment detail drawer is retained.
+- No Apps Script change is required for this UI upgrade.
 
-INSTALL ONLY THESE 3 GITHUB FILES
-1. Replace index.html with this index.html.
-2. Replace styles.css with this styles.css.
-3. Upload app-v5.js as a NEW file.
-4. DO NOT replace config.js. Keep your current working Apps Script /exec URL.
-5. Commit changes, wait about 1 minute, then open:
-   https://saradasutar.github.io/MyFinance/?v=1100
-6. Press Command + Shift + R on Mac.
+GITHUB INSTALL
+1. Keep your existing config.js unchanged (with the NEW Apps Script /exec URL).
+2. Replace index.html with this version.
+3. Replace styles.css with this version.
+4. Upload app-v6.js as a new file.
+5. Commit changes.
+6. Open https://saradasutar.github.io/MyFinance/?v=1200
+7. Press Command + Shift + R on Mac.
 
-No Apps Script/backend change is required for this drawer.
+IMPORTANT
+Do not delete config.js.
+Do not change the Apps Script backend just for this V6 UI feature.
