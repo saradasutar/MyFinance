@@ -7,827 +7,223 @@ const state = {
   user: null,
   holdings: [],
   watchlist: [],
-  summary: {},
   users: [],
+  owners: [],
+  selectedOwner: 'ALL',
   activeSection: 'overview',
   syncing: false,
+  importMode: 'MF_STATEMENT',
   pendingImport: []
 };
 
 const $ = (id) => document.getElementById(id);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
 const els = {};
 [
-  'loginView','appView','loginForm','loginUsername','loginPassword','loginButton','loginMessage',
-  'sideAppName','todayLabel','pageTitle','syncStatus','refreshBtn','addInvestmentBtn','profileButton',
-  'avatarInitial','welcomeName','lastUpdatedText','sumInvested','sumCurrent','sumGain','sumReturn',
-  'sumAssetCount','sumPricedCount','sumWatchCount','sumNearTarget','allocationChart','watchSignals',
-  'topHoldings','holdingSearch','holdingTypeFilter','holdingsBody','holdingsEmpty','watchSearch',
-  'watchBody','watchEmpty','usersBody','modalBackdrop','investmentModal','watchModal','passwordModal',
-  'userModal','bulkImportModal','bulkImportForm','bulkCsvFile','bulkImportStatus','runBulkImportBtn','investmentForm','watchForm','passwordForm','userForm','toastRegion','holdingId',
-  'holdingType','holdingName','holdingCode','holdingExchange','holdingUnits','holdingInvested',
-  'holdingManualPrice','holdingBuyDate','holdingNotes','holdingCodeLabel','exchangeLabel','mfHelp',
-  'watchId','watchType','watchName','watchCode','watchExchange','watchTarget','watchManualPrice',
-  'watchPriority','watchNotes','watchCodeLabel','watchExchangeLabel','watchMfHelp','currentPassword',
-  'newPassword','confirmPassword','newUsername','newDisplayName','newUserRole','newUserPassword'
+  'loginView','appView','loginForm','loginUsername','loginPassword','loginButton','loginMessage','sideAppName','todayLabel','pageTitle','syncStatus','refreshBtn','addInvestmentBtn','profileButton','avatarInitial','welcomeTitle','lastUpdatedText','viewChip','ownerSwitcher','importBtn','exportBtn','sumInvested','sumCurrent','sumGain','sumReturn','sumAssetCount','sumPricedCount','sumSplit','sumWatchCount','allocationChart','investorSummary','topHoldings','holdingSearch','holdingTypeFilter','holdingsBody','holdingsEmpty','watchSearch','watchBody','watchEmpty','usersBody','modalBackdrop','investmentModal','investmentForm','holdingId','holdingOwner','holdingType','holdingName','holdingCode','holdingExchange','holdingUnits','holdingInvested','holdingManualPrice','holdingBuyDate','holdingNotes','holdingCodeLabel','exchangeLabel','mfHelp','bulkImportModal','bulkImportForm','bulkCsvFile','bulkImportStatus','runBulkImportBtn','downloadImportTemplateBtn','mfImportHelp','stockImportHelp','stockOwnerLabel','importOwner','importFileHint','watchModal','watchForm','watchId','watchType','watchName','watchCode','watchExchange','watchTarget','watchManualPrice','watchPriority','watchNotes','watchCodeLabel','watchExchangeLabel','watchMfHelp','passwordModal','passwordForm','currentPassword','newPassword','confirmPassword','userModal','userForm','newUsername','newDisplayName','newUserRole','newUserPassword','toastRegion'
 ].forEach((id) => { els[id] = $(id); });
 
 function isConfigured() {
   return /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(String(CONFIG.API_URL || '').trim());
 }
-
+function escapeHtml(value) { return String(value ?? '').replace(/[&<>'"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 function formatCurrency(value, compact = false) {
-  if (value === null || value === '' || typeof value === 'undefined') return '—';
-  const n = Number(value);
-  if (!Number.isFinite(n)) return '—';
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency', currency: CONFIG.CURRENCY || 'INR', maximumFractionDigits: compact ? 0 : 2,
-    notation: compact && Math.abs(n) >= 100000 ? 'compact' : 'standard'
-  }).format(n);
+  if (value === null || value === '' || value === undefined) return '—';
+  const n = Number(value); if (!Number.isFinite(n)) return '—';
+  return new Intl.NumberFormat('en-IN',{style:'currency',currency:CONFIG.CURRENCY||'INR',maximumFractionDigits:compact?0:2,notation:compact&&Math.abs(n)>=100000?'compact':'standard'}).format(n);
+}
+function formatNumber(value, digits = 4) { const n=Number(value); return value===null||value===''||value===undefined||!Number.isFinite(n)?'—':new Intl.NumberFormat('en-IN',{maximumFractionDigits:digits}).format(n); }
+function formatPercent(value) { const n=Number(value); return value===null||value===''||value===undefined||!Number.isFinite(n)?'—':`${n>=0?'+':''}${n.toFixed(2)}%`; }
+function pnlClass(value) { const n=Number(value); return n>0?'positive':n<0?'negative':'neutral'; }
+function dateLabel(value) { const d=value?new Date(value):null; return !d||Number.isNaN(d.getTime())?'Not available':new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeStyle:'short'}).format(d); }
+function setBusy(button,busy,text){ if(!button)return; if(busy){button.dataset.originalText=button.textContent;button.disabled=true;button.textContent=text||'Please wait…';}else{button.disabled=false;button.textContent=button.dataset.originalText||button.textContent;} }
+function setSyncStatus(mode,message){ if(!els.syncStatus)return; els.syncStatus.className=`sync-status ${mode||''}`.trim(); const label=els.syncStatus.querySelector('span:last-child'); if(label)label.textContent=message; }
+function toast(message,type=''){ const node=document.createElement('div');node.className=`toast ${type}`.trim();node.textContent=message;els.toastRegion.appendChild(node);setTimeout(()=>node.remove(),4500); }
+
+async function api(action,payload={},options={}){
+  if(!isConfigured()) throw new Error('Backend is not configured. Check config.js.');
+  const controller=new AbortController(); const timeout=setTimeout(()=>controller.abort(),CONFIG.REQUEST_TIMEOUT_MS||30000);
+  const body={action,...payload}; if(state.token&&!body.token) body.token=state.token;
+  try{
+    const response=await fetch(CONFIG.API_URL,{method:'POST',body:JSON.stringify(body),redirect:'follow',signal:controller.signal,cache:'no-store',credentials:'omit'});
+    const text=await response.text(); let data; try{data=JSON.parse(text);}catch{throw new Error('The backend returned an unreadable response. Redeploy the Apps Script web app and check access permissions.');}
+    if(!data.ok){const e=new Error(data.message||'Request failed.');e.code=data.code||'REQUEST_FAILED';throw e;} return data;
+  }catch(error){ if(error.name==='AbortError')throw new Error('The request timed out. Please try again.'); if(options.retry&&!options._retried){await new Promise(r=>setTimeout(r,700));return api(action,payload,{...options,_retried:true});} throw error; }
+  finally{clearTimeout(timeout);}
 }
 
-function formatNumber(value, digits = 4) {
-  if (value === null || value === '' || typeof value === 'undefined') return '—';
-  const n = Number(value);
-  if (!Number.isFinite(n)) return '—';
-  return new Intl.NumberFormat('en-IN', { maximumFractionDigits: digits }).format(n);
+function cacheKey(){return `portfolio_cache_${state.username||'unknown'}`;}
+function saveCache(data){try{localStorage.setItem(cacheKey(),JSON.stringify({savedAt:Date.now(),data}));}catch{} }
+function loadCache(){try{const p=JSON.parse(localStorage.getItem(cacheKey())||'null');if(p?.data)applyBootstrap(p.data,true);}catch{} }
+function clearSession(){state.token='';state.username='';state.user=null;localStorage.removeItem('portfolio_token');localStorage.removeItem('portfolio_username');}
+
+function titleCase(value){return String(value||'').trim().toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());}
+function canonicalOwner(value){
+  const raw=String(value||'').trim(); if(!raw)return 'Portfolio';
+  const low=raw.toLowerCase(); const configured=Array.isArray(CONFIG.OWNERS)?CONFIG.OWNERS:[];
+  for(const owner of configured){const first=String(owner).trim().toLowerCase().split(/\s+/)[0]; if(first&&low.includes(first))return String(owner).trim();}
+  return titleCase(raw);
+}
+function configuredOwners(){
+  const defaults=Array.isArray(CONFIG.OWNERS)?CONFIG.OWNERS.map(canonicalOwner):[];
+  return [...new Set([...defaults,...state.owners.map(canonicalOwner),...state.holdings.map(h=>canonicalOwner(h.owner))].filter(Boolean))];
+}
+function shortOwner(owner){ const c=canonicalOwner(owner); const configured=Array.isArray(CONFIG.OWNERS)?CONFIG.OWNERS:[]; const match=configured.find(x=>c.toLowerCase().includes(String(x).toLowerCase().split(/\s+/)[0])); return match||c.split(/\s+/)[0]||c; }
+
+async function login(event){
+  event.preventDefault(); els.loginMessage.textContent='';
+  if(!isConfigured()){els.loginMessage.textContent='Setup required: paste the Apps Script /exec URL into config.js.';return;}
+  setBusy(els.loginButton,true,'Signing in…');
+  try{const result=await api('login',{username:els.loginUsername.value.trim(),password:els.loginPassword.value});state.token=result.token;state.username=result.user.username;localStorage.setItem('portfolio_token',state.token);localStorage.setItem('portfolio_username',state.username);showApp();applyBootstrap(result.data);toast('Signed in successfully.','success');}
+  catch(error){els.loginMessage.textContent=error.message;}
+  finally{setBusy(els.loginButton,false);}
+}
+async function logout(){try{if(state.token)await api('logout');}catch{}clearSession();els.appView.classList.add('hidden');els.loginView.classList.remove('hidden');els.loginPassword.value='';}
+function showApp(){els.loginView.classList.add('hidden');els.appView.classList.remove('hidden');els.sideAppName.textContent=CONFIG.APP_NAME||'My Finance';els.todayLabel.textContent=new Intl.DateTimeFormat('en-IN',{weekday:'long',day:'numeric',month:'long'}).format(new Date()).toUpperCase();}
+async function loadDashboard(force=false){
+  if(state.syncing)return; state.syncing=true;setSyncStatus('syncing',force?'Updating prices & performance…':'Syncing…');
+  try{const result=await api(force?'refreshPrices':'bootstrap',{}, {retry:!force});applyBootstrap(result.data);saveCache(result.data);setSyncStatus('','Up to date');if(force)toast('Prices, NAVs and performance refreshed.','success');}
+  catch(error){if(error.code==='AUTH_REQUIRED'||error.code==='SESSION_EXPIRED'){toast('Your session expired. Please sign in again.','error');logout();return;}setSyncStatus('error','Sync failed');toast(error.message,'error');}
+  finally{state.syncing=false;}
 }
 
-function formatPercent(value) {
-  if (value === null || value === '' || typeof value === 'undefined') return '—';
-  const n = Number(value);
-  if (!Number.isFinite(n)) return '—';
-  return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
+function applyBootstrap(data,fromCache=false){
+  if(!data)return; state.user=data.user||state.user;state.holdings=Array.isArray(data.holdings)?data.holdings:[];state.watchlist=Array.isArray(data.watchlist)?data.watchlist:[];state.owners=Array.isArray(data.owners)?data.owners:[];if(Array.isArray(data.users))state.users=data.users;
+  refreshOwnerControls();renderAll();
+  if(state.user){els.avatarInitial.textContent=(state.user.displayName||state.user.username||'I').charAt(0).toUpperCase();$$('.admin-only').forEach(el=>el.classList.toggle('hidden',state.user.role!=='ADMIN'));}
+  els.lastUpdatedText.textContent=`${fromCache?'Showing saved data':'Updated'} ${dateLabel(data.updatedAt)}${data.priceNote?` · ${data.priceNote}`:''}`;
 }
 
-function escapeHtml(value) {
-  return String(value ?? '').replace(/[&<>'"]/g, (char) => ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;' }[char]));
+function refreshOwnerControls(){
+  const owners=configuredOwners();
+  if(state.selectedOwner!=='ALL'&&!owners.some(o=>o===state.selectedOwner))state.selectedOwner='ALL';
+  els.ownerSwitcher.innerHTML=[{value:'ALL',label:'Combined'},...owners.map(o=>({value:o,label:shortOwner(o)}))].map(x=>`<button type="button" class="owner-pill ${state.selectedOwner===x.value?'active':''}" data-owner-view="${escapeHtml(x.value)}">${escapeHtml(x.label)}</button>`).join('');
+  const opts=owners.length?owners:['Sarada','Niharika'];
+  [els.holdingOwner,els.importOwner].forEach(select=>{if(!select)return;const old=select.value;select.innerHTML=opts.map(o=>`<option value="${escapeHtml(o)}">${escapeHtml(shortOwner(o))}</option>`).join('');if(opts.includes(old))select.value=old;});
+}
+function visibleHoldings(){return state.holdings.filter(h=>state.selectedOwner==='ALL'||canonicalOwner(h.owner)===state.selectedOwner);}
+function visibleWatchlist(){return state.watchlist;}
+function summarizeHoldings(items){
+  let invested=0,current=0,pricedInvested=0,priced=0;const allocation={};
+  items.forEach(h=>{invested+=Number(h.investedAmount)||0;const basis=h.currentValue==null?(Number(h.investedAmount)||0):Number(h.currentValue)||0;allocation[h.type]=(allocation[h.type]||0)+basis;if(h.currentValue!=null){current+=Number(h.currentValue)||0;pricedInvested+=Number(h.investedAmount)||0;priced++;}});
+  const gain=current-pricedInvested;return{invested,current,gain,returnPct:pricedInvested>0?gain/pricedInvested*100:0,priced,allocation};
+}
+function renderAll(){renderSummary();renderAllocation();renderInvestorSummary();renderTopHoldings();renderHoldings();renderWatchlist();if(state.user?.role==='ADMIN')renderUsers();}
+function renderSummary(){
+  const items=visibleHoldings(),s=summarizeHoldings(items);els.sumInvested.textContent=formatCurrency(s.invested,true);els.sumCurrent.textContent=formatCurrency(s.current,true);els.sumGain.textContent=formatCurrency(s.gain,true);els.sumGain.className=pnlClass(s.gain);els.sumReturn.textContent=formatPercent(s.returnPct);els.sumReturn.className=pnlClass(s.returnPct);els.sumAssetCount.textContent=`${items.length} holding${items.length===1?'':'s'}`;els.sumPricedCount.textContent=`${s.priced} priced`;
+  const mf=items.filter(x=>x.type==='MF').length,stocks=items.filter(x=>x.type==='STOCK'||x.type==='ETF').length;els.sumSplit.textContent=`${mf} MF · ${stocks} Stock/ETF`;els.sumWatchCount.textContent=`${state.watchlist.length} watchlist`;const label=state.selectedOwner==='ALL'?'Combined':shortOwner(state.selectedOwner);els.welcomeTitle.textContent=`${label} portfolio`;els.viewChip.textContent=label;
+}
+function renderAllocation(){
+  const s=summarizeHoldings(visibleHoldings()),entries=Object.entries(s.allocation).sort((a,b)=>b[1]-a[1]);const total=entries.reduce((a,[,v])=>a+v,0);
+  if(!entries.length){els.allocationChart.innerHTML='<div class="empty-state">Allocation appears after holdings are imported.</div>';return;}
+  els.allocationChart.innerHTML=entries.map(([type,value])=>{const pct=total?value/total*100:0;return `<div class="allocation-row"><div class="allocation-name"><span class="allocation-dot ${type.toLowerCase()}"></span>${escapeHtml(type)}</div><div class="allocation-track"><div class="allocation-fill" style="width:${Math.min(100,Math.max(0,pct))}%"></div></div><div class="allocation-value">${pct.toFixed(1)}%</div></div>`;}).join('');
+}
+function renderInvestorSummary(){
+  const owners=configuredOwners();if(!owners.length){els.investorSummary.innerHTML='<div class="empty-state">Investor summary appears after import.</div>';return;}
+  els.investorSummary.innerHTML=owners.map(owner=>{const s=summarizeHoldings(state.holdings.filter(h=>canonicalOwner(h.owner)===owner));return `<button class="investor-card" data-owner-view="${escapeHtml(owner)}"><div><strong>${escapeHtml(shortOwner(owner))}</strong><span>${state.holdings.filter(h=>canonicalOwner(h.owner)===owner).length} holdings</span></div><div class="investor-metrics"><b>${formatCurrency(s.current,true)}</b><span class="${pnlClass(s.gain)}">${formatPercent(s.returnPct)}</span></div></button>`;}).join('');
+}
+function renderTopHoldings(){const items=[...visibleHoldings()].sort((a,b)=>(Number(b.currentValue)||Number(b.investedAmount)||0)-(Number(a.currentValue)||Number(a.investedAmount)||0)).slice(0,8);if(!items.length){els.topHoldings.className='mini-holdings empty-state';els.topHoldings.textContent='Import your MF statement or stocks to begin.';return;}els.topHoldings.className='mini-holdings';els.topHoldings.innerHTML=items.map(h=>`<div class="mini-holding"><div><strong>${escapeHtml(h.assetName)}</strong><span>${escapeHtml(shortOwner(h.owner))} · ${escapeHtml(h.type)} · ${escapeHtml(h.exchange?`${h.exchange}:`:'')}${escapeHtml(h.code)}</span></div><div class="mini-value">${formatCurrency(h.currentValue??h.investedAmount,true)}<span class="${pnlClass(h.returnPct)}">${h.currentPrice==null?'Price pending':formatPercent(h.returnPct)}</span></div></div>`).join('');}
+
+function holdingMatches(h){const q=els.holdingSearch.value.trim().toLowerCase(),type=els.holdingTypeFilter.value;const ownerOk=state.selectedOwner==='ALL'||canonicalOwner(h.owner)===state.selectedOwner;const text=`${h.owner} ${h.assetName} ${h.code} ${h.sourceCode||''} ${h.notes||''}`.toLowerCase();return ownerOk&&(!q||text.includes(q))&&(type==='ALL'||h.type===type);}
+function perfCell(v){return `<td class="perf ${pnlClass(v)}">${formatPercent(v)}</td>`;}
+function renderHoldings(){
+  const items=state.holdings.filter(holdingMatches);els.holdingsBody.innerHTML=items.map(h=>{const avg=(Number(h.units)>0?Number(h.investedAmount)/Number(h.units):null),p=h.performance||{};return `<tr><td class="sticky-col owner-col"><span class="owner-tag">${escapeHtml(shortOwner(h.owner))}</span></td><td class="sticky-col asset-col"><div class="asset-cell"><div class="asset-badge ${String(h.type).toLowerCase()}">${escapeHtml(h.type==='MF'?'MF':h.type==='ETF'?'ET':'ST')}</div><div><strong>${escapeHtml(h.assetName)}</strong><span>${escapeHtml(h.exchange?`${h.exchange}:`:'')}${escapeHtml(h.code)}${h.sourceCode?` · stmt ${escapeHtml(h.sourceCode)}`:''}</span></div></div></td><td>${formatNumber(h.units)}</td><td>${formatCurrency(avg)}</td><td>${formatCurrency(h.investedAmount)}</td><td>${formatCurrency(h.currentPrice)}<span class="price-note">${escapeHtml(h.priceSource||'Pending')}</span></td><td><strong>${formatCurrency(h.currentValue)}</strong></td><td class="${pnlClass(h.gainLoss)}">${formatCurrency(h.gainLoss)}</td><td class="${pnlClass(h.returnPct)}"><strong>${formatPercent(h.returnPct)}</strong></td><td class="${pnlClass(h.xirr)}">${formatPercent(h.xirr)}</td>${perfCell(p.d1)}${perfCell(p.w1)}${perfCell(p.m1)}${perfCell(p.m6)}${perfCell(p.y1)}${perfCell(p.y3)}${perfCell(p.y5)}${perfCell(p.y10)}<td class="row-actions"><button class="small-button" data-edit-holding="${escapeHtml(h.id)}">Edit</button><button class="small-button danger" data-delete-holding="${escapeHtml(h.id)}">Delete</button></td></tr>`;}).join('');
+  els.holdingsEmpty.classList.toggle('hidden',items.length>0);
+}
+function renderWatchlist(){const q=els.watchSearch.value.trim().toLowerCase();const items=visibleWatchlist().filter(x=>!q||`${x.assetName} ${x.code} ${x.notes||''}`.toLowerCase().includes(q));els.watchBody.innerHTML=items.map(x=>`<tr><td><div class="asset-cell"><div class="asset-badge ${String(x.type).toLowerCase()}">${escapeHtml(x.type.slice(0,2))}</div><div><strong>${escapeHtml(x.assetName)}</strong><span>${escapeHtml(x.exchange?`${x.exchange}:`:'')}${escapeHtml(x.code)}</span></div></div></td><td>${formatCurrency(x.currentPrice)}</td><td>${formatCurrency(x.targetPrice)}</td><td class="${Number(x.distancePct)<=0?'positive':'neutral'}">${formatPercent(x.distancePct)}</td><td><span class="priority ${String(x.priority).toLowerCase()}">${escapeHtml(x.priority)}</span></td><td>${escapeHtml(x.notes||'')}</td><td class="row-actions"><button class="small-button" data-edit-watch="${escapeHtml(x.id)}">Edit</button><button class="small-button danger" data-delete-watch="${escapeHtml(x.id)}">Delete</button></td></tr>`).join('');els.watchEmpty.classList.toggle('hidden',items.length>0);}
+function renderUsers(){els.usersBody.innerHTML=(state.users||[]).map(u=>`<tr><td><strong>${escapeHtml(u.username)}</strong></td><td>${escapeHtml(u.displayName)}</td><td>${escapeHtml(u.role)}</td><td>${u.active?'Active':'Disabled'}</td><td>${escapeHtml(u.lastLogin||'—')}</td><td class="row-actions"><button class="small-button" data-reset-user="${escapeHtml(u.username)}">Reset password</button><button class="small-button" data-toggle-user="${escapeHtml(u.username)}" data-active="${u.active?'false':'true'}">${u.active?'Disable':'Enable'}</button></td></tr>`).join('');}
+
+function switchSection(section){state.activeSection=section;const titles={overview:'Portfolio overview',holdings:'Holdings & performance',watchlist:'Watchlist',users:'User administration'};els.pageTitle.textContent=titles[section]||'My Finance';['overview','holdings','watchlist','users'].forEach(name=>$(`${name}Section`)?.classList.toggle('hidden',name!==section));$$('[data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===section));if(section==='users'&&state.user?.role==='ADMIN')loadUsers();}
+function openModal(id){els.modalBackdrop.classList.remove('hidden');els.modalBackdrop.setAttribute('aria-hidden','false');$$('.modal').forEach(m=>m.classList.add('hidden'));$(id).classList.remove('hidden');}
+function closeModals(){els.modalBackdrop.classList.add('hidden');els.modalBackdrop.setAttribute('aria-hidden','true');$$('.modal').forEach(m=>m.classList.add('hidden'));}
+function updateAssetForm(type,prefix){const isMf=type==='MF',isOther=type==='OTHER';const codeLabel=$(prefix==='holding'?'holdingCodeLabel':'watchCodeLabel'),exchangeLabel=$(prefix==='holding'?'exchangeLabel':'watchExchangeLabel'),help=$(prefix==='holding'?'mfHelp':'watchMfHelp');if(codeLabel)codeLabel.textContent=isMf?'AMFI scheme code':isOther?'Code / label':'Ticker symbol';exchangeLabel?.classList.toggle('hidden',isMf||isOther);help?.classList.toggle('hidden',!isMf);}
+function openInvestment(item=null){refreshOwnerControls();els.investmentForm.reset();els.holdingId.value=item?.id||'';$('investmentModalTitle').textContent=item?'Edit investment':'Add investment';if(item){els.holdingOwner.value=canonicalOwner(item.owner);els.holdingType.value=item.type;els.holdingName.value=item.assetName;els.holdingCode.value=item.code;els.holdingExchange.value=item.exchange||'NSE';els.holdingUnits.value=item.units;els.holdingInvested.value=item.investedAmount;els.holdingManualPrice.value=item.manualPrice??'';els.holdingBuyDate.value=item.buyDate||'';els.holdingNotes.value=item.notes||'';}else{els.holdingOwner.value=state.selectedOwner!=='ALL'?state.selectedOwner:(configuredOwners()[0]||'Sarada');els.holdingType.value='STOCK';}updateAssetForm(els.holdingType.value,'holding');openModal('investmentModal');}
+function openWatch(item=null){els.watchForm.reset();els.watchId.value=item?.id||'';if(item){els.watchType.value=item.type;els.watchName.value=item.assetName;els.watchCode.value=item.code;els.watchExchange.value=item.exchange||'NSE';els.watchTarget.value=item.targetPrice??'';els.watchManualPrice.value=item.manualPrice??'';els.watchPriority.value=item.priority||'MEDIUM';els.watchNotes.value=item.notes||'';}updateAssetForm(els.watchType.value,'watch');openModal('watchModal');}
+
+async function saveInvestment(event){event.preventDefault();const button=$('saveInvestmentBtn');setBusy(button,true,'Saving…');try{const result=await api('saveHolding',{holding:{id:els.holdingId.value,owner:els.holdingOwner.value,type:els.holdingType.value,assetName:els.holdingName.value.trim(),code:els.holdingCode.value.trim().toUpperCase(),exchange:['MF','OTHER'].includes(els.holdingType.value)?'':els.holdingExchange.value,units:Number(els.holdingUnits.value),investedAmount:Number(els.holdingInvested.value),manualPrice:els.holdingManualPrice.value===''?null:Number(els.holdingManualPrice.value),buyDate:els.holdingBuyDate.value,notes:els.holdingNotes.value.trim()}});closeModals();applyBootstrap(result.data);saveCache(result.data);toast('Investment saved.','success');}catch(e){toast(e.message,'error');}finally{setBusy(button,false);}}
+async function saveWatch(event){event.preventDefault();const button=$('saveWatchBtn');setBusy(button,true,'Saving…');try{const result=await api('saveWatchItem',{item:{id:els.watchId.value,type:els.watchType.value,assetName:els.watchName.value.trim(),code:els.watchCode.value.trim().toUpperCase(),exchange:['MF','OTHER'].includes(els.watchType.value)?'':els.watchExchange.value,targetPrice:els.watchTarget.value===''?null:Number(els.watchTarget.value),manualPrice:els.watchManualPrice.value===''?null:Number(els.watchManualPrice.value),priority:els.watchPriority.value,notes:els.watchNotes.value.trim()}});closeModals();applyBootstrap(result.data);saveCache(result.data);toast('Watchlist item saved.','success');}catch(e){toast(e.message,'error');}finally{setBusy(button,false);}}
+async function deleteItem(action,id,label){if(!confirm(`Delete this ${label}?`))return;try{const result=await api(action,{id});applyBootstrap(result.data);saveCache(result.data);toast(`${label} deleted.`,'success');}catch(e){toast(e.message,'error');}}
+
+function csvCell(value){return `"${String(value??'').replace(/"/g,'""')}"`;}
+function parseCsv(text){
+  const rows=[];let row=[],field='',quoted=false;
+  for(let i=0;i<text.length;i++){const c=text[i],n=text[i+1];if(c==='"'){if(quoted&&n==='"'){field+='"';i++;}else quoted=!quoted;}else if(c===','&&!quoted){row.push(field);field='';}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&n==='\n')i++;row.push(field);if(row.some(v=>String(v).trim()!==''))rows.push(row);row=[];field='';}else field+=c;}
+  row.push(field);if(row.some(v=>String(v).trim()!==''))rows.push(row);return rows;
 }
 
-function dateLabel(value) {
-  const date = value ? new Date(value) : null;
-  if (!date || Number.isNaN(date.getTime())) return 'Not available';
-  return new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+async function loadSheetJs(){
+  if(window.XLSX)return window.XLSX;
+  await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';script.onload=resolve;script.onerror=()=>reject(new Error('Could not load the Excel reader. Save the file as CSV and try again.'));document.head.appendChild(script);});
+  if(!window.XLSX)throw new Error('Excel reader did not load. Save the file as CSV and try again.');
+  return window.XLSX;
 }
-
-function pnlClass(value) {
-  const n = Number(value);
-  return n > 0 ? 'positive' : n < 0 ? 'negative' : 'neutral';
-}
-
-function setBusy(button, busy, text) {
-  if (!button) return;
-  if (busy) {
-    button.dataset.originalText = button.textContent;
-    button.disabled = true;
-    button.textContent = text || 'Please wait…';
-  } else {
-    button.disabled = false;
-    button.textContent = button.dataset.originalText || button.textContent;
+async function fileToRows(file){
+  const name=String(file?.name||'').toLowerCase();
+  if(name.endsWith('.xlsx')||name.endsWith('.xls')){
+    const XLSX=await loadSheetJs();const workbook=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:false});const sheet=workbook.Sheets[workbook.SheetNames[0]];return XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:false});
   }
+  return parseCsv(await file.text());
 }
-
-function setSyncStatus(mode, message) {
-  els.syncStatus.className = `sync-status ${mode || ''}`.trim();
-  const label = els.syncStatus.querySelector('span:last-child');
-  if (label) label.textContent = message;
-}
-
-function toast(message, type = '') {
-  const node = document.createElement('div');
-  node.className = `toast ${type}`.trim();
-  node.textContent = message;
-  els.toastRegion.appendChild(node);
-  setTimeout(() => node.remove(), 4200);
-}
-
-async function api(action, payload = {}, options = {}) {
-  if (!isConfigured()) throw new Error('Backend is not configured. Paste the Apps Script /exec URL in config.js.');
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), CONFIG.REQUEST_TIMEOUT_MS || 25000);
-  const requestBody = { action, ...payload };
-  if (state.token && !requestBody.token) requestBody.token = state.token;
-  try {
-    const response = await fetch(CONFIG.API_URL, {
-      method: 'POST',
-      body: JSON.stringify(requestBody),
-      redirect: 'follow',
-      signal: controller.signal,
-      cache: 'no-store',
-      credentials: 'omit'
-    });
-    const text = await response.text();
-    let data;
-    try { data = JSON.parse(text); } catch { throw new Error('The backend returned an unreadable response. Check the Apps Script deployment permissions.'); }
-    if (!data.ok) {
-      const error = new Error(data.message || 'Request failed.');
-      error.code = data.code || 'REQUEST_FAILED';
-      throw error;
-    }
-    return data;
-  } catch (error) {
-    if (error.name === 'AbortError') throw new Error('The request timed out. Please try again.');
-    if (options.retry && !options._retried) {
-      await new Promise((resolve) => setTimeout(resolve, 700));
-      return api(action, payload, { ...options, _retried: true });
-    }
-    throw error;
-  } finally { clearTimeout(timeout); }
-}
-
-function cacheKey() { return `portfolio_cache_${state.username || 'unknown'}`; }
-function saveCache(data) {
-  try { localStorage.setItem(cacheKey(), JSON.stringify({ savedAt: Date.now(), data })); } catch { /* ignore */ }
-}
-function loadCache() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(cacheKey()) || 'null');
-    if (parsed?.data) applyBootstrap(parsed.data, true);
-  } catch { /* ignore */ }
-}
-function clearSession() {
-  state.token = '';
-  state.username = '';
-  state.user = null;
-  localStorage.removeItem('portfolio_token');
-  localStorage.removeItem('portfolio_username');
-}
-
-async function login(event) {
-  event.preventDefault();
-  els.loginMessage.textContent = '';
-  if (!isConfigured()) {
-    els.loginMessage.textContent = 'First paste your Apps Script /exec URL in config.js.';
-    return;
-  }
-  const username = els.loginUsername.value.trim();
-  const password = els.loginPassword.value;
-  setBusy(els.loginButton, true, 'Signing in…');
-  try {
-    const result = await api('login', { username, password });
-    state.token = result.token;
-    state.username = result.user.username;
-    localStorage.setItem('portfolio_token', state.token);
-    localStorage.setItem('portfolio_username', state.username);
-    showApp();
-    applyBootstrap(result.data);
-    toast('Signed in successfully.', 'success');
-  } catch (error) {
-    els.loginMessage.textContent = error.message;
-  } finally { setBusy(els.loginButton, false); }
-}
-
-async function logout() {
-  try { if (state.token) await api('logout'); } catch { /* session still cleared locally */ }
-  clearSession();
-  els.appView.classList.add('hidden');
-  els.loginView.classList.remove('hidden');
-  els.loginPassword.value = '';
-}
-
-function showApp() {
-  els.loginView.classList.add('hidden');
-  els.appView.classList.remove('hidden');
-  els.sideAppName.textContent = CONFIG.APP_NAME || 'Investment Dashboard';
-  const now = new Date();
-  els.todayLabel.textContent = new Intl.DateTimeFormat('en-IN', { weekday:'long', day:'numeric', month:'long' }).format(now).toUpperCase();
-}
-
-async function loadDashboard(forcePrices = false) {
-  if (state.syncing) return;
-  state.syncing = true;
-  setSyncStatus('syncing', forcePrices ? 'Updating prices…' : 'Syncing…');
-  try {
-    const result = await api(forcePrices ? 'refreshPrices' : 'bootstrap', {}, { retry: !forcePrices });
-    applyBootstrap(result.data);
-    saveCache(result.data);
-    setSyncStatus('', 'Up to date');
-    if (forcePrices) toast('Prices and NAVs refreshed.', 'success');
-  } catch (error) {
-    if (error.code === 'AUTH_REQUIRED' || error.code === 'SESSION_EXPIRED') {
-      toast('Your session expired. Please sign in again.', 'error');
-      logout();
-      return;
-    }
-    setSyncStatus('error', 'Sync failed');
-    toast(error.message, 'error');
-  } finally { state.syncing = false; }
-}
-
-function applyBootstrap(data, fromCache = false) {
-  if (!data) return;
-  state.user = data.user || state.user;
-  state.holdings = Array.isArray(data.holdings) ? data.holdings : [];
-  state.watchlist = Array.isArray(data.watchlist) ? data.watchlist : [];
-  state.summary = data.summary || {};
-  if (Array.isArray(data.users)) state.users = data.users;
-  renderAll();
-  if (state.user) {
-    els.welcomeName.textContent = state.user.displayName || state.user.username;
-    els.avatarInitial.textContent = (state.user.displayName || state.user.username || 'I').charAt(0).toUpperCase();
-    $$('.admin-only').forEach((el) => el.classList.toggle('hidden', state.user.role !== 'ADMIN'));
-  }
-  els.lastUpdatedText.textContent = `${fromCache ? 'Showing saved data' : 'Updated'} ${dateLabel(data.updatedAt)}${data.priceNote ? ` · ${data.priceNote}` : ''}`;
-}
-
-function renderAll() {
-  renderSummary();
-  renderAllocation();
-  renderTopHoldings();
-  renderWatchSignals();
-  renderHoldings();
-  renderWatchlist();
-  if (state.user?.role === 'ADMIN') renderUsers();
-}
-
-function renderSummary() {
-  const s = state.summary || {};
-  els.sumInvested.textContent = formatCurrency(s.investedValue || 0, true);
-  els.sumCurrent.textContent = formatCurrency(s.currentValue || 0, true);
-  els.sumGain.textContent = formatCurrency(s.gainLoss || 0, true);
-  els.sumGain.className = pnlClass(s.gainLoss);
-  els.sumReturn.textContent = formatPercent(s.returnPct || 0);
-  els.sumReturn.className = pnlClass(s.returnPct);
-  els.sumAssetCount.textContent = `${s.assetCount || 0} asset${s.assetCount === 1 ? '' : 's'}`;
-  els.sumPricedCount.textContent = `${s.pricedCount || 0} priced`;
-  els.sumWatchCount.textContent = String(s.watchCount || 0);
-  els.sumNearTarget.textContent = `${s.nearTargetCount || 0} near target`;
-}
-
-function renderAllocation() {
-  const groups = state.summary?.allocation || [];
-  if (!groups.length) {
-    els.allocationChart.innerHTML = '<div class="empty-state">Allocation appears after you add investments.</div>';
-    return;
-  }
-  els.allocationChart.innerHTML = groups.map((item) => `
-    <div class="allocation-row">
-      <div class="allocation-name"><span class="allocation-dot"></span>${escapeHtml(item.type)}</div>
-      <div class="allocation-track"><div class="allocation-fill" style="width:${Math.max(0, Math.min(100, Number(item.percent) || 0))}%"></div></div>
-      <div class="allocation-value">${Number(item.percent || 0).toFixed(1)}%</div>
-    </div>`).join('');
-}
-
-function renderTopHoldings() {
-  const items = [...state.holdings].sort((a,b) => (b.currentValue || b.investedAmount || 0) - (a.currentValue || a.investedAmount || 0)).slice(0,6);
-  if (!items.length) {
-    els.topHoldings.className = 'mini-holdings empty-state';
-    els.topHoldings.textContent = 'Add your first investment to begin.';
-    return;
-  }
-  els.topHoldings.className = 'mini-holdings';
-  els.topHoldings.innerHTML = items.map((item) => `
-    <div class="mini-holding">
-      <div><strong>${escapeHtml(item.assetName)}</strong><span>${escapeHtml(item.type)} · ${escapeHtml(item.code)}</span></div>
-      <div class="mini-value">${formatCurrency(item.currentValue ?? item.investedAmount, true)}<span class="${pnlClass(item.returnPct)}">${item.currentPrice == null ? 'Price pending' : formatPercent(item.returnPct)}</span></div>
-    </div>`).join('');
-}
-
-function renderWatchSignals() {
-  const items = [...state.watchlist]
-    .filter((x) => Number.isFinite(Number(x.distancePct)))
-    .sort((a,b) => Math.abs(a.distancePct) - Math.abs(b.distancePct)).slice(0,5);
-  if (!items.length) {
-    els.watchSignals.className = 'signal-list empty-state';
-    els.watchSignals.textContent = state.watchlist.length ? 'Add target prices to see signals.' : 'No watchlist items yet.';
-    return;
-  }
-  els.watchSignals.className = 'signal-list';
-  els.watchSignals.innerHTML = items.map((item) => `
-    <div class="signal-item">
-      <div><strong>${escapeHtml(item.assetName)}</strong><span>Target ${formatCurrency(item.targetPrice)}</span></div>
-      <div class="signal-price">${formatCurrency(item.currentPrice)}<span class="${Number(item.distancePct) <= 0 ? 'positive' : 'neutral'}">${Number(item.distancePct) <= 0 ? 'At/below target' : `${item.distancePct.toFixed(1)}% above`}</span></div>
-    </div>`).join('');
-}
-
-function holdingMatches(item) {
-  const q = els.holdingSearch.value.trim().toLowerCase();
-  const type = els.holdingTypeFilter.value;
-  const textMatch = !q || `${item.assetName} ${item.code} ${item.notes || ''}`.toLowerCase().includes(q);
-  return textMatch && (type === 'ALL' || item.type === type);
-}
-
-function renderHoldings() {
-  const items = state.holdings.filter(holdingMatches);
-  els.holdingsBody.innerHTML = items.map((item) => `
-    <tr>
-      <td><div class="asset-cell"><div class="asset-badge">${escapeHtml(item.type.slice(0,2))}</div><div><strong>${escapeHtml(item.assetName)}</strong><span>${escapeHtml(item.exchange ? `${item.exchange}:` : '')}${escapeHtml(item.code)}</span></div></div></td>
-      <td>${formatNumber(item.units)}</td>
-      <td>${formatCurrency(item.investedAmount)}</td>
-      <td>${formatCurrency(item.currentPrice)}<span class="price-note">${escapeHtml(item.priceSource || 'Pending')}</span></td>
-      <td>${formatCurrency(item.currentValue)}</td>
-      <td class="${pnlClass(item.gainLoss)}">${formatCurrency(item.gainLoss)}</td>
-      <td class="${pnlClass(item.returnPct)}">${formatPercent(item.returnPct)}</td>
-      <td><div class="row-actions"><button class="row-button" data-edit-holding="${escapeHtml(item.id)}" title="Edit">✎</button><button class="row-button delete" data-delete-holding="${escapeHtml(item.id)}" title="Delete">×</button></div></td>
-    </tr>`).join('');
-  els.holdingsEmpty.classList.toggle('hidden', items.length > 0);
-}
-
-function watchMatches(item) {
-  const q = els.watchSearch.value.trim().toLowerCase();
-  return !q || `${item.assetName} ${item.code} ${item.notes || ''}`.toLowerCase().includes(q);
-}
-
-function renderWatchlist() {
-  const priorityOrder = { HIGH: 0, MEDIUM: 1, LOW: 2 };
-  const items = state.watchlist.filter(watchMatches).sort((a,b) => (priorityOrder[a.priority] ?? 9) - (priorityOrder[b.priority] ?? 9));
-  els.watchBody.innerHTML = items.map((item) => `
-    <tr>
-      <td><div class="asset-cell"><div class="asset-badge">${escapeHtml(item.type.slice(0,2))}</div><div><strong>${escapeHtml(item.assetName)}</strong><span>${escapeHtml(item.exchange ? `${item.exchange}:` : '')}${escapeHtml(item.code)}</span></div></div></td>
-      <td>${formatCurrency(item.currentPrice)}<span class="price-note">${escapeHtml(item.priceSource || 'Pending')}</span></td>
-      <td>${formatCurrency(item.targetPrice)}</td>
-      <td class="${Number(item.distancePct) <= 0 ? 'positive' : 'neutral'}">${Number.isFinite(Number(item.distancePct)) ? formatPercent(item.distancePct) : '—'}</td>
-      <td><span class="pill ${String(item.priority).toLowerCase()}">${escapeHtml(item.priority)}</span></td>
-      <td title="${escapeHtml(item.notes)}">${escapeHtml((item.notes || '—').slice(0,45))}${(item.notes || '').length > 45 ? '…' : ''}</td>
-      <td><div class="row-actions"><button class="row-button" data-edit-watch="${escapeHtml(item.id)}" title="Edit">✎</button><button class="row-button delete" data-delete-watch="${escapeHtml(item.id)}" title="Delete">×</button></div></td>
-    </tr>`).join('');
-  els.watchEmpty.classList.toggle('hidden', items.length > 0);
-}
-
-function renderUsers() {
-  els.usersBody.innerHTML = state.users.map((user) => `
-    <tr>
-      <td><strong>${escapeHtml(user.username)}</strong></td><td>${escapeHtml(user.displayName)}</td><td><span class="pill">${escapeHtml(user.role)}</span></td>
-      <td class="${user.active ? 'positive' : 'negative'}">${user.active ? 'Active' : 'Disabled'}</td><td>${escapeHtml(user.lastLogin ? dateLabel(user.lastLogin) : 'Never')}</td>
-      <td><div class="row-actions"><button class="row-button" data-reset-user="${escapeHtml(user.username)}" title="Reset password">⌁</button><button class="row-button ${user.active ? 'delete' : ''}" data-toggle-user="${escapeHtml(user.username)}" data-active="${user.active}" title="${user.active ? 'Disable' : 'Enable'}">${user.active ? '×' : '✓'}</button></div></td>
-    </tr>`).join('');
-}
-
-function switchSection(name) {
-  const titles = { overview: 'Portfolio overview', holdings: 'My holdings', watchlist: 'Investment watchlist', users: 'User administration' };
-  state.activeSection = name;
-  ['overview','holdings','watchlist','users'].forEach((section) => $(`${section}Section`)?.classList.toggle('hidden', section !== name));
-  els.pageTitle.textContent = titles[name] || 'Investment Dashboard';
-  $$('[data-section]').forEach((button) => button.classList.toggle('active', button.dataset.section === name));
-  if (name === 'users' && state.user?.role === 'ADMIN') loadUsers();
-}
-
-function openModal(id) {
-  els.modalBackdrop.classList.remove('hidden');
-  els.modalBackdrop.setAttribute('aria-hidden', 'false');
-  $$('.modal').forEach((m) => m.classList.add('hidden'));
-  $(id).classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-function closeModals() {
-  els.modalBackdrop.classList.add('hidden');
-  els.modalBackdrop.setAttribute('aria-hidden', 'true');
-  $$('.modal').forEach((m) => m.classList.add('hidden'));
-  document.body.style.overflow = '';
-}
-
-function updateAssetForm(type, scope) {
-  const isMf = type === 'MF';
-  const isOther = type === 'OTHER';
-  if (scope === 'holding') {
-    els.holdingCodeLabel.textContent = isMf ? 'AMFI scheme code' : isOther ? 'Reference code' : 'Ticker symbol';
-    els.exchangeLabel.classList.toggle('hidden', isMf || isOther);
-    els.mfHelp.classList.toggle('hidden', !isMf);
-    els.holdingCode.placeholder = isMf ? 'e.g. 122639' : isOther ? 'GOLD-BOND' : 'RELIANCE';
-  } else {
-    els.watchCodeLabel.textContent = isMf ? 'AMFI scheme code' : isOther ? 'Reference code' : 'Ticker symbol';
-    els.watchExchangeLabel.classList.toggle('hidden', isMf || isOther);
-    els.watchMfHelp.classList.toggle('hidden', !isMf);
-    els.watchCode.placeholder = isMf ? 'e.g. 122639' : isOther ? 'REFERENCE' : 'HDFCBANK';
-  }
-}
-
-function openInvestment(item = null) {
-  els.investmentForm.reset();
-  els.holdingId.value = item?.id || '';
-  $('investmentModalTitle').textContent = item ? 'Edit investment' : 'Add investment';
-  els.holdingType.value = item?.type || 'STOCK';
-  els.holdingName.value = item?.assetName || '';
-  els.holdingCode.value = item?.code || '';
-  els.holdingExchange.value = item?.exchange || 'NSE';
-  els.holdingUnits.value = item?.units ?? '';
-  els.holdingInvested.value = item?.investedAmount ?? '';
-  els.holdingManualPrice.value = item?.manualPrice || '';
-  els.holdingBuyDate.value = item?.buyDate || '';
-  els.holdingNotes.value = item?.notes || '';
-  updateAssetForm(els.holdingType.value, 'holding');
-  openModal('investmentModal');
-}
-
-function openWatch(item = null) {
-  els.watchForm.reset();
-  els.watchId.value = item?.id || '';
-  $('watchModalTitle').textContent = item ? 'Edit watch item' : 'Add to watchlist';
-  els.watchType.value = item?.type || 'STOCK';
-  els.watchName.value = item?.assetName || '';
-  els.watchCode.value = item?.code || '';
-  els.watchExchange.value = item?.exchange || 'NSE';
-  els.watchTarget.value = item?.targetPrice || '';
-  els.watchManualPrice.value = item?.manualPrice || '';
-  els.watchPriority.value = item?.priority || 'MEDIUM';
-  els.watchNotes.value = item?.notes || '';
-  updateAssetForm(els.watchType.value, 'watch');
-  openModal('watchModal');
-}
-
-async function saveInvestment(event) {
-  event.preventDefault();
-  const button = $('saveInvestmentBtn');
-  setBusy(button, true, 'Saving…');
-  try {
-    const result = await api('saveHolding', {
-      holding: {
-        id: els.holdingId.value,
-        type: els.holdingType.value,
-        assetName: els.holdingName.value.trim(),
-        code: els.holdingCode.value.trim().toUpperCase(),
-        exchange: ['MF','OTHER'].includes(els.holdingType.value) ? '' : els.holdingExchange.value,
-        units: Number(els.holdingUnits.value),
-        investedAmount: Number(els.holdingInvested.value),
-        manualPrice: els.holdingManualPrice.value === '' ? null : Number(els.holdingManualPrice.value),
-        buyDate: els.holdingBuyDate.value,
-        notes: els.holdingNotes.value.trim()
-      }
-    });
-    closeModals();
-    applyBootstrap(result.data);
-    saveCache(result.data);
-    toast('Investment saved.', 'success');
-  } catch (error) { toast(error.message, 'error'); }
-  finally { setBusy(button, false); }
-}
-
-
-function openBulkImport() {
-  state.pendingImport = [];
-  els.bulkImportForm.reset();
-  els.bulkImportStatus.textContent = 'No file selected.';
-  els.bulkImportStatus.className = 'import-status muted';
-  els.runBulkImportBtn.disabled = true;
-  openModal('bulkImportModal');
-}
-
-function csvCell(value) {
-  return `"${String(value ?? '').replace(/"/g, '""')}"`;
-}
-
-function downloadImportTemplate() {
-  const headers = ['Asset Type','Asset Name','Code','Exchange','Units','Invested Amount','Manual Price','Purchase Date','Notes'];
-  const examples = [
-    ['STOCK','Reliance Industries','RELIANCE','NSE','10','25000','','2026-08-01','Long-term holding'],
-    ['MF','Parag Parikh Flexi Cap Fund','122639','','125.432','100000','','2026-07-15','Direct growth'],
-    ['ETF','Nippon India ETF Gold BeES','GOLDBEES','NSE','50','35000','','2026-06-10','Gold allocation']
-  ];
-  const csv = [headers, ...examples].map((row) => row.map(csvCell).join(',')).join('\n');
-  const blob = new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'investment-bulk-import-template.csv';
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-function parseCsv(text) {
-  const rows = [];
-  let row = [];
-  let field = '';
-  let quoted = false;
-
-  for (let i = 0; i < text.length; i += 1) {
-    const char = text[i];
-    const next = text[i + 1];
-
-    if (char === '"') {
-      if (quoted && next === '"') {
-        field += '"';
-        i += 1;
-      } else {
-        quoted = !quoted;
-      }
-    } else if (char === ',' && !quoted) {
-      row.push(field);
-      field = '';
-    } else if ((char === '\n' || char === '\r') && !quoted) {
-      if (char === '\r' && next === '\n') i += 1;
-      row.push(field);
-      if (row.some((value) => String(value).trim() !== '')) rows.push(row);
-      row = [];
-      field = '';
-    } else {
-      field += char;
+function trimToDetectedHeader(rows,mode){
+  const max=Math.min(rows.length,30);
+  for(let i=0;i<max;i++){
+    const h=(rows[i]||[]).map(normalizeHeader);
+    if(mode==='MF_STATEMENT'){
+      if(h.includes('investorname')&&h.includes('productcode')&&h.includes('schemename')&&h.includes('tradedate'))return rows.slice(i);
+    }else{
+      const hasSymbol=['stocksymbol','symbol','tradingsymbol','instrument','scrip'].some(x=>h.includes(x));
+      const hasQty=['quantity','qty'].some(x=>h.includes(x));
+      if(hasSymbol&&hasQty)return rows.slice(i);
     }
   }
-  row.push(field);
-  if (row.some((value) => String(value).trim() !== '')) rows.push(row);
   return rows;
 }
 
-function normalizeCsvHeader(value) {
-  return String(value || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+function normalizeHeader(v){return String(v||'').replace(/^\ufeff/,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
+function parseNum(v){const s=String(v??'').replace(/[₹,%\s]/g,'').replace(/,/g,'').trim();if(!s)return null;const n=Number(s);return Number.isFinite(n)?n:NaN;}
+function normalizeDate(v){
+  const raw=String(v||'').trim();if(!raw)return '';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(raw))return raw;
+  let m=raw.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})$/);if(m)return `${m[3]}-${String(m[2]).padStart(2,'0')}-${String(m[1]).padStart(2,'0')}`;
+  m=raw.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);if(m){const months={jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};const mm=months[m[2].toLowerCase()];if(mm)return `${m[3]}-${mm}-${String(m[1]).padStart(2,'0')}`;}
+  return null;
+}
+function detectIndex(headers,aliases){for(const a of aliases){const i=headers.indexOf(normalizeHeader(a));if(i>=0)return i;}return -1;}
+function cell(cells,i){return i>=0?String(cells[i]??'').trim():'';}
+function isFinancialMfTransaction(type,amount,units){const t=String(type||'').toLowerCase();if(/address|nominee|contact|mandate|registered|registration|updation|correction|cancelled|invalid|kyc|bank/.test(t))return false;return (Number.isFinite(amount)&&Math.abs(amount)>0.000001)||(Number.isFinite(units)&&Math.abs(units)>0.000001);}
+function rowsToMfTransactions(rows){
+  if(rows.length<2)throw new Error('The CSV has no transaction rows.');const h=rows[0].map(normalizeHeader);
+  const idx={amc:detectIndex(h,['MF_NAME','AMC','Fund House']),owner:detectIndex(h,['INVESTOR_NAME','Investor Name','Owner']),product:detectIndex(h,['PRODUCT_CODE','Product Code']),scheme:detectIndex(h,['SCHEME_NAME','Scheme Name']),date:detectIndex(h,['TRADE_DATE','Trade Date','Date']),tx:detectIndex(h,['TRANSACTION_TYPE','Transaction Type']),amount:detectIndex(h,['AMOUNT','Amount']),units:detectIndex(h,['UNITS','Units']),price:detectIndex(h,['PRICE','NAV','Price']),broker:detectIndex(h,['BROKER','Broker'])};
+  const required=['owner','product','scheme','date','tx'];const missing=required.filter(k=>idx[k]<0);if(missing.length)throw new Error(`MF statement columns not recognised: ${missing.join(', ')}.`);
+  const out=[],errors=[];rows.slice(1).forEach((r,n)=>{const owner=canonicalOwner(cell(r,idx.owner)),productCode=cell(r,idx.product).toUpperCase(),schemeName=cell(r,idx.scheme),tradeDate=normalizeDate(cell(r,idx.date)),transactionType=cell(r,idx.tx),amount=parseNum(cell(r,idx.amount)),units=parseNum(cell(r,idx.units)),price=parseNum(cell(r,idx.price));if(!isFinancialMfTransaction(transactionType,amount,units))return;if(!owner||!productCode||!schemeName||!tradeDate||!transactionType){errors.push(`Row ${n+2}: missing investor/product/scheme/date/type.`);return;}if([amount,units,price].some(v=>Number.isNaN(v))){errors.push(`Row ${n+2}: invalid amount/units/price.`);return;}out.push({owner,amc:cell(r,idx.amc),productCode,schemeName,tradeDate,transactionType,amount:amount??0,units,price,broker:cell(r,idx.broker)});});
+  if(errors.length)throw new Error(errors.slice(0,6).join(' ')+(errors.length>6?` Plus ${errors.length-6} more.`:''));if(!out.length)throw new Error('No purchase/SIP/redemption rows were found.');if(out.length>5000)throw new Error('More than 5,000 MF transactions detected. Split the file.');return out;
+}
+function classifyAsset(symbol,explicit=''){const e=String(explicit||'').toUpperCase().replace(/[^A-Z]/g,'');if(e.includes('ETF'))return'ETF';if(e.includes('STOCK')||e.includes('EQUITY'))return'STOCK';const s=String(symbol||'').toUpperCase();return /(BEES$|ETF$|MAFANG|MON100|HNGSNGBEES|ITBEES|CPSEETF|MOM100)/.test(s)?'ETF':'STOCK';}
+function rowsToStockHoldings(rows){
+  if(rows.length<2)throw new Error('The CSV has no stock rows.');const h=rows[0].map(normalizeHeader);
+  const idx={owner:detectIndex(h,['INVESTOR_NAME','Investor Name','Owner']),type:detectIndex(h,['Asset Type','Type','Instrument Type']),symbol:detectIndex(h,['Stock Symbol','Symbol','Tradingsymbol','Trading Symbol','Instrument','Scrip']),exchange:detectIndex(h,['Exchange']),qty:detectIndex(h,['Quantity','Qty','Qty.','QTY']),avg:detectIndex(h,['Avg Buy Price','Average Buy Price','Avg. cost','Avg Cost','Average price','Buy Average']),invested:detectIndex(h,['Invested Amount','Invested Value','Cost Value','Investment Value']),name:detectIndex(h,['Company Name','Asset Name','Name'])};
+  if(idx.symbol<0||idx.qty<0||(idx.avg<0&&idx.invested<0))throw new Error('Stock file needs Symbol/Instrument, Quantity and Avg Buy Price or Invested Amount.');
+  const out=[],errors=[];const selected=canonicalOwner(els.importOwner.value||configuredOwners()[0]||'Niharika');rows.slice(1).forEach((r,n)=>{const symbol=cell(r,idx.symbol).toUpperCase().replace(/\s+/g,'');if(!symbol)return;const qty=parseNum(cell(r,idx.qty)),avg=parseNum(cell(r,idx.avg)),invRaw=parseNum(cell(r,idx.invested));const invested=Number.isFinite(invRaw)?invRaw:(Number.isFinite(qty)&&Number.isFinite(avg)?qty*avg:null);if(!Number.isFinite(qty)||qty<=0||!Number.isFinite(invested)||invested<0){errors.push(`Row ${n+2}: invalid quantity/invested amount.`);return;}const owner=idx.owner>=0&&cell(r,idx.owner)?canonicalOwner(cell(r,idx.owner)):selected;const exchange=(cell(r,idx.exchange)||'NSE').toUpperCase()==='BSE'?'BOM':(cell(r,idx.exchange)||'NSE').toUpperCase();const type=classifyAsset(symbol,cell(r,idx.type));out.push({owner,type,assetName:cell(r,idx.name)||symbol,code:symbol,exchange,units:qty,investedAmount:invested,manualPrice:null,buyDate:'',notes:'Imported stock holding'});});if(errors.length)throw new Error(errors.slice(0,6).join(' '));if(!out.length)throw new Error('No stock holdings found.');return out;
+}
+function setImportMode(mode){state.importMode=mode;$$('.import-mode').forEach(b=>b.classList.toggle('active',b.dataset.importMode===mode));els.mfImportHelp.classList.toggle('hidden',mode!=='MF_STATEMENT');els.stockImportHelp.classList.toggle('hidden',mode!=='STOCK_HOLDINGS');els.stockOwnerLabel.classList.toggle('hidden',mode!=='STOCK_HOLDINGS');els.importFileHint.textContent=mode==='MF_STATEMENT'?'Up to 5,000 MF transaction rows. PAN and folio are ignored. CSV/XLSX supported.':'Current stock/ETF holdings. Zerodha XLSX/CSV supported.';els.bulkCsvFile.value='';state.pendingImport=[];els.bulkImportStatus.textContent='No file selected.';els.bulkImportStatus.className='import-status muted';els.runBulkImportBtn.disabled=true;}
+function openBulkImport(){refreshOwnerControls();setImportMode('MF_STATEMENT');openModal('bulkImportModal');}
+function downloadImportTemplate(){let headers,examples,name;if(state.importMode==='MF_STATEMENT'){headers=['MF_NAME','INVESTOR_NAME','PRODUCT_CODE','SCHEME_NAME','Type','TRADE_DATE','TRANSACTION_TYPE','DIVIDEND_RATE','AMOUNT','UNITS','PRICE','BROKER'];examples=[['PPFAS Mutual Fund','Sarada','PP001ZG','Parag Parikh Flexi Cap - Dir Plan Growth','Equity','2026-07-05','Purchase Systematic','','12999.35','140.000','92.8525','Direct'],['SBI Mutual Fund','Niharika','LD246G','SBI Gold Fund- Dir Plan Growth','Gold FOF','2026-08-05','Purchase- Systematic','','4999.75','113.211','44.163','Direct']];name='mf-statement-import-template.csv';}else{headers=['Investor Name','Asset Type','Stock Symbol','Exchange','Quantity','Avg Buy Price','Invested Amount'];examples=[['Niharika','STOCK','DMART','NSE','20','3923.85','78477'],['Niharika','ETF','GOLDBEES','NSE','1123','91.37','102614']];name='stock-holdings-import-template.csv';}const csv=[headers,...examples].map(r=>r.map(csvCell).join(',')).join('\n');const blob=new Blob(['\ufeff',csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+async function handleBulkFile(){state.pendingImport=[];els.runBulkImportBtn.disabled=true;const file=els.bulkCsvFile.files?.[0];if(!file){els.bulkImportStatus.textContent='No file selected.';return;}try{const rows=trimToDetectedHeader(await fileToRows(file),state.importMode);const data=state.importMode==='MF_STATEMENT'?rowsToMfTransactions(rows):rowsToStockHoldings(rows);state.pendingImport=data;const owners=[...new Set(data.map(x=>x.owner).filter(Boolean))];els.bulkImportStatus.textContent=`${data.length} ${state.importMode==='MF_STATEMENT'?'financial transaction':'holding'} row${data.length===1?'':'s'} ready · ${owners.map(shortOwner).join(', ')}`;els.bulkImportStatus.className='import-status success';els.runBulkImportBtn.disabled=false;}catch(e){els.bulkImportStatus.textContent=e.message;els.bulkImportStatus.className='import-status error';}}
+async function runBulkImport(event){event.preventDefault();if(!state.pendingImport.length)return;const b=els.runBulkImportBtn;setBusy(b,true,'Importing…');try{const action=state.importMode==='MF_STATEMENT'?'bulkImportMfTransactions':'bulkImportHoldings';const payload=state.importMode==='MF_STATEMENT'?{transactions:state.pendingImport}:{holdings:state.pendingImport};const result=await api(action,payload);closeModals();state.pendingImport=[];applyBootstrap(result.data);saveCache(result.data);switchSection('holdings');toast(state.importMode==='MF_STATEMENT'?`${result.imported} new MF transactions imported; ${result.skipped||0} duplicates skipped. Click Refresh for 1D–10Y performance.`:`${result.imported} stock/ETF holdings imported. Click Refresh for performance.`, 'success');}catch(e){toast(e.message,'error');els.bulkImportStatus.textContent=e.message;els.bulkImportStatus.className='import-status error';}finally{setBusy(b,false);}}
+
+function exportCsv(){const headers=['Investor','Type','Asset','Code','Exchange','Units','Avg Buy','Invested','Current Price','Current Value','Gain Loss','Gain %','XIRR','1D','1W','1M','6M','1Y','3Y','5Y','10Y'];const rows=visibleHoldings().map(h=>{const p=h.performance||{};return[shortOwner(h.owner),h.type,h.assetName,h.code,h.exchange,h.units,Number(h.units)>0?Number(h.investedAmount)/Number(h.units):'',h.investedAmount,h.currentPrice,h.currentValue,h.gainLoss,h.returnPct,h.xirr,p.d1,p.w1,p.m1,p.m6,p.y1,p.y3,p.y5,p.y10];});const csv=[headers,...rows].map(r=>r.map(csvCell).join(',')).join('\n');const blob=new Blob(['\ufeff',csv],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`my-finance-${state.selectedOwner==='ALL'?'combined':shortOwner(state.selectedOwner)}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+
+async function changePassword(event){event.preventDefault();if(els.newPassword.value!==els.confirmPassword.value){toast('New passwords do not match.','error');return;}const b=event.submitter;setBusy(b,true,'Updating…');try{await api('changePassword',{currentPassword:els.currentPassword.value,newPassword:els.newPassword.value});closeModals();els.passwordForm.reset();toast('Password changed.','success');}catch(e){toast(e.message,'error');}finally{setBusy(b,false);}}
+async function loadUsers(){try{const r=await api('adminListUsers');state.users=r.users||[];renderUsers();}catch(e){toast(e.message,'error');}}
+async function createUser(event){event.preventDefault();const b=event.submitter;setBusy(b,true,'Creating…');try{await api('adminCreateUser',{username:els.newUsername.value.trim(),displayName:els.newDisplayName.value.trim(),role:els.newUserRole.value,password:els.newUserPassword.value});closeModals();els.userForm.reset();await loadUsers();toast('User created.','success');}catch(e){toast(e.message,'error');}finally{setBusy(b,false);}}
+async function resetUserPassword(username){const password=prompt(`Enter a new temporary password for ${username}:`);if(!password)return;try{await api('adminResetPassword',{username,password});toast('Password reset.','success');}catch(e){toast(e.message,'error');}}
+async function toggleUser(username,active){try{await api('adminToggleUser',{username,active});await loadUsers();toast(`User ${active?'enabled':'disabled'}.`,'success');}catch(e){toast(e.message,'error');}}
+
+function bindEvents(){
+  els.loginForm.addEventListener('submit',login);els.logoutBtn.addEventListener('click',logout);els.refreshBtn.addEventListener('click',()=>loadDashboard(true));els.addInvestmentBtn.addEventListener('click',()=>openInvestment());els.addInvestmentTableBtn.addEventListener('click',()=>openInvestment());els.importBtn.addEventListener('click',openBulkImport);els.bulkImportBtn.addEventListener('click',openBulkImport);els.downloadImportTemplateBtn.addEventListener('click',downloadImportTemplate);els.bulkCsvFile.addEventListener('change',handleBulkFile);els.bulkImportForm.addEventListener('submit',runBulkImport);els.exportBtn.addEventListener('click',exportCsv);els.investmentForm.addEventListener('submit',saveInvestment);els.watchForm.addEventListener('submit',saveWatch);els.passwordForm.addEventListener('submit',changePassword);els.userForm.addEventListener('submit',createUser);els.holdingType.addEventListener('change',()=>updateAssetForm(els.holdingType.value,'holding'));els.watchType.addEventListener('change',()=>updateAssetForm(els.watchType.value,'watch'));els.holdingSearch.addEventListener('input',renderHoldings);els.holdingTypeFilter.addEventListener('change',renderHoldings);els.watchSearch.addEventListener('input',renderWatchlist);$('addWatchBtn').addEventListener('click',()=>openWatch());$('changePasswordBtn').addEventListener('click',()=>openModal('passwordModal'));$('addUserBtn').addEventListener('click',()=>openModal('userModal'));els.modalBackdrop.addEventListener('click',e=>{if(e.target===els.modalBackdrop)closeModals();});$$('[data-close-modal]').forEach(b=>b.addEventListener('click',closeModals));$$('[data-section]').forEach(b=>b.addEventListener('click',()=>switchSection(b.dataset.section)));$$('[data-section-link]').forEach(b=>b.addEventListener('click',()=>switchSection(b.dataset.sectionLink)));$$('[data-toggle-password]').forEach(b=>b.addEventListener('click',()=>{const input=$(b.dataset.togglePassword),show=input.type==='password';input.type=show?'text':'password';b.textContent=show?'Hide':'Show';}));$$('.import-mode').forEach(b=>b.addEventListener('click',()=>setImportMode(b.dataset.importMode)));
+  document.addEventListener('click',e=>{const owner=e.target.closest('[data-owner-view]');if(owner){state.selectedOwner=owner.dataset.ownerView;refreshOwnerControls();renderAll();return;}const edit=e.target.closest('[data-edit-holding]'),del=e.target.closest('[data-delete-holding]'),ew=e.target.closest('[data-edit-watch]'),dw=e.target.closest('[data-delete-watch]'),ru=e.target.closest('[data-reset-user]'),tu=e.target.closest('[data-toggle-user]');if(edit)openInvestment(state.holdings.find(x=>x.id===edit.dataset.editHolding));if(del)deleteItem('deleteHolding',del.dataset.deleteHolding,'investment');if(ew)openWatch(state.watchlist.find(x=>x.id===ew.dataset.editWatch));if(dw)deleteItem('deleteWatchItem',dw.dataset.deleteWatch,'watchlist item');if(ru)resetUserPassword(ru.dataset.resetUser);if(tu)toggleUser(tu.dataset.toggleUser,tu.dataset.active==='true');});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();});
 }
 
-function parseCsvNumber(value) {
-  const cleaned = String(value ?? '').replace(/[₹,\s]/g, '').trim();
-  if (cleaned === '') return null;
-  const number = Number(cleaned);
-  return Number.isFinite(number) ? number : NaN;
-}
-
-function normalizeImportType(value) {
-  const key = String(value || '').trim().toUpperCase().replace(/[\s_-]+/g, '');
-  const types = {
-    STOCK: 'STOCK', EQUITY: 'STOCK', SHARE: 'STOCK',
-    ETF: 'ETF',
-    MF: 'MF', MUTUALFUND: 'MF', FUND: 'MF',
-    OTHER: 'OTHER'
-  };
-  return types[key] || '';
-}
-
-function normalizeImportDate(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return '';
-  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
-  const match = raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
-  if (!match) return null;
-  const day = String(match[1]).padStart(2, '0');
-  const month = String(match[2]).padStart(2, '0');
-  return `${match[3]}-${month}-${day}`;
-}
-
-function rowsToHoldings(rows) {
-  if (rows.length < 2) throw new Error('The CSV does not contain any investment rows.');
-
-  const aliases = {
-    assettype: 'type', type: 'type',
-    assetname: 'assetName', name: 'assetName', investmentname: 'assetName',
-    code: 'code', symbol: 'code', ticker: 'code', tickersymbol: 'code', amfischemecode: 'code', schemecode: 'code',
-    exchange: 'exchange',
-    units: 'units', quantity: 'units', qty: 'units',
-    investedamount: 'investedAmount', totalinvestedamount: 'investedAmount', investedvalue: 'investedAmount', costvalue: 'investedAmount',
-    manualprice: 'manualPrice', currentprice: 'manualPrice', nav: 'manualPrice',
-    purchasedate: 'buyDate', buydate: 'buyDate', date: 'buyDate',
-    notes: 'notes', remark: 'notes', remarks: 'notes'
-  };
-
-  const map = {};
-  rows[0].forEach((header, index) => {
-    const field = aliases[normalizeCsvHeader(header)];
-    if (field && typeof map[field] === 'undefined') map[field] = index;
-  });
-
-  const required = ['type','assetName','code','units','investedAmount'];
-  const missing = required.filter((field) => typeof map[field] === 'undefined');
-  if (missing.length) throw new Error(`Missing required column(s): ${missing.join(', ')}.`);
-
-  const errors = [];
-  const holdings = [];
-
-  rows.slice(1).forEach((cells, offset) => {
-    const rowNumber = offset + 2;
-    const get = (field) => typeof map[field] === 'undefined' ? '' : String(cells[map[field]] ?? '').trim();
-    const type = normalizeImportType(get('type'));
-    const assetName = get('assetName');
-    const code = get('code').toUpperCase();
-    const units = parseCsvNumber(get('units'));
-    const investedAmount = parseCsvNumber(get('investedAmount'));
-    const manualRaw = get('manualPrice');
-    const manualPrice = parseCsvNumber(manualRaw);
-    const buyDate = normalizeImportDate(get('buyDate'));
-    const exchange = ['MF','OTHER'].includes(type) ? '' : (get('exchange').toUpperCase() || 'NSE');
-
-    if (!type) errors.push(`Row ${rowNumber}: invalid Asset Type.`);
-    if (!assetName) errors.push(`Row ${rowNumber}: Asset Name is required.`);
-    if (!code) errors.push(`Row ${rowNumber}: Code is required.`);
-    if (!Number.isFinite(units) || units <= 0) errors.push(`Row ${rowNumber}: Units must be greater than zero.`);
-    if (!Number.isFinite(investedAmount) || investedAmount < 0) errors.push(`Row ${rowNumber}: Invested Amount is invalid.`);
-    if (manualRaw && (!Number.isFinite(manualPrice) || manualPrice < 0)) errors.push(`Row ${rowNumber}: Manual Price is invalid.`);
-    if (buyDate === null) errors.push(`Row ${rowNumber}: use YYYY-MM-DD or DD/MM/YYYY for Purchase Date.`);
-
-    holdings.push({
-      type,
-      assetName,
-      code,
-      exchange,
-      units,
-      investedAmount,
-      manualPrice: manualRaw === '' ? null : manualPrice,
-      buyDate: buyDate || '',
-      notes: get('notes')
-    });
-  });
-
-  if (holdings.length > 500) errors.push('The file has more than 500 investment rows.');
-  if (errors.length) throw new Error(`${errors.slice(0, 8).join(' ')}${errors.length > 8 ? ` Plus ${errors.length - 8} more error(s).` : ''}`);
-  return holdings;
-}
-
-async function handleBulkCsvFile() {
-  state.pendingImport = [];
-  els.runBulkImportBtn.disabled = true;
-  const file = els.bulkCsvFile.files?.[0];
-  if (!file) {
-    els.bulkImportStatus.textContent = 'No file selected.';
-    els.bulkImportStatus.className = 'import-status muted';
-    return;
-  }
-
-  try {
-    const rows = parseCsv(await file.text());
-    const holdings = rowsToHoldings(rows);
-    state.pendingImport = holdings;
-    els.bulkImportStatus.textContent = `${holdings.length} investment row${holdings.length === 1 ? '' : 's'} ready to import.`;
-    els.bulkImportStatus.className = 'import-status success';
-    els.runBulkImportBtn.disabled = false;
-  } catch (error) {
-    els.bulkImportStatus.textContent = error.message;
-    els.bulkImportStatus.className = 'import-status error';
-  }
-}
-
-async function bulkImportInvestments(event) {
-  event.preventDefault();
-  if (!state.pendingImport.length) {
-    toast('Select and validate a CSV file first.', 'error');
-    return;
-  }
-
-  const button = els.runBulkImportBtn;
-  setBusy(button, true, 'Importing…');
-  try {
-    const result = await api('bulkImportHoldings', { holdings: state.pendingImport });
-    closeModals();
-    state.pendingImport = [];
-    applyBootstrap(result.data);
-    saveCache(result.data);
-    switchSection('holdings');
-    toast(`${result.imported} investments imported successfully.`, 'success');
-  } catch (error) {
-    toast(error.message, 'error');
-  } finally {
-    setBusy(button, false);
-  }
-}
-
-
-async function saveWatch(event) {
-  event.preventDefault();
-  const button = $('saveWatchBtn');
-  setBusy(button, true, 'Saving…');
-  try {
-    const result = await api('saveWatchItem', {
-      item: {
-        id: els.watchId.value,
-        type: els.watchType.value,
-        assetName: els.watchName.value.trim(),
-        code: els.watchCode.value.trim().toUpperCase(),
-        exchange: ['MF','OTHER'].includes(els.watchType.value) ? '' : els.watchExchange.value,
-        targetPrice: els.watchTarget.value === '' ? null : Number(els.watchTarget.value),
-        manualPrice: els.watchManualPrice.value === '' ? null : Number(els.watchManualPrice.value),
-        priority: els.watchPriority.value,
-        notes: els.watchNotes.value.trim()
-      }
-    });
-    closeModals();
-    applyBootstrap(result.data);
-    saveCache(result.data);
-    toast('Watchlist item saved.', 'success');
-  } catch (error) { toast(error.message, 'error'); }
-  finally { setBusy(button, false); }
-}
-
-async function deleteItem(action, id, label) {
-  if (!confirm(`Delete this ${label}? This cannot be undone.`)) return;
-  try {
-    const result = await api(action, { id });
-    applyBootstrap(result.data);
-    saveCache(result.data);
-    toast(`${label[0].toUpperCase()}${label.slice(1)} deleted.`, 'success');
-  } catch (error) { toast(error.message, 'error'); }
-}
-
-async function changePassword(event) {
-  event.preventDefault();
-  if (els.newPassword.value !== els.confirmPassword.value) { toast('New passwords do not match.', 'error'); return; }
-  const button = event.submitter;
-  setBusy(button, true, 'Updating…');
-  try {
-    await api('changePassword', { currentPassword: els.currentPassword.value, newPassword: els.newPassword.value });
-    closeModals();
-    els.passwordForm.reset();
-    toast('Password changed successfully.', 'success');
-  } catch (error) { toast(error.message, 'error'); }
-  finally { setBusy(button, false); }
-}
-
-async function loadUsers() {
-  try {
-    const result = await api('adminListUsers');
-    state.users = result.users || [];
-    renderUsers();
-  } catch (error) { toast(error.message, 'error'); }
-}
-
-async function createUser(event) {
-  event.preventDefault();
-  const button = event.submitter;
-  setBusy(button, true, 'Creating…');
-  try {
-    await api('adminCreateUser', {
-      username: els.newUsername.value.trim(), displayName: els.newDisplayName.value.trim(),
-      role: els.newUserRole.value, password: els.newUserPassword.value
-    });
-    closeModals();
-    els.userForm.reset();
-    await loadUsers();
-    toast('User created.', 'success');
-  } catch (error) { toast(error.message, 'error'); }
-  finally { setBusy(button, false); }
-}
-
-async function resetUserPassword(username) {
-  const password = prompt(`Enter a new temporary password for ${username}:`);
-  if (!password) return;
-  try { await api('adminResetPassword', { username, password }); toast('Password reset.', 'success'); }
-  catch (error) { toast(error.message, 'error'); }
-}
-
-async function toggleUser(username, active) {
-  if (!confirm(`${active ? 'Disable' : 'Enable'} user ${username}?`)) return;
-  try { await api('adminToggleUser', { username, active: !active }); await loadUsers(); toast('User status updated.', 'success'); }
-  catch (error) { toast(error.message, 'error'); }
-}
-
-function exportCsv() {
-  if (!state.holdings.length) { toast('There are no holdings to export.', 'error'); return; }
-  const headers = ['Asset Type','Asset Name','Code','Exchange','Units','Invested Amount','Current Price','Present Value','Gain/Loss','Return %','Purchase Date','Notes'];
-  const rows = state.holdings.map((x) => [x.type,x.assetName,x.code,x.exchange,x.units,x.investedAmount,x.currentPrice,x.currentValue,x.gainLoss,x.returnPct,x.buyDate,x.notes]);
-  const csv = [headers, ...rows].map((row) => row.map((cell) => `"${String(cell ?? '').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = `portfolio-${new Date().toISOString().slice(0,10)}.csv`; a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-function bindEvents() {
-  els.loginForm.addEventListener('submit', login);
-  $('logoutBtn').addEventListener('click', logout);
-  els.refreshBtn.addEventListener('click', () => loadDashboard(true));
-  els.addInvestmentBtn.addEventListener('click', () => openInvestment());
-  $('addInvestmentTableBtn').addEventListener('click', () => openInvestment());
-  $('bulkImportBtn').addEventListener('click', openBulkImport);
-  $('downloadImportTemplateBtn').addEventListener('click', downloadImportTemplate);
-  els.bulkCsvFile.addEventListener('change', handleBulkCsvFile);
-  els.bulkImportForm.addEventListener('submit', bulkImportInvestments);
-  $('addWatchBtn').addEventListener('click', () => openWatch());
-  $('addWatchOverviewBtn').addEventListener('click', () => openWatch());
-  $('changePasswordBtn').addEventListener('click', () => openModal('passwordModal'));
-  els.profileButton.addEventListener('click', () => openModal('passwordModal'));
-  $('addUserBtn').addEventListener('click', () => openModal('userModal'));
-  $('exportBtn').addEventListener('click', exportCsv);
-  els.investmentForm.addEventListener('submit', saveInvestment);
-  els.watchForm.addEventListener('submit', saveWatch);
-  els.passwordForm.addEventListener('submit', changePassword);
-  els.userForm.addEventListener('submit', createUser);
-  els.holdingType.addEventListener('change', () => updateAssetForm(els.holdingType.value, 'holding'));
-  els.watchType.addEventListener('change', () => updateAssetForm(els.watchType.value, 'watch'));
-  els.holdingSearch.addEventListener('input', renderHoldings);
-  els.holdingTypeFilter.addEventListener('change', renderHoldings);
-  els.watchSearch.addEventListener('input', renderWatchlist);
-  els.modalBackdrop.addEventListener('click', (event) => { if (event.target === els.modalBackdrop) closeModals(); });
-  $$('[data-close-modal]').forEach((button) => button.addEventListener('click', closeModals));
-  $$('[data-section]').forEach((button) => button.addEventListener('click', () => switchSection(button.dataset.section)));
-  $$('[data-section-link]').forEach((button) => button.addEventListener('click', () => switchSection(button.dataset.sectionLink)));
-  $$('[data-toggle-password]').forEach((button) => button.addEventListener('click', () => {
-    const input = $(button.dataset.togglePassword);
-    const visible = input.type === 'text'; input.type = visible ? 'password' : 'text'; button.textContent = visible ? 'Show' : 'Hide';
-  }));
-  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeModals(); });
-  document.addEventListener('click', (event) => {
-    const editHolding = event.target.closest('[data-edit-holding]');
-    const deleteHolding = event.target.closest('[data-delete-holding]');
-    const editWatch = event.target.closest('[data-edit-watch]');
-    const deleteWatch = event.target.closest('[data-delete-watch]');
-    const resetUser = event.target.closest('[data-reset-user]');
-    const toggleUserBtn = event.target.closest('[data-toggle-user]');
-    if (editHolding) openInvestment(state.holdings.find((x) => x.id === editHolding.dataset.editHolding));
-    if (deleteHolding) deleteItem('deleteHolding', deleteHolding.dataset.deleteHolding, 'investment');
-    if (editWatch) openWatch(state.watchlist.find((x) => x.id === editWatch.dataset.editWatch));
-    if (deleteWatch) deleteItem('deleteWatchItem', deleteWatch.dataset.deleteWatch, 'watchlist item');
-    if (resetUser) resetUserPassword(resetUser.dataset.resetUser);
-    if (toggleUserBtn) toggleUser(toggleUserBtn.dataset.toggleUser, toggleUserBtn.dataset.active === 'true');
-  });
-}
-
-async function init() {
-  bindEvents();
-  document.title = CONFIG.APP_NAME || 'Investment Dashboard';
-  if (!isConfigured()) {
-    els.loginMessage.textContent = 'Setup required: paste the Apps Script /exec URL into config.js.';
-  }
-  if (state.token && state.username) {
-    showApp();
-    loadCache();
-    await loadDashboard(false);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', init);
+async function init(){bindEvents();refreshOwnerControls();if(!isConfigured()){els.loginMessage.textContent='Setup required: paste the Apps Script /exec URL into config.js.';return;}if(state.token){showApp();loadCache();await loadDashboard(false);} }
+init();

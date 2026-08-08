@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#eef6ff">
-  <meta name="description" content="Private stock and mutual fund portfolio dashboard">
-  <title>Investment Dashboard</title>
+  <meta name="theme-color" content="#eef5ff">
+  <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
+  <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -15,264 +15,137 @@
   <section id="loginView" class="login-view">
     <div class="login-shell">
       <div class="brand-panel">
-        <div class="brand-mark" aria-hidden="true">₹</div>
-        <p class="eyebrow">PRIVATE PORTFOLIO</p>
-        <h1>Invest clearly.<br>Track calmly.</h1>
-        <p class="brand-copy">A fast personal dashboard for stocks, ETFs and Indian mutual funds, with a separate future-investment watchlist.</p>
-        <div class="feature-pills">
-          <span>Secure login</span><span>Google Sheet</span><span>Drive backup</span><span>Mobile ready</span>
-        </div>
+        <div class="brand-mark">₹</div>
+        <p class="eyebrow">PRIVATE FAMILY PORTFOLIO</p>
+        <h1>One dashboard.<br>Two investors.</h1>
+        <p class="brand-copy">Track mutual funds, stocks and ETFs with automatic current value, gain/loss and long-period performance.</p>
+        <div class="feature-pills"><span>MF statement import</span><span>Zerodha ready</span><span>Auto prices</span><span>Family view</span></div>
       </div>
-
       <form id="loginForm" class="login-card" autocomplete="on">
-        <div>
-          <p class="eyebrow">WELCOME BACK</p>
-          <h2>Sign in</h2>
-          <p class="muted">Use the username and password created in Apps Script.</p>
-        </div>
-        <label>Username
-          <input id="loginUsername" name="username" autocomplete="username" required maxlength="60" placeholder="admin">
-        </label>
-        <label>Password
-          <div class="password-wrap">
-            <input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="Your password">
-            <button type="button" class="text-button" data-toggle-password="loginPassword" aria-label="Show password">Show</button>
-          </div>
-        </label>
+        <div><p class="eyebrow">WELCOME BACK</p><h2>Sign in</h2><p class="muted">Use your Apps Script dashboard username and password.</p></div>
+        <label>Username<input id="loginUsername" name="username" autocomplete="username" required maxlength="60" placeholder="admin"></label>
+        <label>Password<div class="password-wrap"><input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="Your password"><button type="button" class="text-button" data-toggle-password="loginPassword">Show</button></div></label>
         <button id="loginButton" class="primary-button full" type="submit">Sign in</button>
         <p id="loginMessage" class="form-message" role="alert"></p>
-        <p class="tiny muted">This app does not save your password in local storage.</p>
+        <p class="tiny muted">Your password is never stored in the browser.</p>
       </form>
     </div>
   </section>
 
   <div id="appView" class="app-view hidden">
     <aside class="sidebar">
-      <div class="side-brand">
-        <div class="brand-mark small">₹</div>
-        <div><strong id="sideAppName">Investment Dashboard</strong><span>Portfolio tracker</span></div>
-      </div>
+      <div class="side-brand"><div class="brand-mark small">₹</div><div><strong id="sideAppName">My Finance</strong><span>Family portfolio</span></div></div>
       <nav class="side-nav" aria-label="Main navigation">
         <button class="nav-item active" data-section="overview"><span>◫</span>Overview</button>
         <button class="nav-item" data-section="holdings"><span>▥</span>Holdings</button>
         <button class="nav-item" data-section="watchlist"><span>☆</span>Watchlist</button>
         <button class="nav-item admin-only hidden" data-section="users"><span>♙</span>Users</button>
       </nav>
-      <div class="sidebar-foot">
-        <button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button>
-        <button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button>
-      </div>
+      <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div>
-          <p class="eyebrow" id="todayLabel"></p>
-          <h1 id="pageTitle">Portfolio overview</h1>
-        </div>
-        <div class="top-actions">
-          <div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div>
-          <button id="refreshBtn" class="icon-button" title="Refresh data" aria-label="Refresh data">↻</button>
-          <button id="addInvestmentBtn" class="primary-button">+ Add investment</button>
-          <button id="profileButton" class="avatar-button" aria-label="Open account menu"><span id="avatarInitial">A</span></button>
-        </div>
+        <div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div>
+        <div class="top-actions"><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
+
+      <div class="portfolio-switch-wrap">
+        <div><span class="switch-label">VIEW PORTFOLIO</span><div id="ownerSwitcher" class="portfolio-switcher"></div></div>
+        <div class="quick-actions"><button id="importBtn" class="secondary-button">⇧ Import portfolio</button><button id="exportBtn" class="secondary-button">Export CSV</button></div>
+      </div>
 
       <section id="overviewSection" class="page-section">
         <div class="welcome-banner">
-          <div>
-            <p class="eyebrow">PORTFOLIO SNAPSHOT</p>
-            <h2>Hello, <span id="welcomeName">Investor</span></h2>
-            <p id="lastUpdatedText">Loading your latest saved portfolio…</p>
-          </div>
-          <div class="banner-actions">
-            <button id="addWatchOverviewBtn" class="secondary-button">+ Add to watchlist</button>
-            <button id="exportBtn" class="secondary-button">Export CSV</button>
-          </div>
+          <div><p class="eyebrow">PORTFOLIO SNAPSHOT</p><h2 id="welcomeTitle">Combined portfolio</h2><p id="lastUpdatedText">Loading your latest portfolio…</p></div>
+          <div class="banner-chip" id="viewChip">Combined</div>
         </div>
 
         <div class="summary-grid">
-          <article class="summary-card accent-blue">
-            <div class="card-icon">₹</div><p>Invested value</p><strong id="sumInvested">₹0</strong><span id="sumAssetCount">0 assets</span>
-          </article>
-          <article class="summary-card accent-green">
-            <div class="card-icon">↗</div><p>Present value</p><strong id="sumCurrent">₹0</strong><span id="sumPricedCount">0 priced</span>
-          </article>
-          <article class="summary-card accent-purple">
-            <div class="card-icon">±</div><p>Total gain / loss</p><strong id="sumGain">₹0</strong><span id="sumReturn">0.00%</span>
-          </article>
-          <article class="summary-card accent-orange">
-            <div class="card-icon">☆</div><p>Watchlist</p><strong id="sumWatchCount">0</strong><span id="sumNearTarget">0 near target</span>
-          </article>
+          <article class="summary-card accent-blue"><div class="card-icon">₹</div><p>Invested / cost value</p><strong id="sumInvested">₹0</strong><span id="sumAssetCount">0 holdings</span></article>
+          <article class="summary-card accent-green"><div class="card-icon">↗</div><p>Current value</p><strong id="sumCurrent">₹0</strong><span id="sumPricedCount">0 priced</span></article>
+          <article class="summary-card accent-purple"><div class="card-icon">±</div><p>Total gain / loss</p><strong id="sumGain">₹0</strong><span id="sumReturn">0.00%</span></article>
+          <article class="summary-card accent-orange"><div class="card-icon">▦</div><p>MF + Stock split</p><strong id="sumSplit">—</strong><span id="sumWatchCount">0 watchlist</span></article>
         </div>
 
         <div class="overview-grid">
-          <article class="panel allocation-panel">
-            <div class="panel-head"><div><p class="eyebrow">ALLOCATION</p><h3>By asset type</h3></div></div>
-            <div id="allocationChart" class="allocation-chart"></div>
-          </article>
-          <article class="panel">
-            <div class="panel-head"><div><p class="eyebrow">WATCHLIST SIGNALS</p><h3>Closest to target</h3></div><button class="link-button" data-section-link="watchlist">View all</button></div>
-            <div id="watchSignals" class="signal-list empty-state">No watchlist items yet.</div>
-          </article>
+          <article class="panel allocation-panel"><div class="panel-head"><div><p class="eyebrow">ALLOCATION</p><h3>By asset type</h3></div></div><div id="allocationChart" class="allocation-chart"></div></article>
+          <article class="panel"><div class="panel-head"><div><p class="eyebrow">INVESTOR SUMMARY</p><h3>Family comparison</h3></div></div><div id="investorSummary" class="investor-summary"></div></article>
         </div>
 
-        <article class="panel">
-          <div class="panel-head"><div><p class="eyebrow">TOP HOLDINGS</p><h3>Portfolio at a glance</h3></div><button class="link-button" data-section-link="holdings">View all</button></div>
-          <div id="topHoldings" class="mini-holdings empty-state">Add your first investment to begin.</div>
-        </article>
+        <article class="panel"><div class="panel-head"><div><p class="eyebrow">TOP HOLDINGS</p><h3>Largest current holdings</h3></div><button class="link-button" data-section-link="holdings">View all</button></div><div id="topHoldings" class="mini-holdings empty-state">Add investments to begin.</div></article>
       </section>
 
       <section id="holdingsSection" class="page-section hidden">
         <article class="panel table-panel">
           <div class="panel-head responsive-head">
-            <div><p class="eyebrow">YOUR ASSETS</p><h3>Stocks, ETFs and mutual funds</h3></div>
-            <div class="table-tools">
-              <input id="holdingSearch" class="search-input" type="search" placeholder="Search holdings…">
-              <select id="holdingTypeFilter" class="compact-select"><option value="ALL">All types</option><option>STOCK</option><option>ETF</option><option>MF</option><option>OTHER</option></select>
-              <button id="bulkImportBtn" class="secondary-button">⇧ Bulk import</button>
-              <button id="addInvestmentTableBtn" class="primary-button">+ Add</button>
-            </div>
+            <div><p class="eyebrow">PORTFOLIO DETAILS</p><h3>Mutual funds, stocks and ETFs</h3></div>
+            <div class="table-tools"><input id="holdingSearch" class="search-input" type="search" placeholder="Search holdings…"><select id="holdingTypeFilter" class="compact-select"><option value="ALL">All assets</option><option value="MF">Mutual funds</option><option value="STOCK">Stocks</option><option value="ETF">ETFs</option><option value="OTHER">Other</option></select><button id="bulkImportBtn" class="secondary-button">⇧ Import</button><button id="addInvestmentTableBtn" class="primary-button">+ Add</button></div>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Asset</th><th>Units</th><th>Invested</th><th>Price / NAV</th><th>Present value</th><th>Gain / loss</th><th>Return</th><th></th></tr></thead>
+          <div class="performance-note">1D–10Y columns show the asset/scheme price or NAV performance for that period. XIRR is available for mutual funds imported from transaction statements.</div>
+          <div class="table-wrap wide-table">
+            <table class="holdings-table">
+              <thead><tr><th class="sticky-col owner-col">Investor</th><th class="sticky-col asset-col">Asset</th><th>Qty / Units</th><th>Avg Buy</th><th>Invested</th><th>Current Price / NAV</th><th>Current Value</th><th>Gain / Loss</th><th>Gain %</th><th>XIRR</th><th>1D</th><th>1W</th><th>1M</th><th>6M</th><th>1Y</th><th>3Y</th><th>5Y</th><th>10Y</th><th></th></tr></thead>
               <tbody id="holdingsBody"></tbody>
             </table>
           </div>
-          <div id="holdingsEmpty" class="empty-state hidden">No investments match this search.</div>
+          <div id="holdingsEmpty" class="empty-state hidden">No holdings match this view.</div>
         </article>
       </section>
 
       <section id="watchlistSection" class="page-section hidden">
-        <article class="panel table-panel">
-          <div class="panel-head responsive-head">
-            <div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div>
-            <div class="table-tools">
-              <input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…">
-              <button id="addWatchBtn" class="primary-button">+ Add</button>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Asset</th><th>Current price</th><th>Target price</th><th>Distance</th><th>Priority</th><th>Reason / notes</th><th></th></tr></thead>
-              <tbody id="watchBody"></tbody>
-            </table>
-          </div>
-          <div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div>
-        </article>
+        <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div><div class="table-tools"><input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…"><button id="addWatchBtn" class="primary-button">+ Add</button></div></div><div class="table-wrap"><table><thead><tr><th>Asset</th><th>Current price</th><th>Target price</th><th>Distance</th><th>Priority</th><th>Reason / notes</th><th></th></tr></thead><tbody id="watchBody"></tbody></table></div><div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div></article>
       </section>
 
       <section id="usersSection" class="page-section hidden">
-        <article class="panel table-panel">
-          <div class="panel-head responsive-head">
-            <div><p class="eyebrow">ADMINISTRATION</p><h3>Dashboard users</h3></div>
-            <button id="addUserBtn" class="primary-button">+ Create user</button>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Last login</th><th></th></tr></thead>
-              <tbody id="usersBody"></tbody>
-            </table>
-          </div>
-        </article>
+        <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">ADMINISTRATION</p><h3>Dashboard users</h3></div><button id="addUserBtn" class="primary-button">+ Create user</button></div><div class="table-wrap"><table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Last login</th><th></th></tr></thead><tbody id="usersBody"></tbody></table></div></article>
       </section>
     </main>
 
-    <nav class="mobile-nav" aria-label="Mobile navigation">
-      <button class="mobile-nav-item active" data-section="overview"><span>◫</span>Overview</button>
-      <button class="mobile-nav-item" data-section="holdings"><span>▥</span>Holdings</button>
-      <button class="mobile-nav-item" data-section="watchlist"><span>☆</span>Watchlist</button>
-    </nav>
+    <nav class="mobile-nav"><button class="mobile-nav-item active" data-section="overview"><span>◫</span>Overview</button><button class="mobile-nav-item" data-section="holdings"><span>▥</span>Holdings</button><button class="mobile-nav-item" data-section="watchlist"><span>☆</span>Watchlist</button></nav>
   </div>
 
   <div id="modalBackdrop" class="modal-backdrop hidden" aria-hidden="true">
-    <div id="investmentModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="investmentModalTitle">
+    <div id="investmentModal" class="modal hidden" role="dialog" aria-modal="true">
       <div class="modal-head"><div><p class="eyebrow">PORTFOLIO ENTRY</p><h2 id="investmentModalTitle">Add investment</h2></div><button class="modal-close" data-close-modal>×</button></div>
-      <form id="investmentForm" class="form-grid">
-        <input id="holdingId" type="hidden">
+      <form id="investmentForm" class="form-grid"><input id="holdingId" type="hidden">
+        <label>Investor<select id="holdingOwner" required></select></label>
         <label>Asset type<select id="holdingType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label>
         <label>Asset name<input id="holdingName" required maxlength="160" placeholder="Reliance Industries"></label>
         <label><span id="holdingCodeLabel">Ticker symbol</span><input id="holdingCode" required maxlength="40" placeholder="RELIANCE"></label>
         <label id="exchangeLabel">Exchange<select id="holdingExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label>
-        <label>Units<input id="holdingUnits" type="number" min="0" step="0.000001" required placeholder="10"></label>
-        <label>Total invested amount<input id="holdingInvested" type="number" min="0" step="0.01" required placeholder="25000"></label>
-        <label>Manual current price <small>(optional)</small><input id="holdingManualPrice" type="number" min="0" step="0.0001" placeholder="Leave blank for automatic price"></label>
-        <label>Purchase date<input id="holdingBuyDate" type="date"></label>
-        <label class="span-2">Notes<textarea id="holdingNotes" rows="3" maxlength="500" placeholder="SIP, account, goal or other note"></textarea></label>
-        <div id="mfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code. NAV is updated from AMFI's daily NAV file.</div>
+        <label>Units / quantity<input id="holdingUnits" type="number" min="0" step="0.000001" required placeholder="10"></label>
+        <label>Total invested / current cost<input id="holdingInvested" type="number" min="0" step="0.01" required placeholder="25000"></label>
+        <label>Manual current price <small>(optional)</small><input id="holdingManualPrice" type="number" min="0" step="0.0001" placeholder="Automatic when blank"></label>
+        <label>Purchase date <small>(optional)</small><input id="holdingBuyDate" type="date"></label>
+        <label class="span-2">Notes<textarea id="holdingNotes" rows="3" maxlength="500"></textarea></label>
+        <div id="mfHelp" class="info-box span-2 hidden">For manual MF entry, use the numeric AMFI scheme code. For statement import, mapping is attempted automatically.</div>
         <div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveInvestmentBtn" type="submit" class="primary-button">Save investment</button></div>
       </form>
     </div>
 
-
-    <div id="bulkImportModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="bulkImportTitle">
-      <div class="modal-head">
-        <div><p class="eyebrow">BULK PORTFOLIO ENTRY</p><h2 id="bulkImportTitle">Import investments from CSV</h2></div>
-        <button class="modal-close" data-close-modal>×</button>
-      </div>
+    <div id="bulkImportModal" class="modal import-modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-head"><div><p class="eyebrow">SMART IMPORT</p><h2>Import portfolio data</h2></div><button class="modal-close" data-close-modal>×</button></div>
       <form id="bulkImportForm" class="stack-form">
-        <div class="info-box">
-          Use one row per asset with total units and total invested amount. Stocks and ETFs need an exchange such as NSE or BOM. Mutual funds need the numeric AMFI scheme code and may leave Exchange blank.
-        </div>
-        <div class="import-actions">
-          <button id="downloadImportTemplateBtn" type="button" class="secondary-button">Download CSV template</button>
-        </div>
-        <label class="import-drop">
-          <strong>Select completed CSV file</strong>
-          <span>Maximum 500 rows. Excel files should first be saved as CSV UTF-8.</span>
-          <input id="bulkCsvFile" type="file" accept=".csv,text/csv" required>
-        </label>
+        <div class="import-mode-tabs"><button type="button" class="import-mode active" data-import-mode="MF_STATEMENT">Mutual fund statement</button><button type="button" class="import-mode" data-import-mode="STOCK_HOLDINGS">Stock / Zerodha holdings</button></div>
+        <div id="mfImportHelp" class="info-box"><strong>MF statement:</strong> accepts your columns MF_NAME, INVESTOR_NAME, PRODUCT_CODE, SCHEME_NAME, TRADE_DATE, TRANSACTION_TYPE, AMOUNT, UNITS, PRICE and BROKER. PAN and folio columns are ignored and are not sent to the backend.</div>
+        <div id="stockImportHelp" class="info-box hidden"><strong>Stock/Zerodha:</strong> accepts Investor Name, Stock Symbol, Exchange, Quantity, Avg Buy Price and Invested Amount. It also recognises common Zerodha holdings headings such as Instrument, Qty. and Avg. cost. Native Zerodha XLSX holdings files are supported.</div>
+        <label id="stockOwnerLabel" class="hidden">Investor for stock file<select id="importOwner"></select></label>
+        <div class="import-actions"><button id="downloadImportTemplateBtn" type="button" class="secondary-button">Download template</button></div>
+        <label class="import-drop"><strong>Select CSV or Excel file</strong><span id="importFileHint">Up to 5,000 MF transaction rows. CSV and XLSX are supported.</span><input id="bulkCsvFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" required></label>
         <div id="bulkImportStatus" class="import-status muted">No file selected.</div>
-        <div class="form-actions">
-          <button type="button" class="secondary-button" data-close-modal>Cancel</button>
-          <button id="runBulkImportBtn" type="submit" class="primary-button" disabled>Import investments</button>
-        </div>
+        <div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="runBulkImportBtn" type="submit" class="primary-button" disabled>Import</button></div>
       </form>
     </div>
 
-    <div id="watchModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="watchModalTitle">
-      <div class="modal-head"><div><p class="eyebrow">FUTURE INVESTMENT</p><h2 id="watchModalTitle">Add to watchlist</h2></div><button class="modal-close" data-close-modal>×</button></div>
-      <form id="watchForm" class="form-grid">
-        <input id="watchId" type="hidden">
-        <label>Asset type<select id="watchType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label>
-        <label>Asset name<input id="watchName" required maxlength="160" placeholder="HDFC Bank"></label>
-        <label><span id="watchCodeLabel">Ticker symbol</span><input id="watchCode" required maxlength="40" placeholder="HDFCBANK"></label>
-        <label id="watchExchangeLabel">Exchange<select id="watchExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label>
-        <label>Target buy price<input id="watchTarget" type="number" min="0" step="0.0001" placeholder="1500"></label>
-        <label>Manual current price <small>(optional)</small><input id="watchManualPrice" type="number" min="0" step="0.0001" placeholder="Automatic when available"></label>
-        <label>Priority<select id="watchPriority"><option value="HIGH">High</option><option value="MEDIUM" selected>Medium</option><option value="LOW">Low</option></select></label>
-        <label class="span-2">Reason / notes<textarea id="watchNotes" rows="3" maxlength="500" placeholder="Valuation, business quality, desired entry point…"></textarea></label>
-        <div id="watchMfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code.</div>
-        <div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveWatchBtn" type="submit" class="primary-button">Save watch item</button></div>
-      </form>
-    </div>
+    <div id="watchModal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">FUTURE INVESTMENT</p><h2>Add to watchlist</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="watchForm" class="form-grid"><input id="watchId" type="hidden"><label>Asset type<select id="watchType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label><label>Asset name<input id="watchName" required maxlength="160"></label><label><span id="watchCodeLabel">Ticker symbol</span><input id="watchCode" required maxlength="40"></label><label id="watchExchangeLabel">Exchange<select id="watchExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label><label>Target buy price<input id="watchTarget" type="number" min="0" step="0.0001"></label><label>Manual current price <small>(optional)</small><input id="watchManualPrice" type="number" min="0" step="0.0001"></label><label>Priority<select id="watchPriority"><option value="HIGH">High</option><option value="MEDIUM" selected>Medium</option><option value="LOW">Low</option></select></label><label class="span-2">Reason / notes<textarea id="watchNotes" rows="3" maxlength="500"></textarea></label><div id="watchMfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code.</div><div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveWatchBtn" type="submit" class="primary-button">Save watch item</button></div></form></div>
 
-    <div id="passwordModal" class="modal small-modal hidden" role="dialog" aria-modal="true">
-      <div class="modal-head"><div><p class="eyebrow">ACCOUNT SECURITY</p><h2>Change password</h2></div><button class="modal-close" data-close-modal>×</button></div>
-      <form id="passwordForm" class="stack-form">
-        <label>Current password<input id="currentPassword" type="password" required autocomplete="current-password"></label>
-        <label>New password<input id="newPassword" type="password" required minlength="10" autocomplete="new-password"></label>
-        <label>Confirm new password<input id="confirmPassword" type="password" required minlength="10" autocomplete="new-password"></label>
-        <p class="tiny muted">Use at least 10 characters with upper-case, lower-case, number and symbol.</p>
-        <div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button type="submit" class="primary-button">Update password</button></div>
-      </form>
-    </div>
+    <div id="passwordModal" class="modal small-modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">ACCOUNT SECURITY</p><h2>Change password</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="passwordForm" class="stack-form"><label>Current password<input id="currentPassword" type="password" required></label><label>New password<input id="newPassword" type="password" required minlength="10"></label><label>Confirm new password<input id="confirmPassword" type="password" required minlength="10"></label><p class="tiny muted">At least 10 characters with upper-case, lower-case, number and symbol.</p><div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button type="submit" class="primary-button">Update password</button></div></form></div>
 
-    <div id="userModal" class="modal small-modal hidden" role="dialog" aria-modal="true">
-      <div class="modal-head"><div><p class="eyebrow">ADMINISTRATION</p><h2>Create user</h2></div><button class="modal-close" data-close-modal>×</button></div>
-      <form id="userForm" class="stack-form">
-        <label>Username<input id="newUsername" required maxlength="60" pattern="[A-Za-z0-9._-]+" placeholder="investor2"></label>
-        <label>Display name<input id="newDisplayName" required maxlength="100" placeholder="Second Investor"></label>
-        <label>Role<select id="newUserRole"><option value="USER">User</option><option value="ADMIN">Admin</option></select></label>
-        <label>Temporary password<input id="newUserPassword" type="password" required minlength="10" autocomplete="new-password"></label>
-        <div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button type="submit" class="primary-button">Create user</button></div>
-      </form>
-    </div>
+    <div id="userModal" class="modal small-modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">ADMINISTRATION</p><h2>Create user</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="userForm" class="stack-form"><label>Username<input id="newUsername" required maxlength="60" pattern="[A-Za-z0-9._-]+"></label><label>Display name<input id="newDisplayName" required maxlength="100"></label><label>Role<select id="newUserRole"><option value="USER">User</option><option value="ADMIN">Admin</option></select></label><label>Temporary password<input id="newUserPassword" type="password" required minlength="10"></label><div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button type="submit" class="primary-button">Create user</button></div></form></div>
   </div>
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
-
   <script src="config.js"></script>
   <script src="app.js" defer></script>
 </body>
