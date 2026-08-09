@@ -1280,3 +1280,64 @@ body.drawer-open { overflow: hidden; }
   background: rgba(255,255,255,.13);
   color: #f4f6ff;
 }
+
+
+/* V10 — view and edit Watchlist note simultaneously */
+.note-button {
+  white-space: nowrap;
+}
+.watch-note-editor-section {
+  border: 1px solid #e5e7f3;
+  border-radius: 16px;
+  padding: 15px;
+  background: linear-gradient(180deg, #fffdf8, #fffaf0);
+}
+.drawer-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+.drawer-section-head .drawer-section-title {
+  margin: 0;
+}
+.drawer-note-textarea {
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  border: 1px solid #dfe3ee;
+  border-radius: 12px;
+  padding: 12px 13px;
+  color: var(--ink);
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.55;
+  outline: none;
+  box-sizing: border-box;
+}
+.drawer-note-textarea:focus {
+  border-color: #9793e7;
+  box-shadow: 0 0 0 3px rgba(91,92,226,.10);
+}
+.drawer-note-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+.compact-button {
+  min-height: 36px;
+  padding: 8px 13px;
+}
+@media (max-width: 560px) {
+  .drawer-note-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .drawer-note-actions .primary-button {
+    width: 100%;
+  }
+}
