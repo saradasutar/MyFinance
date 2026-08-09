@@ -1,32 +1,47 @@
-MYFINANCE PERSONAL NOTES V7
+MYFINANCE WATCHLIST VERTICAL DETAIL DRAWER V9
 
-NEW FEATURES
-1. A new "Personal Note" column in Holdings.
-2. Existing saved Notes are shown in that column.
-3. Click a Personal Note cell to immediately edit that investment and update the note.
-4. New "📝 All notes" button in Holdings.
-5. All Notes window can:
-   - show the entire portfolio or only the current dashboard view,
-   - show all investments, only investments with notes, or investments without notes,
-   - search by investment, investor, symbol/code, or note text,
-   - open the investment detail drawer,
-   - add/edit a personal note.
-6. Personal Note is also shown in the right-side investment detail drawer.
-7. Export CSV now includes a "Personal Note" column.
+NEW IN V9
+- Click any watchlist Stock, ETF or Mutual Fund row to open a vertical detail panel from the right.
+- A dedicated View button is also available in every watchlist row.
+- The Watchlist Personal Notes Centre now has:
+  • View watch item -> opens the vertical detail panel
+  • Add/Edit note -> opens the edit form
+- Keyboard support: select a watchlist row and press Enter or Space to open the detail panel.
+- Mobile: the right-side detail view becomes full width for easy reading.
+
+WATCHLIST DETAIL PANEL SHOWS
+- Asset name
+- Stock / ETF / MF type
+- Symbol or AMFI code
+- Exchange where relevant
+- Current price / current NAV
+- Target buy price / target NAV
+- Distance from target
+- Target status
+- Priority
+- Manual price if entered
+- Price source and price date
+- Personal Note
+- Edit watch item button
+
+EXISTING FEATURES RETAINED
+- Investment vertical detail drawer
+- Personal Note columns
+- All Notes / Notes Centre
+- Combined / Sarada / Niharika filters
+- All Investments / Mutual Funds / Stocks & ETFs filters
 
 BACKEND
-No Apps Script change is required. The current V3 backend already stores Notes in the Holdings sheet.
+No Google Apps Script change is required for V9.
 
 GITHUB INSTALL
-1. Keep config.js exactly as it is.
-2. Replace index.html with this V7 file.
-3. Replace styles.css with this V7 file.
-4. Upload app-v7.js as a NEW file.
+1. Keep config.js unchanged.
+2. Replace index.html with the V9 version.
+3. Replace styles.css with the V9 version.
+4. Upload app-v9.js as a NEW file.
 5. Commit changes.
 6. Open:
-   https://saradasutar.github.io/MyFinance/?v=1300
-7. On Mac press Command + Shift + R.
+   https://saradasutar.github.io/MyFinance/?v=1500
+7. Press Command + Shift + R on Mac.
 
-DO NOT
-- Do not change config.js.
-- Do not redeploy Apps Script just for this notes feature.
+Do not redeploy Apps Script for this UI feature.

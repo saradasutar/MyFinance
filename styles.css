@@ -1216,3 +1216,67 @@ body.drawer-open { overflow: hidden; }
     min-width: 190px;
   }
 }
+
+
+/* V8 — Watchlist personal notes + unified Notes Centre */
+.notes-toolbar {
+  grid-template-columns: minmax(220px, 1fr) auto auto auto;
+}
+.note-source-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.note-source-badge.holding {
+  color: #4c4fc3;
+  background: #eeefff;
+}
+.note-source-badge.watch {
+  color: #a66100;
+  background: #fff3d8;
+}
+.watch-note-card {
+  border-left-color: #e5a72e !important;
+}
+.watch-note-card .note-card-body {
+  background: #fffaf0;
+}
+@media (max-width: 900px) {
+  .notes-toolbar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .notes-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* V9 — vertical watchlist detail drawer */
+.watch-row {
+  cursor: pointer;
+}
+.watch-row:hover td {
+  background: #fbfcff;
+}
+.watch-row:focus {
+  outline: 2px solid rgba(91,92,226,.35);
+  outline-offset: -2px;
+}
+.watch-drawer-value {
+  background: linear-gradient(145deg, #303b72, #4f4dc6);
+}
+.watch-drawer-value .drawer-gain-chip.positive {
+  background: rgba(35, 195, 121, .18);
+  color: #d8ffec;
+}
+.watch-drawer-value .drawer-gain-chip.neutral {
+  background: rgba(255,255,255,.13);
+  color: #f4f6ff;
+}

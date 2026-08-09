@@ -113,7 +113,7 @@
       </section>
 
       <section id="watchlistSection" class="page-section hidden">
-        <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div><div class="table-tools"><input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…"><button id="addWatchBtn" class="primary-button">+ Add</button></div></div><div class="table-wrap"><table><thead><tr><th>Asset</th><th>Current price</th><th>Target price</th><th>Distance</th><th>Priority</th><th>Reason / notes</th><th></th></tr></thead><tbody id="watchBody"></tbody></table></div><div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div></article>
+        <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div><div class="table-tools"><input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…"><button id="watchAllNotesBtn" class="secondary-button">📝 All notes</button><button id="addWatchBtn" class="primary-button">+ Add</button></div></div><div class="table-wrap"><table><thead><tr><th>Asset</th><th>Current price</th><th>Target price</th><th>Distance</th><th>Priority</th><th class="personal-note-head">Personal Note</th><th></th></tr></thead><tbody id="watchBody"></tbody></table></div><div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div></article>
       </section>
 
       <section id="usersSection" class="page-section hidden">
@@ -160,17 +160,22 @@
 
     <div id="notesModal" class="modal notes-modal hidden" role="dialog" aria-modal="true" aria-labelledby="notesModalTitle">
       <div class="modal-head">
-        <div><p class="eyebrow">PERSONAL INVESTMENT JOURNAL</p><h2 id="notesModalTitle">All investment notes</h2></div>
+        <div><p class="eyebrow">PERSONAL NOTES CENTRE</p><h2 id="notesModalTitle">All personal notes</h2></div>
         <button class="modal-close" data-close-modal aria-label="Close notes">×</button>
       </div>
       <div class="notes-toolbar">
-        <input id="notesSearch" class="search-input" type="search" placeholder="Search investment or note…">
+        <input id="notesSearch" class="search-input" type="search" placeholder="Search asset, symbol or note…">
+        <select id="notesSource" class="compact-select">
+          <option value="BOTH">Investments + Watchlist</option>
+          <option value="HOLDINGS">Portfolio investments</option>
+          <option value="WATCHLIST">Watchlist</option>
+        </select>
         <select id="notesScope" class="compact-select">
           <option value="ALL">Entire portfolio</option>
-          <option value="CURRENT">Current dashboard view</option>
+          <option value="CURRENT">Current portfolio view</option>
         </select>
         <select id="notesFilter" class="compact-select">
-          <option value="ALL">All investments</option>
+          <option value="ALL">All items</option>
           <option value="WITH_NOTES">With notes only</option>
           <option value="WITHOUT_NOTES">Without notes</option>
         </select>
@@ -183,7 +188,7 @@
       </div>
     </div>
 
-    <div id="watchModal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">FUTURE INVESTMENT</p><h2>Add to watchlist</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="watchForm" class="form-grid"><input id="watchId" type="hidden"><label>Asset type<select id="watchType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label><label>Asset name<input id="watchName" required maxlength="160"></label><label><span id="watchCodeLabel">Ticker symbol</span><input id="watchCode" required maxlength="40"></label><label id="watchExchangeLabel">Exchange<select id="watchExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label><label>Target buy price<input id="watchTarget" type="number" min="0" step="0.0001"></label><label>Manual current price <small>(optional)</small><input id="watchManualPrice" type="number" min="0" step="0.0001"></label><label>Priority<select id="watchPriority"><option value="HIGH">High</option><option value="MEDIUM" selected>Medium</option><option value="LOW">Low</option></select></label><label class="span-2">Reason / notes<textarea id="watchNotes" rows="3" maxlength="500"></textarea></label><div id="watchMfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code.</div><div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveWatchBtn" type="submit" class="primary-button">Save watch item</button></div></form></div>
+    <div id="watchModal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">FUTURE INVESTMENT</p><h2>Add to watchlist</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="watchForm" class="form-grid"><input id="watchId" type="hidden"><label>Asset type<select id="watchType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label><label>Asset name<input id="watchName" required maxlength="160"></label><label><span id="watchCodeLabel">Ticker symbol</span><input id="watchCode" required maxlength="40"></label><label id="watchExchangeLabel">Exchange<select id="watchExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label><label>Target buy price<input id="watchTarget" type="number" min="0" step="0.0001"></label><label>Manual current price <small>(optional)</small><input id="watchManualPrice" type="number" min="0" step="0.0001"></label><label>Priority<select id="watchPriority"><option value="HIGH">High</option><option value="MEDIUM" selected>Medium</option><option value="LOW">Low</option></select></label><label class="span-2">Personal Note <small>(optional)</small><textarea id="watchNotes" rows="4" maxlength="500" placeholder="Example: Buy below ₹1,500; wait for valuation correction; review after Q3 results…"></textarea></label><div id="watchMfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code.</div><div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveWatchBtn" type="submit" class="primary-button">Save watch item</button></div></form></div>
 
     <div id="passwordModal" class="modal small-modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">ACCOUNT SECURITY</p><h2>Change password</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="passwordForm" class="stack-form"><label>Current password<input id="currentPassword" type="password" required></label><label>New password<input id="newPassword" type="password" required minlength="10"></label><label>Confirm new password<input id="confirmPassword" type="password" required minlength="10"></label><p class="tiny muted">At least 10 characters with upper-case, lower-case, number and symbol.</p><div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button type="submit" class="primary-button">Update password</button></div></form></div>
 
@@ -198,7 +203,7 @@
       <div class="drawer-title-wrap">
         <div id="drawerAssetBadge" class="drawer-asset-badge">₹</div>
         <div>
-          <p class="eyebrow">INVESTMENT DETAILS</p>
+          <p id="drawerEyebrow" class="eyebrow">INVESTMENT DETAILS</p>
           <h2 id="drawerTitle">Investment</h2>
           <p id="drawerSubtitle" class="drawer-subtitle"></p>
         </div>
@@ -207,13 +212,13 @@
     </div>
     <div id="drawerContent" class="drawer-content"></div>
     <div class="drawer-footer">
-      <button id="drawerEditBtn" class="secondary-button" type="button">Edit investment</button>
+      <button id="drawerEditBtn" class="secondary-button" type="button">Edit</button>
       <button id="drawerDoneBtn" class="primary-button" type="button">Done</button>
     </div>
   </aside>
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v7.js?v=20260808-7" defer></script>
+  <script src="app-v9.js?v=20260809-9" defer></script>
 </body>
 </html>
