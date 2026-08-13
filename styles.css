@@ -1352,3 +1352,28 @@ body.drawer-open { overflow: hidden; }
 .holding-row:hover td,
 .watch-row:hover td { background-color: #f8f9ff; }
 .view-button { font-weight: 900; }
+
+
+/* V13 — one-click Show All Investments */
+.show-all-button {
+  min-height: 40px;
+  padding: 9px 15px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, #5367e8, #7a4fd8);
+  box-shadow: 0 9px 22px rgba(77, 79, 190, .22);
+  font-weight: 900;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.show-all-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(77, 79, 190, .28);
+}
+.show-all-button:active { transform: translateY(0); }
+@media (max-width: 760px) {
+  .show-all-button { width: 100%; }
+}
