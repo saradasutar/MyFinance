@@ -7,7 +7,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260809-11">
+  <link rel="stylesheet" href="styles.css?v=20260813-14">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -47,7 +47,7 @@
     <main class="main-content">
       <header class="topbar">
         <div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div>
-        <div class="top-actions"><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
+        <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
       <div class="portfolio-switch-wrap portfolio-filter-bar">
@@ -68,15 +68,27 @@
 
       <section id="overviewSection" class="page-section">
         <div class="welcome-banner">
-          <div><p class="eyebrow">PORTFOLIO SNAPSHOT</p><h2 id="welcomeTitle">Combined portfolio</h2><p id="lastUpdatedText">Loading your latest portfolio…</p></div>
+          <div><p class="eyebrow">LIVE WEALTH DASHBOARD</p><h2 id="welcomeTitle">Combined portfolio</h2><p id="lastUpdatedText">Loading your latest portfolio…</p><div class="live-data-line"><span class="live-dot"></span><span>Portfolio + watchlist auto tracking</span></div></div>
           <div class="banner-chip" id="viewChip">Combined</div>
         </div>
 
         <div class="summary-grid">
-          <article class="summary-card accent-blue"><div class="card-icon">₹</div><p id="sumInvestedLabel">Invested / cost value</p><strong id="sumInvested">₹0</strong><span id="sumAssetCount">0 holdings</span></article>
-          <article class="summary-card accent-green"><div class="card-icon">↗</div><p id="sumCurrentLabel">Current value</p><strong id="sumCurrent">₹0</strong><span id="sumPricedCount">0 priced</span></article>
-          <article class="summary-card accent-purple"><div class="card-icon">±</div><p>Total gain / loss</p><strong id="sumGain">₹0</strong><span id="sumReturn">0.00%</span></article>
-          <article class="summary-card accent-orange"><div class="card-icon">▦</div><p>Selected view</p><strong id="sumSplit">All investments</strong><span id="sumWatchCount">0 watchlist</span></article>
+          <article class="summary-card accent-blue"><div class="card-icon">₹</div><p id="sumInvestedLabel">Invested / cost value</p><strong id="sumInvested">₹0</strong><span id="sumAssetCount">0 holdings</span><div id="sumInvestedTrend" class="summary-trend neutral">Tracking growth…</div></article>
+          <article class="summary-card accent-green"><div class="card-icon">↗</div><p id="sumCurrentLabel">Current value</p><strong id="sumCurrent">₹0</strong><span id="sumPricedCount">0 priced</span><div id="sumCurrentTrend" class="summary-trend neutral">Tracking growth…</div></article>
+          <article class="summary-card accent-purple"><div class="card-icon">±</div><p>Total gain / loss</p><strong id="sumGain">₹0</strong><span id="sumReturn">0.00%</span><div id="sumGainTrend" class="summary-trend neutral">Latest portfolio result</div></article>
+          <article class="summary-card accent-orange"><div class="card-icon">☆</div><p>Watchlist pulse</p><strong id="sumSplit">All investments</strong><span id="sumWatchCount">0 watchlist</span><div id="sumWatchTrend" class="summary-trend neutral">Tracking opportunities…</div></article>
+        </div>
+        <div class="insight-grid">
+          <article class="panel trend-panel portfolio-trend-panel">
+            <div class="panel-head trend-panel-head"><div><p class="eyebrow">WEALTH GROWTH</p><h3>Invested capital vs current value</h3><p class="panel-subcopy">Automatically records dashboard snapshots while you use My Finance.</p></div><div id="growthRangeButtons" class="range-switcher"><button type="button" data-growth-range="7D">7D</button><button type="button" class="active" data-growth-range="30D">30D</button><button type="button" data-growth-range="ALL">All</button></div></div>
+            <div class="growth-kpi-grid"><div class="growth-kpi"><span>Invested change</span><strong id="growthInvestedDelta">₹0</strong><small id="growthInvestedPct">0.00%</small></div><div class="growth-kpi"><span>Value change</span><strong id="growthValueDelta">₹0</strong><small id="growthValuePct">0.00%</small></div><div class="growth-kpi"><span>Portfolio gain</span><strong id="growthGainNow">₹0</strong><small id="growthReturnNow">0.00%</small></div></div>
+            <div id="portfolioGrowthChart" class="trend-chart"></div><div class="chart-legend"><span><i class="legend-line invested"></i>Invested amount</span><span><i class="legend-line current"></i>Current value</span><span id="growthHistoryNote" class="muted">Growth history starts from this version.</span></div>
+          </article>
+          <article class="panel trend-panel watch-trend-panel">
+            <div class="panel-head"><div><p class="eyebrow">WATCHLIST PULSE</p><h3>How close are ideas to your target?</h3><p class="panel-subcopy">Prices and target gaps refresh automatically with the portfolio.</p></div><span id="watchPulseBadge" class="pulse-badge">Live</span></div>
+            <div class="watch-pulse-grid"><div class="watch-pulse-card opportunity"><span>At / below target</span><strong id="watchAtTarget">0</strong><small>Potential opportunities</small></div><div class="watch-pulse-card near"><span>Within 5% of target</span><strong id="watchNearTarget">0</strong><small>Worth watching closely</small></div><div class="watch-pulse-card gap"><span>Average gap</span><strong id="watchAverageGap">—</strong><small>From your target prices</small></div><div class="watch-pulse-card total"><span>Watchlist size</span><strong id="watchPulseCount">0</strong><small>Stocks / ETFs / MFs</small></div></div>
+            <div id="watchlistTrendChart" class="trend-chart compact"></div><div class="chart-legend"><span><i class="legend-line watch"></i>Average distance to target</span><span id="watchTrendNote" class="muted">Lower is closer to your target.</span></div>
+          </article>
         </div>
 
         <article class="panel type-breakdown-panel">
@@ -112,7 +124,7 @@
         </article>
       </section>
 
-      <section id="watchlistSection" class="page-section hidden">
+      <section id="watchlistSection" class="page-section hidden"><div class="watchlist-live-strip"><div><span class="live-dot"></span><strong>Live watchlist tracking</strong><span id="watchlistLastAutoUpdate" class="muted">Waiting for update…</span></div><div class="watchlist-live-stats"><span>At target <b id="watchStripAtTarget">0</b></span><span>Near target <b id="watchStripNear">0</b></span><span>Avg gap <b id="watchStripGap">—</b></span></div></div>
         <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div><div class="table-tools"><input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…"><button id="watchAllNotesBtn" class="secondary-button">📝 All notes</button><button id="addWatchBtn" class="primary-button">+ Add</button></div></div><div class="table-wrap"><table><thead><tr><th>Asset</th><th>Current price</th><th>Target price</th><th>Distance</th><th>Priority</th><th class="personal-note-head">Personal Note</th><th></th></tr></thead><tbody id="watchBody"></tbody></table></div><div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div></article>
       </section>
 
@@ -219,6 +231,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v13.js?v=20260813-13" defer></script>
+  <script src="app-v14.js?v=20260813-14" defer></script>
 </body>
 </html>
