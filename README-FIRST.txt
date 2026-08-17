@@ -1,26 +1,80 @@
-MYFINANCE V14 — BEAUTIFUL AUTO-UPDATE + GROWTH DASHBOARD
+MYFINANCE V15.3 — DAILY + MONTHLY DIARY / PLAN / EXPERIENCE / TARGETS
 
-NEW
-- Premium visual redesign.
-- Auto update every 5 / 15 / 30 / 60 minutes or Off; default 15 min.
-- Auto refresh updates Holdings and Watchlist through the existing refreshPrices backend action.
-- Wealth Growth chart: Invested capital vs Current value.
-- 7D / 30D / All history filters.
-- Invested amount change, current-value change, gain and return.
-- Watchlist Pulse: at/below target, within 5%, average gap, size, and trend.
-- Watchlist live status strip.
+SIGN-IN + DASHBOARD IDENTITY
+- Login page has “Save username on this device”.
+- Password is never saved.
+- Login page shows: My Finance · v15.3.
+- Inside dashboard, the sidebar shows the signed-in username and My Finance · v15.3.
+- Top header also shows v15.3.
 
-HISTORY
-Growth history starts when V14 is installed and is saved in this browser. It builds automatically while the dashboard is used.
-Auto update works while the dashboard tab is open.
+DAILY DIARY
+- Daily diary entry by date.
+- Day view or month view.
+- Search daily diary by date, title or text.
+- Edit and delete saved daily entries.
 
-INSTALL
-1. Upload app-v14.js as a NEW GitHub file.
+MONTHLY DIARY / PLAN / EXPERIENCE
+A new Monthly workspace has:
+- Monthly Diary
+- Plan
+- Experience
+- Target
+- Search
+- Year filter
+- Month filter
+- Type filter
+- Target status filter
+
+MONTHLY TARGETS
+- Add any number of targets for a month.
+- Each target starts as “Open target”.
+- Click “Mark completed” when achieved.
+- Completed targets are permanently retained unless you delete them.
+- A month cannot be marked completed while it still has open targets.
+- When all targets are achieved, click “Complete month”.
+- Completed months are saved permanently in a Completed Months archive.
+- A completed month can be reopened later.
+
+FILTERING
+You can view:
+- All years
+- A selected year
+- A selected month
+- The same month across different years
+- Diary only
+- Plan only
+- Experience only
+- Target only
+- Open or completed targets
+- Search within monthly records
+
+BACKEND
+- Code-v3.4.gs
+- Backend version 3.4.0
+- Schema version 5
+- Automatically creates:
+  MonthlyDiary
+  MonthlyStatus
+
+INSTALL FRONTEND
+1. Upload app-v15-3.js to GitHub as a NEW file.
 2. Replace index.html.
 3. Replace styles.css.
 4. Keep config.js unchanged.
-5. Do not redeploy Apps Script.
-6. Commit and wait about one minute.
-7. Verify https://saradasutar.github.io/MyFinance/app-v14.js is not 404.
-8. Open https://saradasutar.github.io/MyFinance/?v=2100
-9. Mac: Command + Shift + R.
+5. Commit.
+6. Check:
+   https://saradasutar.github.io/MyFinance/app-v15-3.js
+7. Open:
+   https://saradasutar.github.io/MyFinance/?v=1530
+8. Mac: Command + Shift + R.
+
+INSTALL BACKEND
+1. Open the SAME Apps Script project currently used by MyFinance.
+2. Replace Code.gs with Code-v3.4.gs.
+3. Save.
+4. Deploy > Manage deployments > Edit > New version > Deploy.
+5. Keep the same /exec URL.
+6. Open the /exec URL and confirm:
+   "version":"3.4.0"
+
+The first request after deployment automatically creates the MonthlyDiary and MonthlyStatus sheets.

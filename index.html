@@ -7,7 +7,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260813-14">
+  <link rel="stylesheet" href="styles.css?v=20260817-153">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -25,9 +25,16 @@
         <div><p class="eyebrow">WELCOME BACK</p><h2>Sign in</h2><p class="muted">Use your Apps Script dashboard username and password.</p></div>
         <label>Username<input id="loginUsername" name="username" autocomplete="username" required maxlength="60" placeholder="admin"></label>
         <label>Password<div class="password-wrap"><input id="loginPassword" name="password" type="password" autocomplete="current-password" required maxlength="200" placeholder="Your password"><button type="button" class="text-button" data-toggle-password="loginPassword">Show</button></div></label>
+        <div class="login-options">
+          <label class="remember-user"><input id="rememberUsername" type="checkbox"><span>Save username on this device</span></label>
+          <span class="remember-note">Password is never saved</span>
+        </div>
         <button id="loginButton" class="primary-button full" type="submit">Sign in</button>
         <p id="loginMessage" class="form-message" role="alert"></p>
-        <p class="tiny muted">Your password is never stored in the browser.</p>
+        <div class="login-meta">
+          <p class="tiny muted">Your password is never stored in the browser.</p>
+          <span id="loginVersion" class="version-badge">My Finance · v15.3</span>
+        </div>
       </form>
     </div>
   </section>
@@ -39,14 +46,20 @@
         <button class="nav-item active" data-section="overview"><span>◫</span>Overview</button>
         <button class="nav-item" data-section="holdings"><span>▥</span>Holdings</button>
         <button class="nav-item" data-section="watchlist"><span>☆</span>Watchlist</button>
+        <button class="nav-item" data-section="diary"><span>✎</span>Diary</button>
         <button class="nav-item admin-only hidden" data-section="users"><span>♙</span>Users</button>
       </nav>
+      <div class="sidebar-session-card">
+        <span class="sidebar-session-label">SIGNED IN AS</span>
+        <strong id="dashboardUsername">—</strong>
+        <span id="dashboardVersion">My Finance · v15.3</span>
+      </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><span id="dashboardVersionTop" class="dashboard-version-chip">v15.3</span></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -128,12 +141,152 @@
         <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div><div class="table-tools"><input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…"><button id="watchAllNotesBtn" class="secondary-button">📝 All notes</button><button id="addWatchBtn" class="primary-button">+ Add</button></div></div><div class="table-wrap"><table><thead><tr><th>Asset</th><th>Current price</th><th>Target price</th><th>Distance</th><th>Priority</th><th class="personal-note-head">Personal Note</th><th></th></tr></thead><tbody id="watchBody"></tbody></table></div><div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div></article>
       </section>
 
+
+      <section id="diarySection" class="page-section hidden">
+        <div class="diary-hero">
+          <div>
+            <p class="eyebrow">PERSONAL DIARY & MONTHLY LIFE PLAN</p>
+            <h2>Daily diary, monthly plans, experiences & targets</h2>
+            <p>Write day-to-day notes, plan each month, record experiences, set targets, mark achievements, and keep completed months permanently.</p>
+          </div>
+          <div class="diary-hero-actions">
+            <span id="diaryHeroStatus" class="diary-hero-status">Private to your login</span>
+            <button id="newDiaryEntryBtn" class="primary-button" type="button">+ New daily entry</button>
+          </div>
+        </div>
+
+        <div id="diaryWorkspaceSwitcher" class="diary-workspace-switcher">
+          <button type="button" class="active" data-diary-workspace="DAILY"><span>☀</span> Daily Diary</button>
+          <button type="button" data-diary-workspace="MONTHLY"><span>▣</span> Monthly Diary / Plan / Experience</button>
+        </div>
+
+        <div id="dailyDiaryWorkspace">
+          <div class="diary-layout">
+            <article class="panel diary-compose-panel">
+              <div class="panel-head">
+                <div><p class="eyebrow">WRITE / EDIT</p><h3>Daily diary entry</h3></div>
+                <span id="diarySaveStatus" class="tiny muted">New entry</span>
+              </div>
+              <form id="diaryForm" class="diary-form">
+                <input id="diaryId" type="hidden">
+                <label>Date<input id="diaryDate" type="date" required></label>
+                <label>Title <small>(optional)</small><input id="diaryTitle" type="text" maxlength="120" placeholder="Today’s note"></label>
+                <label class="diary-entry-field">Entry<textarea id="diaryText" rows="10" maxlength="5000" required placeholder="Write what you want to remember…"></textarea></label>
+                <div class="diary-form-actions">
+                  <button id="clearDiaryBtn" type="button" class="secondary-button">Clear</button>
+                  <button id="saveDiaryBtn" type="submit" class="primary-button">Save entry</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel diary-browser-panel">
+              <div class="panel-head diary-browser-head">
+                <div><p class="eyebrow">BROWSE & SEARCH</p><h3>Daily diary history</h3></div>
+                <div id="diaryViewSwitcher" class="range-switcher diary-view-switcher">
+                  <button type="button" class="active" data-diary-view="DAILY">Day</button>
+                  <button type="button" data-diary-view="MONTHLY">Month</button>
+                </div>
+              </div>
+
+              <div class="diary-controls">
+                <input id="diarySearch" class="search-input diary-search" type="search" placeholder="Search title, entry or date…">
+                <label id="diaryDayControl" class="diary-date-control">Day<input id="diaryBrowseDate" type="date"></label>
+                <label id="diaryMonthControl" class="diary-date-control hidden">Month<input id="diaryBrowseMonth" type="month"></label>
+              </div>
+
+              <div id="diarySummary" class="diary-summary"></div>
+              <div id="diaryList" class="diary-list"></div>
+              <div id="diaryEmpty" class="empty-state hidden">No daily diary entries match this view.</div>
+            </article>
+          </div>
+        </div>
+
+        <div id="monthlyDiaryWorkspace" class="hidden">
+          <div class="monthly-control-bar">
+            <div class="monthly-filter-group">
+              <label>Year<select id="monthlyYearFilter"></select></label>
+              <label>Month<select id="monthlyMonthFilter">
+                <option value="ALL">All months</option>
+                <option value="01">January</option><option value="02">February</option><option value="03">March</option>
+                <option value="04">April</option><option value="05">May</option><option value="06">June</option>
+                <option value="07">July</option><option value="08">August</option><option value="09">September</option>
+                <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+              </select></label>
+              <label>Type<select id="monthlyTypeFilter">
+                <option value="ALL">All types</option>
+                <option value="DIARY">Diary</option>
+                <option value="PLAN">Plan</option>
+                <option value="EXPERIENCE">Experience</option>
+                <option value="TARGET">Target</option>
+              </select></label>
+              <label>Status<select id="monthlyStatusFilter">
+                <option value="ALL">All status</option>
+                <option value="OPEN">Open targets</option>
+                <option value="COMPLETED">Completed targets</option>
+              </select></label>
+            </div>
+            <input id="monthlySearch" class="search-input monthly-search" type="search" placeholder="Search monthly diary, plan, experience or target…">
+          </div>
+
+          <div id="monthCompletionPanel" class="month-completion-panel">
+            <div>
+              <p class="eyebrow">MONTH PROGRESS</p>
+              <h3 id="monthCompletionTitle">This month</h3>
+              <p id="monthCompletionText" class="muted">Add targets to track completion.</p>
+            </div>
+            <div class="month-progress-side">
+              <div class="month-progress-track"><div id="monthProgressBar" class="month-progress-bar"></div></div>
+              <strong id="monthProgressLabel">0 / 0 targets completed</strong>
+              <button id="completeMonthBtn" class="primary-button" type="button">✓ Complete month</button>
+            </div>
+          </div>
+
+          <div class="monthly-workspace-grid">
+            <article class="panel monthly-compose-panel">
+              <div class="panel-head">
+                <div><p class="eyebrow">ADD / EDIT MONTHLY ITEM</p><h3>Diary, plan, experience or target</h3></div>
+                <span id="monthlySaveStatus" class="tiny muted">New monthly item</span>
+              </div>
+              <form id="monthlyForm" class="diary-form">
+                <input id="monthlyId" type="hidden">
+                <label>Month<input id="monthlyEntryMonth" type="month" required></label>
+                <label>Type<select id="monthlyEntryType" required>
+                  <option value="DIARY">Monthly Diary</option>
+                  <option value="PLAN">Plan</option>
+                  <option value="EXPERIENCE">Experience</option>
+                  <option value="TARGET">Target</option>
+                </select></label>
+                <label>Title<input id="monthlyTitle" type="text" maxlength="140" placeholder="e.g. Health target, Trip plan, Monthly reflection"></label>
+                <label class="diary-entry-field">Details<textarea id="monthlyText" rows="8" maxlength="5000" required placeholder="Write the monthly diary, plan, experience or target details…"></textarea></label>
+                <div class="monthly-target-help" id="monthlyTargetHelp">
+                  For a Target, save it first. Then use <strong>Mark completed</strong> when achieved.
+                </div>
+                <div class="diary-form-actions">
+                  <button id="clearMonthlyBtn" type="button" class="secondary-button">Clear</button>
+                  <button id="saveMonthlyBtn" type="submit" class="primary-button">Save monthly item</button>
+                </div>
+              </form>
+            </article>
+
+            <article class="panel monthly-list-panel">
+              <div class="panel-head">
+                <div><p class="eyebrow">MONTHLY RECORDS</p><h3 id="monthlyListTitle">Monthly diary / plan / experience</h3></div>
+                <span id="monthlyResultCount" class="tiny muted">0 items</span>
+              </div>
+              <div id="completedMonthArchive" class="completed-month-archive"></div>
+              <div id="monthlyList" class="monthly-list"></div>
+              <div id="monthlyEmpty" class="empty-state hidden">No monthly records match these filters.</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section id="usersSection" class="page-section hidden">
         <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">ADMINISTRATION</p><h3>Dashboard users</h3></div><button id="addUserBtn" class="primary-button">+ Create user</button></div><div class="table-wrap"><table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Last login</th><th></th></tr></thead><tbody id="usersBody"></tbody></table></div></article>
       </section>
     </main>
 
-    <nav class="mobile-nav"><button class="mobile-nav-item active" data-section="overview"><span>◫</span>Overview</button><button class="mobile-nav-item" data-section="holdings"><span>▥</span>Holdings</button><button class="mobile-nav-item" data-section="watchlist"><span>☆</span>Watchlist</button></nav>
+    <nav class="mobile-nav"><button class="mobile-nav-item active" data-section="overview"><span>◫</span>Overview</button><button class="mobile-nav-item" data-section="holdings"><span>▥</span>Holdings</button><button class="mobile-nav-item" data-section="watchlist"><span>☆</span>Watchlist</button><button class="mobile-nav-item" data-section="diary"><span>✎</span>Diary</button></nav>
   </div>
 
   <div id="modalBackdrop" class="modal-backdrop hidden" aria-hidden="true">
@@ -158,10 +311,10 @@
     <div id="bulkImportModal" class="modal import-modal hidden" role="dialog" aria-modal="true">
       <div class="modal-head"><div><p class="eyebrow">SMART IMPORT</p><h2>Import portfolio data</h2></div><button class="modal-close" data-close-modal>×</button></div>
       <form id="bulkImportForm" class="stack-form">
-        <div class="import-mode-tabs"><button type="button" class="import-mode active" data-import-mode="MF_STATEMENT">Mutual fund statement</button><button type="button" class="import-mode" data-import-mode="STOCK_HOLDINGS">Stock / Zerodha holdings</button></div>
+        <div class="import-mode-tabs"><button type="button" class="import-mode active" data-import-mode="MF_STATEMENT">MF transaction statement</button><button type="button" class="import-mode" data-import-mode="MF_SNAPSHOT">MF current holdings</button><button type="button" class="import-mode" data-import-mode="STOCK_HOLDINGS">Stock / Zerodha holdings</button></div>
         <div id="mfImportHelp" class="info-box"><strong>MF statement:</strong> accepts your columns MF_NAME, INVESTOR_NAME, PRODUCT_CODE, SCHEME_NAME, TRADE_DATE, TRANSACTION_TYPE, AMOUNT, UNITS, PRICE and BROKER. PAN and folio columns are ignored and are not sent to the backend.</div>
-        <div id="stockImportHelp" class="info-box hidden"><strong>Stock/Zerodha:</strong> accepts Investor Name, Stock Symbol, Exchange, Quantity, Avg Buy Price and Invested Amount. It also recognises common Zerodha holdings headings such as Instrument, Qty. and Avg. cost. Native Zerodha XLSX holdings files are supported.</div>
-        <label id="stockOwnerLabel" class="hidden">Investor for stock file<select id="importOwner"></select></label>
+        <div id="mfSnapshotImportHelp" class="info-box hidden"><strong>MF current holdings:</strong> accepts Investor Name, Scheme Name, ISIN, Units Held, Avg NAV and Invested Amount. The backend resolves the ISIN to the numeric AMFI scheme code so NAV and 1D–10Y performance can update automatically. Snapshot mode does not create transaction history, so XIRR remains blank unless a transaction statement is also imported.</div><div id="stockImportHelp" class="info-box hidden"><strong>Stock/Zerodha:</strong> accepts Investor Name, Stock Symbol, Exchange, Quantity, Avg Buy Price and Invested Amount. It also recognises common Zerodha holdings headings such as Instrument, Qty. and Avg. cost. Native Zerodha XLSX holdings files are supported.</div>
+        <label id="stockOwnerLabel" class="hidden">Investor if file has no investor column<select id="importOwner"></select></label>
         <div class="import-actions"><button id="downloadImportTemplateBtn" type="button" class="secondary-button">Download template</button></div>
         <label class="import-drop"><strong>Select CSV or Excel file</strong><span id="importFileHint">Up to 5,000 MF transaction rows. CSV and XLSX are supported.</span><input id="bulkCsvFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" required></label>
         <div id="bulkImportStatus" class="import-status muted">No file selected.</div>
@@ -231,6 +384,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v14.js?v=20260813-14" defer></script>
+  <script src="app-v15-3.js?v=20260817-153" defer></script>
 </body>
 </html>
