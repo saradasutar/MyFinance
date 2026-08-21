@@ -1,62 +1,36 @@
-MYFINANCE V15.7 — MASTER DATA REPLACEMENT TIMEOUT FIX
+MYFINANCE V15.8 — HORIZONTAL SCROLLER + SMOOTHER DIARY
 
-WHY V15.5 / V15.6 WAS NOT REPLACING
-The backend replacement was doing too much work in one request:
-- deleting old rows one-by-one with deleteRow()
-- deleting every old MF transaction row one-by-one
-- creating/updating quote rows one at a time
-- creating performance rows one at a time
-- refreshing mutual-fund NAV/performance before returning
+FRONTEND: v15.8
+BACKEND: keep v3.6.0
 
-The frontend request timeout was only 60 seconds.
-With many old transaction rows, the request could time out before the browser received a success response.
+HORIZONTAL SCROLL
+- Fixed bottom horizontal scrollbar appears for wide Holdings and Watchlist tables.
+- Drag the bar or use left/right arrows.
+- It stays synchronized with the table's own horizontal scroll.
+- Works on desktop and mobile.
 
-V15.7 / BACKEND V3.6.0 FIX
-- Replaces old Holdings in one batch write.
-- Replaces old Watchlist in one batch write.
-- Removes old MF Transactions in one batch write.
-- Loads 35 holdings in one batch.
-- Loads 17 watchlist items in one batch.
-- Does NOT run slow AMFI/network refresh during replacement.
-- Sets up quote rows in batch.
-- Verifies the final dashboard contains exactly:
-  35 holdings
-  17 watchlist items
-- Master replacement gets a 180-second frontend timeout as extra protection.
-- Live NAV/price/performance refresh runs separately afterwards through Refresh / auto-update.
+DAILY DIARY
+- Previous day / Today / Next day buttons.
+- Auto-growing entry box.
+- Character count.
+- Local draft autosave and restore for the selected date.
+- Search clear button.
+- Cmd+Enter (Mac) / Ctrl+Enter (Windows) quick save.
+- Save/Clear controls remain easier to reach while typing.
 
-YOUR DIARY DATA IS NOT DELETED.
-Daily Diary, Monthly Diary / Plan / Experience / Targets, users and passwords remain intact.
+MONTHLY DIARY
+- Previous month / This month / Next month buttons.
+- Auto-growing details box.
+- Character count.
+- Local draft autosave/restore.
+- Cmd+Enter / Ctrl+Enter quick save.
+- Existing Year/Month/Type/Status filters, targets and completed-month archive remain intact.
 
-INSTALL
-1. GitHub:
-   - upload app-v15-7.js as a NEW file
-   - replace index.html
-   - replace styles.css
-   - keep config.js unchanged
-
-2. Apps Script:
-   - replace Code.gs with Code-v3.6.gs
-   - Save
-   - Deploy > Manage deployments > Edit > New version > Deploy
-   - keep the SAME /exec URL
-
-3. Confirm the /exec URL shows:
-   "version":"3.6.0"
-
-4. Open:
-   https://saradasutar.github.io/MyFinance/?v=1570
-
-5. Hard refresh:
-   Mac: Command + Shift + R
-   Windows: Ctrl + Shift + R
-
-6. On Overview click:
-   ⇄ Load Master Sheet Data
-
-7. Confirm.
-
-8. Wait for the success message:
-   35 holdings and 17 watchlist items loaded.
-
-9. Then click Refresh once to update live prices / MF NAV / performance.
+INSTALL — FRONTEND ONLY
+1. Upload app-v15-8.js to GitHub as a NEW file.
+2. Replace index.html.
+3. Replace styles.css.
+4. Keep config.js unchanged.
+5. Do NOT redeploy Apps Script if Backend v3.6.0 is already live.
+6. Open https://saradasutar.github.io/MyFinance/?v=1580
+7. Hard refresh: Command+Shift+R (Mac) / Ctrl+Shift+R (Windows).

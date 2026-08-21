@@ -7,7 +7,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260821-157">
+  <link rel="stylesheet" href="styles.css?v=20260821-158">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -33,7 +33,7 @@
         <p id="loginMessage" class="form-message" role="alert"></p>
         <div class="login-meta">
           <p class="tiny muted">Your password is never stored in the browser.</p>
-          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v15.7</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
+          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v15.8</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
         </div>
       </form>
     </div>
@@ -52,14 +52,14 @@
       <div class="sidebar-session-card">
         <span class="sidebar-session-label">SIGNED IN AS</span>
         <strong id="dashboardUsername">—</strong>
-        <span id="dashboardVersion">Frontend · v15.7</span><span id="dashboardBackendVersion">Backend · checking…</span>
+        <span id="dashboardVersion">Frontend · v15.8</span><span id="dashboardBackendVersion">Backend · checking…</span>
       </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v15.7</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v15.8</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -177,10 +177,21 @@
               </div>
               <form id="diaryForm" class="diary-form">
                 <input id="diaryId" type="hidden">
-                <label>Date<input id="diaryDate" type="date" required></label>
+                <div class="diary-date-row">
+                  <label>Date<input id="diaryDate" type="date" required></label>
+                  <div class="diary-date-nav" aria-label="Diary date navigation">
+                    <button id="diaryPrevDayBtn" type="button" class="diary-nav-button" title="Previous day">‹</button>
+                    <button id="diaryTodayBtn" type="button" class="diary-nav-button diary-today-button">Today</button>
+                    <button id="diaryNextDayBtn" type="button" class="diary-nav-button" title="Next day">›</button>
+                  </div>
+                </div>
                 <label>Title <small>(optional)</small><input id="diaryTitle" type="text" maxlength="120" placeholder="Today’s note"></label>
-                <label class="diary-entry-field">Entry<textarea id="diaryText" rows="10" maxlength="5000" required placeholder="Write what you want to remember…"></textarea></label>
-                <div class="diary-form-actions">
+                <label class="diary-entry-field">Entry
+                  <textarea id="diaryText" rows="8" maxlength="5000" required placeholder="Write what you want to remember…"></textarea>
+                  <div class="diary-writing-meta"><span id="diaryDraftStatus">Draft ready</span><span id="diaryCharCount">0 / 5000</span></div>
+                </label>
+                <div class="diary-keyboard-tip">Tip: press <strong>⌘/Ctrl + Enter</strong> to save quickly.</div>
+                <div class="diary-form-actions diary-sticky-actions">
                   <button id="clearDiaryBtn" type="button" class="secondary-button">Clear</button>
                   <button id="saveDiaryBtn" type="submit" class="primary-button">Save entry</button>
                 </div>
@@ -197,7 +208,7 @@
               </div>
 
               <div class="diary-controls">
-                <input id="diarySearch" class="search-input diary-search" type="search" placeholder="Search title, entry or date…">
+                <div class="diary-search-wrap"><input id="diarySearch" class="search-input diary-search" type="search" placeholder="Search title, entry or date…"><button id="diarySearchClearBtn" type="button" class="search-clear-button" title="Clear search">×</button></div>
                 <label id="diaryDayControl" class="diary-date-control">Day<input id="diaryBrowseDate" type="date"></label>
                 <label id="diaryMonthControl" class="diary-date-control hidden">Month<input id="diaryBrowseMonth" type="month"></label>
               </div>
@@ -257,7 +268,14 @@
               </div>
               <form id="monthlyForm" class="diary-form">
                 <input id="monthlyId" type="hidden">
-                <label>Month<input id="monthlyEntryMonth" type="month" required></label>
+                <div class="diary-date-row">
+                  <label>Month<input id="monthlyEntryMonth" type="month" required></label>
+                  <div class="diary-date-nav" aria-label="Monthly entry navigation">
+                    <button id="monthlyPrevMonthBtn" type="button" class="diary-nav-button" title="Previous month">‹</button>
+                    <button id="monthlyThisMonthBtn" type="button" class="diary-nav-button diary-today-button">This month</button>
+                    <button id="monthlyNextMonthBtn" type="button" class="diary-nav-button" title="Next month">›</button>
+                  </div>
+                </div>
                 <label>Type<select id="monthlyEntryType" required>
                   <option value="DIARY">Monthly Diary</option>
                   <option value="PLAN">Plan</option>
@@ -265,7 +283,11 @@
                   <option value="TARGET">Target</option>
                 </select></label>
                 <label>Title<input id="monthlyTitle" type="text" maxlength="140" placeholder="e.g. Health target, Trip plan, Monthly reflection"></label>
-                <label class="diary-entry-field">Details<textarea id="monthlyText" rows="8" maxlength="5000" required placeholder="Write the monthly diary, plan, experience or target details…"></textarea></label>
+                <label class="diary-entry-field">Details
+                  <textarea id="monthlyText" rows="7" maxlength="5000" required placeholder="Write the monthly diary, plan, experience or target details…"></textarea>
+                  <div class="diary-writing-meta"><span id="monthlyDraftStatus">Draft ready</span><span id="monthlyCharCount">0 / 5000</span></div>
+                </label>
+                <div class="diary-keyboard-tip">Tip: press <strong>⌘/Ctrl + Enter</strong> to save quickly.</div>
                 <div class="monthly-target-help" id="monthlyTargetHelp">
                   For a Target, save it first. Then use <strong>Mark completed</strong> when achieved.
                 </div>
@@ -293,6 +315,12 @@
         <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">ADMINISTRATION</p><h3>Dashboard users</h3></div><button id="addUserBtn" class="primary-button">+ Create user</button></div><div class="table-wrap"><table><thead><tr><th>Username</th><th>Name</th><th>Role</th><th>Status</th><th>Last login</th><th></th></tr></thead><tbody id="usersBody"></tbody></table></div></article>
       </section>
     </main>
+
+    <div id="dashboardHScroll" class="dashboard-hscroll hidden" aria-label="Horizontal dashboard scroller">
+      <button id="dashboardHScrollLeft" class="dashboard-hscroll-arrow" type="button" title="Scroll left">‹</button>
+      <div id="dashboardHScrollTrack" class="dashboard-hscroll-track"><div id="dashboardHScrollInner" class="dashboard-hscroll-inner"></div></div>
+      <button id="dashboardHScrollRight" class="dashboard-hscroll-arrow" type="button" title="Scroll right">›</button>
+    </div>
 
     <nav class="mobile-nav"><button class="mobile-nav-item active" data-section="overview"><span>◫</span>Overview</button><button class="mobile-nav-item" data-section="holdings"><span>▥</span>Holdings</button><button class="mobile-nav-item" data-section="watchlist"><span>☆</span>Watchlist</button><button class="mobile-nav-item" data-section="diary"><span>✎</span>Diary</button></nav>
   </div>
@@ -392,6 +420,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v15-7.js?v=20260821-157" defer></script>
+  <script src="app-v15-8.js?v=20260821-158" defer></script>
 </body>
 </html>
