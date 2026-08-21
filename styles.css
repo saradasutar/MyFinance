@@ -1747,3 +1747,19 @@ body{background:radial-gradient(circle at 72% -10%,rgba(105,85,226,.14),transpar
   .monthly-item-actions{width:100%;justify-content:flex-start}
   .topbar-title-line{align-items:flex-start;flex-direction:column;gap:5px}
 }
+
+/* V15.5 — master workbook + FE/BE versions */
+.version-pair,.dashboard-version-pair{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.backend-version{color:#087b63;border-color:#cfe9df;background:#edf9f5}
+.sidebar-session-card #dashboardBackendVersion{color:#86e0c4;font-size:9px;font-weight:850}
+.backend-chip{color:#087b63;border-color:#cee9df;background:#ecf9f4}
+.master-data-status{margin:6px 0 0;color:#8a94a8;font-size:9.5px;font-weight:800}
+.master-data-status.loaded{color:#087d61}
+.master-data-button{min-height:40px;padding:9px 13px;border:1px solid #cfd8ee;border-radius:12px;color:#334272;background:linear-gradient(135deg,#f8faff,#eef3ff);font-weight:900;cursor:pointer;white-space:nowrap;box-shadow:0 7px 17px rgba(42,55,116,.07)}
+.master-data-button:hover{border-color:#aebbe3;background:linear-gradient(135deg,#f2f5ff,#e8edff)}
+.watchlist-details-table{min-width:1850px}
+.watchlist-details-table .asset-col{min-width:245px}
+.watch-source-remark{min-width:250px;max-width:320px;white-space:normal;line-height:1.4}
+.master-sheet-detail-section{border:1px solid #e1e5f4;border-radius:16px;padding:14px;background:linear-gradient(180deg,#fbfbff,#f6f8ff)}
+.source-performance-grid,.source-info-list{margin-top:14px}
+@media(max-width:760px){.version-pair{width:100%}.dashboard-version-pair{align-items:flex-start;flex-direction:column}.master-data-button{width:100%}}
