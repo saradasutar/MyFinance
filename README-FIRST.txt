@@ -1,85 +1,39 @@
-MYFINANCE V15.5 — MASTER SPREADSHEET REPLACEMENT
+MYFINANCE V15.6 — MASTER DATA NOT SHOWING FIX
 
-SOURCE
-Family_Portfolio_stock nm Tracker.xlsx
+WHAT YOUR SCREENSHOT PROVES
+- Frontend v15.5 is live.
+- Backend v3.5.0 is live.
+- Dashboard still shows 22 holdings and 1 watchlist item.
+Therefore the master-data replacement action has NOT been executed yet.
 
-EXTRACTED DATA
-- Niharika Stocks/ETFs invested: ₹574,647.01
-- Niharika Mutual Funds invested: ₹554,521.25
-- Sarada Mutual Funds invested: ₹2,086,171.49
-- Combined invested amount: ₹3,215,339.75
-- Consolidated holdings: 35
-- Cleaned watchlist items: 17
-
-CLEANING / PRIVACY
-- Duplicate HDFCBANK watchlist row was consolidated.
-- Same-investor mutual-fund rows with the same ISIN were consolidated.
-- Folio-specific text was removed from fund names.
-- No PAN or folio identifiers are written into this dashboard package.
-- Blank-code invalid MF watchlist rows were not imported.
-
-REPLACE FROM MASTER SHEET
-This new button:
-- deletes old Holdings for the signed-in dashboard account
-- deletes old Watchlist rows
-- deletes old MF Transactions
-- loads the 35 holdings and 17 watchlist items above
-- preserves Daily Diary
-- preserves Monthly Diary / Plan / Experience / Targets
-- preserves users/passwords/settings
-- attempts a backend backup before replacement
-
-WATCHLIST DETAILS
-The View drawer now displays:
-- live price/NAV
-- workbook snapshot price and day move
-- day high/low
-- volume
-- 52-week high/low
-- market cap/assets/debt field
-- sales/profit growth
-- P/E or P/B
-- remark/moat/management
-- final remark
-- 1M/1Y/3Y/5Y/10Y workbook performance
-
-VERSIONS
-Login page:
-- Frontend v15.5
-- Backend version read live from Apps Script
-
-Inside dashboard:
-- signed-in username
-- Frontend v15.5
-- Backend version
-- FE/BE chips in the top header
+V15.6 FIX
+- Adds a large visible banner on the Overview page:
+  “Master spreadsheet not yet applied”.
+- Adds a prominent button:
+  ⇄ Load Master Sheet Data
+- Clicking it uses the existing backend action replaceMasterPortfolioData.
+- After confirmation it replaces old Holdings / Watchlist / MF transaction rows with:
+  35 consolidated investments
+  17 cleaned watchlist items
+- Diary, monthly diary, users and passwords remain untouched.
+- After successful replacement the banner disappears automatically.
 
 INSTALL
 1. GitHub:
-   Upload app-v15-5.js as a NEW file.
-   Replace index.html.
-   Replace styles.css.
-   Keep config.js unchanged.
-
-2. Apps Script:
-   Replace Code.gs with Code-v3.5.gs.
-   Save.
-   Deploy > Manage deployments > Edit > New version > Deploy.
-   Keep the SAME /exec URL.
-
-3. Confirm backend direct URL shows:
-   "version":"3.5.0"
-
-4. Open:
-   https://saradasutar.github.io/MyFinance/?v=1550
-
-5. Hard refresh:
+   - upload app-v15-6.js as a NEW file
+   - replace index.html
+   - replace styles.css
+   - keep config.js unchanged
+2. NO Apps Script change is required if your page already shows Backend v3.5.0.
+3. Open:
+   https://saradasutar.github.io/MyFinance/?v=1560
+4. Hard refresh:
    Mac: Command + Shift + R
    Windows: Ctrl + Shift + R
-
-6. Sign in -> Holdings -> click:
-   ⇄ Replace from Master Sheet
-
-7. Confirm the replacement warning.
-
-After successful replacement, use Show All Investments.
+5. On Overview click:
+   ⇄ Load Master Sheet Data
+6. Confirm the warning.
+7. Wait for the success message.
+8. You should then see:
+   35 holdings
+   17 watchlist items

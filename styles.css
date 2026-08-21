@@ -1763,3 +1763,40 @@ body{background:radial-gradient(circle at 72% -10%,rgba(105,85,226,.14),transpar
 .master-sheet-detail-section{border:1px solid #e1e5f4;border-radius:16px;padding:14px;background:linear-gradient(180deg,#fbfbff,#f6f8ff)}
 .source-performance-grid,.source-info-list{margin-top:14px}
 @media(max-width:760px){.version-pair{width:100%}.dashboard-version-pair{align-items:flex-start;flex-direction:column}.master-data-button{width:100%}}
+
+
+/* V15.6 — prominent master-data load banner */
+.master-load-banner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:16px;
+  padding:18px 20px;
+  border:1px solid #d6dcf5;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 88% 10%,rgba(102,88,216,.12),transparent 26%),
+    linear-gradient(135deg,#fbfbff,#f2f5ff);
+  box-shadow:0 12px 28px rgba(55,62,130,.08);
+}
+.master-load-banner h3{
+  margin:3px 0 6px;
+  color:#273451;
+  font-size:17px;
+}
+.master-load-banner p:last-child{
+  margin:0;
+  color:#66728a;
+  font-size:10.5px;
+  line-height:1.5;
+  max-width:760px;
+}
+.master-load-banner .primary-button{
+  min-width:210px;
+  white-space:nowrap;
+}
+@media(max-width:760px){
+  .master-load-banner{align-items:stretch;flex-direction:column}
+  .master-load-banner .primary-button{width:100%;min-width:0}
+}
