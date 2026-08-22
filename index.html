@@ -10,7 +10,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260822-0945">
+  <link rel="stylesheet" href="styles.css?v=20260822-168">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -36,7 +36,7 @@
         <p id="loginMessage" class="form-message" role="alert"></p>
         <div class="login-meta">
           <p class="tiny muted">Your password is never stored in the browser.</p>
-          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v16.7.1</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
+          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v16.8</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
         </div>
       </form>
     </div>
@@ -57,14 +57,14 @@
       <div class="sidebar-session-card">
         <span class="sidebar-session-label">SIGNED IN AS</span>
         <strong id="dashboardUsername">—</strong>
-        <span id="dashboardVersion">Frontend · v16.7.1</span><span id="dashboardBackendVersion">Backend · checking…</span>
+        <span id="dashboardVersion">Frontend · v16.8</span><span id="dashboardBackendVersion">Backend · checking…</span>
       </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v16.7.1</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v16.8</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -98,28 +98,10 @@
           <div class="banner-chip" id="viewChip">Combined</div>
         </div>
 
-        <section class="life-quote-panel" aria-label="Daily life quote">
-          <div class="life-quote-mark">“</div>
-          <div class="life-quote-copy">
-            <div class="life-quote-label"><span>QUOTE OF THE DAY</span><span id="lifeQuoteShuffleStatus">Auto shuffle · 30s</span></div>
-            <blockquote id="lifeQuoteText">Add your favorite life quotes to start the daily rotation.</blockquote>
-            <div id="lifeQuoteAuthor" class="life-quote-author">— Quote Library</div>
-          </div>
-          <div class="life-quote-actions">
-            <button id="lifeQuoteNextBtn" type="button" title="Show another quote">↻ Next</button>
-            <button id="lifeQuotePauseBtn" type="button" title="Pause automatic shuffle">Ⅱ Pause</button>
-            <button id="lifeQuoteLibraryBtn" type="button" class="quote-library-button" title="Manage saved quotes">☰ Library</button>
-          </div>
-        </section>
-
-        <section class="sticky-notes-panel" aria-label="Sticky targets and reminders">
-          <div class="sticky-notes-head">
-            <div><p class="eyebrow">STICKY NOTES</p><h3>Targets & reminders</h3></div>
-            <div class="sticky-head-actions"><span id="stickyNotesCount">0 active</span><button id="addStickyNoteBtn" class="sticky-add-button" type="button">+ Add sticky</button></div>
-          </div>
-          <div id="stickyNotesList" class="sticky-notes-list"></div>
-          <div id="stickyNotesEmpty" class="sticky-empty">No active target or reminder. Add one when something needs your attention.</div>
-        </section>
+        <div class="overview-utility-row">
+          <button id="overviewStickyShortcut" class="overview-utility-chip sticky-chip" type="button"><span>📌</span><strong id="overviewStickyShortcutCount">0 active</strong><small>Targets & reminders</small></button>
+          <button id="overviewQuoteShortcut" class="overview-utility-chip quote-chip" type="button"><span>💬</span><strong>Daily quote</strong><small>Open right panel</small></button>
+        </div>
 
         <div class="summary-grid">
           <article class="summary-card accent-blue"><div class="card-icon">₹</div><p id="sumInvestedLabel">Invested / cost value</p><strong id="sumInvested">₹0</strong><span id="sumAssetCount">0 holdings</span><div id="sumInvestedTrend" class="summary-trend neutral">Tracking growth…</div></article>
@@ -378,6 +360,53 @@
       <button id="openFullDiaryBtn" class="secondary-button quick-full-diary" type="button">Open full Diary</button>
     </aside>
 
+    <button id="utilityDrawerOpenBtn" class="utility-drawer-launcher" type="button" aria-controls="utilityDrawer" aria-expanded="false" title="Open targets, reminders and quotes">
+      <span class="utility-launcher-icon">✦</span>
+      <span class="utility-launcher-text">Notes & Quotes</span>
+      <span id="utilityStickyBadge" class="utility-launcher-badge">0</span>
+    </button>
+
+    <div id="utilityDrawerScrim" class="utility-drawer-scrim" aria-hidden="true"></div>
+
+    <aside id="utilityDrawer" class="utility-drawer" aria-hidden="true">
+      <div class="utility-drawer-head">
+        <div><p class="eyebrow">RIGHT UTILITY PANEL</p><h3>Notes & Quotes</h3><p>Targets, reminders and inspiration without occupying dashboard space.</p></div>
+        <button id="utilityDrawerCloseBtn" class="icon-button" type="button" aria-label="Close right utility panel">×</button>
+      </div>
+
+      <div class="utility-drawer-tabs" role="tablist" aria-label="Right panel sections">
+        <button type="button" class="active" data-utility-tab="STICKY">📌 Sticky <span id="utilityStickyTabCount">0</span></button>
+        <button type="button" data-utility-tab="QUOTE">💬 Quotes</button>
+      </div>
+
+      <div id="utilityStickySection" class="utility-drawer-section active">
+        <section class="sticky-notes-panel" aria-label="Sticky targets and reminders">
+          <div class="sticky-notes-head">
+            <div><p class="eyebrow">STICKY NOTES</p><h3>Targets & reminders</h3></div>
+            <div class="sticky-head-actions"><span id="stickyNotesCount">0 active</span><button id="addStickyNoteBtn" class="sticky-add-button" type="button">+ Add sticky</button></div>
+          </div>
+          <div id="stickyNotesList" class="sticky-notes-list"></div>
+          <div id="stickyNotesEmpty" class="sticky-empty">No active target or reminder. Add one when something needs your attention.</div>
+        </section>
+      </div>
+
+      <div id="utilityQuoteSection" class="utility-drawer-section hidden">
+        <section class="life-quote-panel" aria-label="Daily life quote">
+          <div class="life-quote-mark">“</div>
+          <div class="life-quote-copy">
+            <div class="life-quote-label"><span>QUOTE OF THE DAY</span><span id="lifeQuoteShuffleStatus">Auto shuffle · 30s</span></div>
+            <blockquote id="lifeQuoteText">Add your favorite life quotes to start the daily rotation.</blockquote>
+            <div id="lifeQuoteAuthor" class="life-quote-author">— Quote Library</div>
+          </div>
+          <div class="life-quote-actions">
+            <button id="lifeQuoteNextBtn" type="button" title="Show another quote">↻ Next</button>
+            <button id="lifeQuotePauseBtn" type="button" title="Pause automatic shuffle">Ⅱ Pause</button>
+            <button id="lifeQuoteLibraryBtn" type="button" class="quote-library-button" title="Manage saved quotes">☰ Library</button>
+          </div>
+        </section>
+      </div>
+    </aside>
+
     <div id="dashboardHScroll" class="dashboard-hscroll hidden" aria-label="Horizontal dashboard scroller">
       <button id="dashboardHScrollLeft" class="dashboard-hscroll-arrow" type="button" title="Scroll left">‹</button>
       <div class="dashboard-hscroll-center">
@@ -518,6 +547,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v16-7-1.js?v=20260822-0945" defer></script>
+  <script src="app-v16-8.js?v=20260822-168" defer></script>
 </body>
 </html>

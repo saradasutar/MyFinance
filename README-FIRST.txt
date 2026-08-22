@@ -1,50 +1,75 @@
-MYFINANCE V16.7.1 — FORCE FRONTEND UPDATE
+MYFINANCE V16.8 — RIGHT UTILITY PANEL
 
-WHY YOUR DASHBOARD STILL SHOWED FE v16.6
-The browser/GitHub Pages is still serving an older index.html that points to app-v16-6.js,
-or only app-v16-7.js was uploaded while index.html remained cached/old.
+PURPOSE
+Make Overview substantially shorter and cleaner by moving Quote of the Day and
+Targets & Reminders out of the centre dashboard.
 
-V16.7.1 USES A DOUBLE-SAFETY METHOD
+NEW LAYOUT
+LEFT:
+- Existing navigation
+- Existing Quick Diary
 
-1. NEW index.html
-   - shows FE v16.7.1
-   - points to app-v16-7-1.js
-   - uses a fresh cache-busting URL
-   - includes no-cache meta tags
+CENTRE:
+- Portfolio filters
+- Compact Live Wealth strip
+- Two tiny shortcut chips only:
+  📌 Targets & reminders
+  💬 Daily quote
+- KPI cards, growth, allocation and other portfolio content
 
-2. COMPATIBILITY app-v16-6.js
-   - this is intentionally included
-   - it contains the SAME repaired V16.7.1 code
-   - if an older cached index.html still requests app-v16-6.js, it will nevertheless
-     load the latest repaired frontend and update the visible version to FE v16.7.1
+RIGHT:
+A collapsible “Notes & Quotes” utility drawer.
 
-UPLOAD THESE FILES TO GITHUB TOGETHER
+RIGHT DRAWER — STICKY TAB
+- Active Targets and Reminders
+- Due / overdue status
+- + Add sticky
+- ✓ Done
+- Edit
+- Delete
+- Done items still save into Daily Diary as before
+
+RIGHT DRAWER — QUOTES TAB
+- Quote of the Day
+- Next
+- Pause / Resume
+- Quote Library
+- Auto-shuffle every 30 seconds while the Quotes tab is open
+
+COMPACT BEHAVIOUR
+- The previous full-width Sticky Notes row is removed from Overview.
+- The previous full-width Quote row is removed from Overview.
+- The right drawer overlays the dashboard instead of making Holdings/Watchlist narrower.
+- A slim fixed “Notes & Quotes” tab stays at the right edge.
+- It shows the active sticky count.
+- On mobile the drawer opens nearly full-width.
+- Escape key or clicking outside closes it.
+
+BACKEND
+Backend remains v3.8.0.
+NO Apps Script redeployment is required if BE already shows v3.8.0.
+
+INSTALL
+Upload matched frontend files together:
+
 REPLACE:
 - index.html
 - styles.css
-- app-v16-6.js   <-- IMPORTANT: replace the old V16.6 file
+- app-v16-7-1.js  <-- compatibility replacement, important
 
 ADD NEW:
-- app-v16-7-1.js
+- app-v16-8.js
 
 KEEP:
 - config.js
 
-BACKEND
-Backend remains v3.8.0.
-No Apps Script redeployment is needed if BE already shows v3.8.0.
-
-AFTER COMMIT
-Wait around 1 minute, then open:
-https://saradasutar.github.io/MyFinance/?v=1671
+Then open:
+https://saradasutar.github.io/MyFinance/?v=1680
 
 Hard refresh:
 Mac: Command + Shift + R
 Windows: Ctrl + Shift + R
 
-EXPECTED:
-FE v16.7.1
+EXPECTED
+FE v16.8
 BE v3.8.0
-
-The app-v16-6.js compatibility replacement is what protects you even if GitHub/browser
-temporarily serves the older V16.6 index.html.
