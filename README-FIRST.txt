@@ -1,75 +1,59 @@
-MYFINANCE V16.8 — RIGHT UTILITY PANEL
+MYFINANCE V17.0 — FULL-SCREEN HOLDINGS & WATCHLIST
 
-PURPOSE
-Make Overview substantially shorter and cleaner by moving Quote of the Day and
-Targets & Reminders out of the centre dashboard.
+NEW OPTION
 
-NEW LAYOUT
-LEFT:
-- Existing navigation
-- Existing Quick Diary
+HOLDINGS
+A new:
+  ⛶ Full screen
+button is added beside Print view.
 
-CENTRE:
-- Portfolio filters
-- Compact Live Wealth strip
-- Two tiny shortcut chips only:
-  📌 Targets & reminders
-  💬 Daily quote
-- KPI cards, growth, allocation and other portfolio content
+WATCHLIST
+A new:
+  ⛶ Full screen
+button is added beside Print view.
 
-RIGHT:
-A collapsible “Notes & Quotes” utility drawer.
+HOW IT WORKS
+- Click Full screen to expand the selected Holdings or Watchlist section over almost the
+  entire browser content area.
+- Sidebar, top dashboard and unrelated content no longer use space.
+- The table receives maximum width and height.
+- Vertical and horizontal scrolling remain available inside the table.
+- Column headers remain sticky while scrolling.
+- Existing sticky Investor/Asset columns continue to work.
+- Search, filters, Print, Notes, Add/Edit/Delete and Import controls remain usable.
+- Button changes to:
+  ✕ Exit full screen
+- Press Escape at any time to return to normal dashboard view.
+- Changing to another dashboard section automatically exits full-screen mode.
 
-RIGHT DRAWER — STICKY TAB
-- Active Targets and Reminders
-- Due / overdue status
-- + Add sticky
-- ✓ Done
-- Edit
-- Delete
-- Done items still save into Daily Diary as before
-
-RIGHT DRAWER — QUOTES TAB
-- Quote of the Day
-- Next
-- Pause / Resume
-- Quote Library
-- Auto-shuffle every 30 seconds while the Quotes tab is open
-
-COMPACT BEHAVIOUR
-- The previous full-width Sticky Notes row is removed from Overview.
-- The previous full-width Quote row is removed from Overview.
-- The right drawer overlays the dashboard instead of making Holdings/Watchlist narrower.
-- A slim fixed “Notes & Quotes” tab stays at the right edge.
-- It shows the active sticky count.
-- On mobile the drawer opens nearly full-width.
-- Escape key or clicking outside closes it.
+IMPORTANT
+This is an application focus/full-screen view inside the browser.
+It does not force Chrome/macOS into operating-system fullscreen, so it remains predictable
+and easy to exit.
 
 BACKEND
 Backend remains v3.8.0.
-NO Apps Script redeployment is required if BE already shows v3.8.0.
+NO Apps Script redeployment is required.
 
 INSTALL
-Upload matched frontend files together:
-
 REPLACE:
 - index.html
 - styles.css
-- app-v16-7-1.js  <-- compatibility replacement, important
+- app-v16-9.js  <-- compatibility replacement
 
 ADD NEW:
-- app-v16-8.js
+- app-v17-0.js
 
 KEEP:
 - config.js
 
-Then open:
-https://saradasutar.github.io/MyFinance/?v=1680
+OPEN:
+https://saradasutar.github.io/MyFinance/?v=1700
 
 Hard refresh:
 Mac: Command + Shift + R
 Windows: Ctrl + Shift + R
 
-EXPECTED
-FE v16.8
+EXPECTED:
+FE v17.0
 BE v3.8.0
