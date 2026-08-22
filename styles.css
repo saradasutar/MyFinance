@@ -5445,3 +5445,227 @@ td.negative strong{
   color:var(--loss-red) !important;
   background:var(--loss-red-bg) !important;
 }
+
+
+/* =========================================================
+   V19.2 — ADVANCED STICKY TARGETS & REMINDERS
+   Colour · Pin/keep-open · Collapse · Drag/move · Resize
+   ========================================================= */
+.sticky-usage-hint{
+  display:block;
+  margin-top:4px;
+  color:#8993a5;
+  font-size:8.5px;
+  font-weight:750;
+}
+.sticky-notes-list{
+  align-items:flex-start;
+  min-height:128px;
+}
+.sticky-note-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  flex:0 0 270px;
+  width:270px;
+  min-height:128px;
+  transition:width .18s ease,flex-basis .18s ease,min-height .18s ease,transform .16s ease,box-shadow .16s ease,opacity .16s ease;
+  user-select:none;
+}
+.sticky-note-card.sticky-size-s{flex-basis:220px;width:220px}
+.sticky-note-card.sticky-size-m{flex-basis:270px;width:270px}
+.sticky-note-card.sticky-size-l{flex-basis:340px;width:340px}
+.sticky-note-card.sticky-size-xl{flex-basis:430px;width:430px}
+.sticky-note-card.is-pinned{
+  order:-1;
+  box-shadow:0 0 0 2px rgba(92,87,210,.14),0 12px 26px rgba(53,55,126,.13);
+}
+.sticky-note-card.is-pinned::before{
+  content:"PINNED";
+  position:absolute;
+  top:-7px;
+  left:14px;
+  padding:2px 7px;
+  border-radius:999px;
+  color:#fff;
+  background:#625bd6;
+  font-size:6.7px;
+  font-weight:950;
+  letter-spacing:.08em;
+}
+.sticky-note-card.is-collapsed{
+  min-height:72px;
+}
+.sticky-note-card.is-collapsed .sticky-note-body{
+  display:none;
+}
+.sticky-note-card.is-collapsed .sticky-title-button h4{
+  margin-bottom:1px;
+}
+.sticky-note-card.is-dragging{
+  opacity:.48;
+  transform:scale(.98);
+}
+.sticky-note-card.drag-target{
+  transform:translateY(-3px);
+  outline:2px dashed rgba(91,92,226,.45);
+  outline-offset:2px;
+}
+
+/* Six selectable colours */
+.sticky-note-card.sticky-color-yellow{border-color:#ead99a;background:linear-gradient(145deg,#fffbe4,#fff3b9)}
+.sticky-note-card.sticky-color-blue{border-color:#bad8f2;background:linear-gradient(145deg,#f3f9ff,#deefff)}
+.sticky-note-card.sticky-color-green{border-color:#b9e0cc;background:linear-gradient(145deg,#f1fbf6,#dff5e9)}
+.sticky-note-card.sticky-color-pink{border-color:#efc2cf;background:linear-gradient(145deg,#fff5f8,#ffe3eb)}
+.sticky-note-card.sticky-color-purple{border-color:#d5c6f1;background:linear-gradient(145deg,#faf6ff,#ece3ff)}
+.sticky-note-card.sticky-color-orange{border-color:#efc99e;background:linear-gradient(145deg,#fff8ef,#ffe8cc)}
+
+.sticky-note-card.overdue{
+  border-color:#ed9da6!important;
+  box-shadow:inset 0 0 0 1px rgba(207,70,87,.08),0 7px 16px rgba(103,89,35,.08);
+}
+.sticky-note-top{
+  gap:6px;
+}
+.sticky-note-grab-zone{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:5px;
+  cursor:grab;
+}
+.sticky-note-grab-zone:active{cursor:grabbing}
+.sticky-drag-handle{
+  color:#8b91a0;
+  font-size:14px;
+  font-weight:950;
+  letter-spacing:-4px;
+  transform:rotate(90deg);
+  margin-right:2px;
+}
+.sticky-top-tools{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+.sticky-top-tools .sticky-due{
+  margin-right:2px;
+  max-width:105px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.sticky-icon-button,
+.sticky-mini-button{
+  display:inline-grid;
+  place-items:center;
+  border:1px solid rgba(112,121,145,.20);
+  color:#5e687a;
+  background:rgba(255,255,255,.58);
+  cursor:pointer;
+}
+.sticky-icon-button{
+  width:23px;
+  height:23px;
+  padding:0;
+  border-radius:7px;
+  font-size:11px;
+  font-weight:950;
+}
+.sticky-icon-button:hover,
+.sticky-mini-button:hover{
+  color:#4e49b3;
+  background:rgba(255,255,255,.92);
+  border-color:rgba(93,88,190,.32);
+}
+.sticky-icon-button.pin.active{
+  color:#6552bc;
+  background:#f0ebff;
+  border-color:#cfc4ef;
+}
+.sticky-icon-button.danger{
+  color:#c44b59;
+}
+.sticky-icon-button.danger:hover{
+  color:#b62f40;
+  background:#fff0f2;
+  border-color:#efc2c9;
+}
+.sticky-title-button{
+  width:100%;
+  padding:0;
+  border:0;
+  text-align:left;
+  color:inherit;
+  background:transparent;
+  cursor:pointer;
+}
+.sticky-title-button h4{
+  margin:8px 0 5px;
+}
+.sticky-note-body{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+}
+.sticky-no-details{
+  color:#9097a3!important;
+  font-style:italic;
+}
+.sticky-note-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:auto;
+  padding-top:5px;
+}
+.sticky-layout-tools{
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+.sticky-mini-button{
+  width:23px;
+  height:23px;
+  padding:0;
+  border-radius:7px;
+  font-size:11px;
+  font-weight:950;
+}
+.sticky-size-label{
+  min-width:18px;
+  color:#7c8493;
+  font-size:7.5px;
+  font-weight:950;
+  text-align:center;
+}
+.sticky-note-actions{
+  display:none!important; /* replaced by compact top tools + footer */
+}
+
+/* Drawer: cards remain practical even at L / XL setting */
+.utility-drawer .sticky-note-card.sticky-size-s,
+.utility-drawer .sticky-note-card.sticky-size-m,
+.utility-drawer .sticky-note-card.sticky-size-l,
+.utility-drawer .sticky-note-card.sticky-size-xl{
+  width:100%!important;
+  flex-basis:auto!important;
+}
+.utility-drawer .sticky-notes-list{
+  overflow-x:hidden!important;
+}
+.utility-drawer .sticky-note-card{
+  user-select:auto;
+}
+
+/* Mobile keeps move arrows available when drag is awkward */
+@media(max-width:720px){
+  .sticky-usage-hint{font-size:8px}
+  .sticky-note-card.sticky-size-s{flex-basis:205px;width:205px}
+  .sticky-note-card.sticky-size-m{flex-basis:245px;width:245px}
+  .sticky-note-card.sticky-size-l{flex-basis:300px;width:300px}
+  .sticky-note-card.sticky-size-xl{flex-basis:360px;width:360px}
+  .sticky-icon-button{width:22px;height:22px}
+  .sticky-top-tools .sticky-due{max-width:82px}
+}
