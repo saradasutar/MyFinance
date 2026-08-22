@@ -5219,3 +5219,144 @@ body.print-preview-open{overflow:hidden!important}
   .column-manager-layout{grid-template-columns:1fr}
   .column-manager-lists{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   V18.6 — LARGER, BOLDER, EYE-CATCHING HOLDINGS SUMMARY
+   ========================================================= */
+#holdingsSection .holdings-summary-panel{
+  padding:15px 16px !important;
+  border-radius:18px !important;
+}
+
+#holdingsSection .holdings-summary-head{
+  margin-bottom:12px !important;
+  align-items:center !important;
+}
+
+#holdingsSection .holdings-summary-head .eyebrow{
+  font-size:12px !important;
+  font-weight:950 !important;
+  letter-spacing:.12em !important;
+  color:#5e63d8 !important;
+}
+
+#holdingsSection .holdings-summary-head h3{
+  margin-top:4px !important;
+  font-size:25px !important;
+  line-height:1.05 !important;
+  font-weight:950 !important;
+  letter-spacing:-.035em !important;
+  color:#1f2d48 !important;
+}
+
+#holdingsSection .holdings-summary-note{
+  font-size:11.5px !important;
+  font-weight:850 !important;
+  color:#68768d !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix{
+  gap:8px !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .holdings-summary-row{
+  grid-template-columns:145px repeat(3,minmax(0,1fr)) !important;
+  gap:8px !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-owner-label{
+  min-height:132px !important;
+  padding:13px 14px !important;
+  border-radius:13px !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-owner-label strong{
+  font-size:18px !important;
+  line-height:1.05 !important;
+  font-weight:950 !important;
+  letter-spacing:-.02em !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-owner-label span{
+  margin-top:5px !important;
+  font-size:11px !important;
+  font-weight:800 !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .holdings-mini-card{
+  min-height:132px !important;
+  padding:13px 14px !important;
+  border-radius:13px !important;
+  box-shadow:0 5px 14px rgba(39,53,91,.055);
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-card-title{
+  margin-bottom:8px !important;
+  font-size:14px !important;
+  line-height:1.1 !important;
+  font-weight:950 !important;
+  letter-spacing:.005em !important;
+  color:#34435e !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-metric{
+  grid-template-columns:100px minmax(0,1fr) !important;
+  gap:8px !important;
+  padding:6px 0 !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-metric>span{
+  font-size:12px !important;
+  line-height:1.1 !important;
+  font-weight:900 !important;
+  color:#707e95 !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-metric>strong{
+  font-size:18px !important;
+  line-height:1.08 !important;
+  font-weight:950 !important;
+  letter-spacing:-.02em !important;
+  color:#1f2d48 !important;
+}
+
+#holdingsSection .holdings-value-growth-matrix .summary-metric.growth>strong{
+  font-size:17px !important;
+  font-weight:950 !important;
+}
+
+/* Keep the same stronger hierarchy in full-screen mode. */
+#holdingsSection.data-fullscreen-active .holdings-summary-head h3{
+  font-size:22px !important;
+}
+#holdingsSection.data-fullscreen-active .holdings-value-growth-matrix .summary-owner-label,
+#holdingsSection.data-fullscreen-active .holdings-value-growth-matrix .holdings-mini-card{
+  min-height:112px !important;
+  padding:10px 12px !important;
+}
+#holdingsSection.data-fullscreen-active .holdings-value-growth-matrix .summary-metric>span{
+  font-size:11px !important;
+}
+#holdingsSection.data-fullscreen-active .holdings-value-growth-matrix .summary-metric>strong{
+  font-size:16px !important;
+}
+
+/* Responsive protection for the larger summary typography. */
+@media(max-width:1100px){
+  #holdingsSection .holdings-value-growth-matrix .holdings-summary-row{
+    grid-template-columns:125px repeat(3,minmax(170px,1fr)) !important;
+    min-width:720px !important;
+  }
+  #holdingsSection .holdings-summary-head h3{
+    font-size:22px !important;
+  }
+}
+@media(max-width:620px){
+  #holdingsSection .holdings-summary-head{
+    align-items:flex-start !important;
+  }
+  #holdingsSection .holdings-summary-head h3{
+    font-size:20px !important;
+  }
+}
