@@ -2470,3 +2470,193 @@ table td{
   font-weight:800;
 }
 @media(max-width:1100px){.runtime-warning{left:14px;right:14px}}
+
+/* V16.5 freeze repair */
+.runtime-warning{max-height:82px;overflow:auto}
+
+
+/* =========================================================
+   V16.6 — Daily Life Quotes
+   ========================================================= */
+.life-quote-panel{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  min-height:64px;
+  margin:0 0 10px;
+  padding:9px 12px;
+  border:1px solid #e0e5ef;
+  border-radius:17px;
+  background:linear-gradient(135deg,#fffdf8,#f8f8ff 62%,#f2f7ff);
+  box-shadow:0 8px 20px rgba(49,57,104,.05);
+}
+.life-quote-mark{
+  align-self:start;
+  color:#8176cf;
+  font-family:Georgia,serif;
+  font-size:42px;
+  line-height:.9;
+  text-align:center;
+}
+.life-quote-copy{min-width:0}
+.life-quote-label{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:3px;
+  color:#8a94a6;
+  font-size:7.5px;
+  font-weight:950;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+.life-quote-label span:last-child{
+  color:#a0a8b8;
+  font-weight:800;
+  letter-spacing:0;
+  text-transform:none;
+}
+.life-quote-panel blockquote{
+  margin:0;
+  color:#2f3b50;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:13px;
+  font-weight:700;
+  line-height:1.35;
+}
+.life-quote-author{
+  margin-top:3px;
+  color:#777f90;
+  font-size:8.5px;
+  font-weight:800;
+}
+.life-quote-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  white-space:nowrap;
+}
+.life-quote-actions button{
+  min-height:31px;
+  padding:6px 9px;
+  border:1px solid #d8deeb;
+  border-radius:9px;
+  color:#58657d;
+  background:#fff;
+  font-size:8.5px;
+  font-weight:900;
+  cursor:pointer;
+}
+.life-quote-actions button:hover{
+  color:#504bb4;
+  border-color:#bebbe8;
+  background:#f4f3ff;
+}
+.life-quote-actions button:disabled{opacity:.4;cursor:not-allowed}
+.life-quote-actions .quote-library-button{
+  color:#4e4aa8;
+  background:#f2f1ff;
+}
+
+/* Quote Library */
+.quote-library-modal{
+  width:min(930px,94vw) !important;
+}
+.quote-library-layout{
+  display:grid;
+  grid-template-columns:minmax(270px,.8fr) minmax(340px,1.2fr);
+  gap:18px;
+  align-items:start;
+}
+.quote-editor{
+  position:sticky;
+  top:0;
+  padding:14px;
+  border:1px solid #e2e6ef;
+  border-radius:14px;
+  background:#fbfcff;
+}
+.quote-editor textarea{
+  min-height:150px;
+  resize:vertical;
+}
+.quote-library-list-wrap{
+  min-width:0;
+}
+.quote-library-tools{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:9px;
+}
+.quote-library-tools .search-input{
+  flex:1;
+}
+.quote-library-list{
+  display:grid;
+  gap:8px;
+  max-height:58vh;
+  overflow-y:auto;
+  padding-right:3px;
+}
+.quote-library-item{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 12px;
+  border:1px solid #e1e6ef;
+  border-radius:12px;
+  background:#fff;
+}
+.quote-library-item-copy{
+  min-width:0;
+}
+.quote-library-item-copy p{
+  margin:0 0 5px;
+  color:#344056;
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:10.5px;
+  line-height:1.45;
+}
+.quote-library-item-copy span{
+  color:#848d9e;
+  font-size:8px;
+  font-weight:800;
+}
+.quote-library-item-actions{
+  display:flex;
+  align-items:flex-start;
+  gap:5px;
+}
+@media(max-width:900px){
+  .life-quote-panel{
+    grid-template-columns:30px minmax(0,1fr);
+  }
+  .life-quote-actions{
+    grid-column:1 / -1;
+    justify-content:flex-end;
+  }
+  .quote-library-layout{
+    grid-template-columns:1fr;
+  }
+  .quote-editor{
+    position:static;
+  }
+}
+@media(max-width:600px){
+  .life-quote-panel{
+    padding:10px;
+    border-radius:14px;
+  }
+  .life-quote-panel blockquote{
+    font-size:12px;
+  }
+  .life-quote-actions{
+    overflow-x:auto;
+    justify-content:flex-start;
+  }
+  .quote-library-item{
+    flex-direction:column;
+  }
+}

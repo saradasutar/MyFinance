@@ -7,7 +7,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260822-164">
+  <link rel="stylesheet" href="styles.css?v=20260822-166">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -33,7 +33,7 @@
         <p id="loginMessage" class="form-message" role="alert"></p>
         <div class="login-meta">
           <p class="tiny muted">Your password is never stored in the browser.</p>
-          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v16.4</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
+          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v16.6</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
         </div>
       </form>
     </div>
@@ -54,14 +54,14 @@
       <div class="sidebar-session-card">
         <span class="sidebar-session-label">SIGNED IN AS</span>
         <strong id="dashboardUsername">—</strong>
-        <span id="dashboardVersion">Frontend · v16.4</span><span id="dashboardBackendVersion">Backend · checking…</span>
+        <span id="dashboardVersion">Frontend · v16.6</span><span id="dashboardBackendVersion">Backend · checking…</span>
       </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v16.4</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v16.6</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -94,6 +94,20 @@
           <div><p class="eyebrow">LIVE WEALTH DASHBOARD</p><h2 id="welcomeTitle">Combined portfolio</h2><p id="lastUpdatedText">Loading your latest portfolio…</p><div class="live-data-line"><span class="live-dot"></span><span>Portfolio + watchlist auto tracking</span></div></div>
           <div class="banner-chip" id="viewChip">Combined</div>
         </div>
+
+        <section class="life-quote-panel" aria-label="Daily life quote">
+          <div class="life-quote-mark">“</div>
+          <div class="life-quote-copy">
+            <div class="life-quote-label"><span>QUOTE OF THE DAY</span><span id="lifeQuoteShuffleStatus">Auto shuffle · 30s</span></div>
+            <blockquote id="lifeQuoteText">Add your favorite life quotes to start the daily rotation.</blockquote>
+            <div id="lifeQuoteAuthor" class="life-quote-author">— Quote Library</div>
+          </div>
+          <div class="life-quote-actions">
+            <button id="lifeQuoteNextBtn" type="button" title="Show another quote">↻ Next</button>
+            <button id="lifeQuotePauseBtn" type="button" title="Pause automatic shuffle">Ⅱ Pause</button>
+            <button id="lifeQuoteLibraryBtn" type="button" class="quote-library-button" title="Manage saved quotes">☰ Library</button>
+          </div>
+        </section>
 
         <section class="sticky-notes-panel" aria-label="Sticky targets and reminders">
           <div class="sticky-notes-head">
@@ -439,6 +453,26 @@
 
     <div id="watchModal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">FUTURE INVESTMENT</p><h2>Add to watchlist</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="watchForm" class="form-grid"><input id="watchId" type="hidden"><label>Asset type<select id="watchType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label><label>Asset name<input id="watchName" required maxlength="160"></label><label><span id="watchCodeLabel">Ticker symbol</span><input id="watchCode" required maxlength="40"></label><label id="watchExchangeLabel">Exchange<select id="watchExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label><label>Target buy price<input id="watchTarget" type="number" min="0" step="0.0001"></label><label>Manual current price <small>(optional)</small><input id="watchManualPrice" type="number" min="0" step="0.0001"></label><label>Priority<select id="watchPriority"><option value="HIGH">High</option><option value="MEDIUM" selected>Medium</option><option value="LOW">Low</option></select></label><label class="span-2">Personal Note <small>(optional)</small><textarea id="watchNotes" rows="4" maxlength="500" placeholder="Example: Buy below ₹1,500; wait for valuation correction; review after Q3 results…"></textarea></label><div id="watchMfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code.</div><div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveWatchBtn" type="submit" class="primary-button">Save watch item</button></div></form></div>
 
+    <div id="lifeQuoteModal" class="modal quote-library-modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div><p class="eyebrow">DAILY LIFE QUOTES</p><h2>Quote Library</h2><p class="modal-subcopy">Saved permanently in the Google Sheet tab <strong>DailyQuotes</strong>. The dashboard chooses a different starting quote each day and auto-shuffles while open.</p></div>
+        <button class="modal-close" data-close-modal>×</button>
+      </div>
+      <div class="quote-library-layout">
+        <form id="lifeQuoteForm" class="stack-form quote-editor">
+          <input id="lifeQuoteId" type="hidden">
+          <label>Quote<textarea id="lifeQuoteInput" rows="5" maxlength="500" required placeholder="Write or paste a life quote…"></textarea></label>
+          <label>Author / source <small>(optional)</small><input id="lifeQuoteAuthorInput" maxlength="120" placeholder="e.g. Personal note, book author, My Finance"></label>
+          <div class="form-actions"><button id="clearLifeQuoteBtn" type="button" class="secondary-button">Clear</button><button id="saveLifeQuoteBtn" type="submit" class="primary-button">Save quote</button></div>
+        </form>
+        <div class="quote-library-list-wrap">
+          <div class="quote-library-tools"><input id="lifeQuoteSearch" class="search-input" type="search" placeholder="Search saved quotes…"><span id="lifeQuoteCount" class="filter-result-pill">0 quotes</span></div>
+          <div id="lifeQuoteList" class="quote-library-list"></div>
+          <div id="lifeQuoteEmpty" class="empty-state hidden">No quotes saved yet.</div>
+        </div>
+      </div>
+    </div>
+
     <div id="stickyNoteModal" class="modal small-modal sticky-note-modal hidden" role="dialog" aria-modal="true">
       <div class="modal-head"><div><p class="eyebrow">DASHBOARD STICKY</p><h2 id="stickyNoteModalTitle">Add target or reminder</h2></div><button class="modal-close" data-close-modal>×</button></div>
       <form id="stickyNoteForm" class="stack-form">
@@ -481,6 +515,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v16-4.js?v=20260822-164" defer></script>
+  <script src="app-v16-6.js?v=20260822-166" defer></script>
 </body>
 </html>
