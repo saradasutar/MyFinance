@@ -1,71 +1,50 @@
-MYFINANCE V16.6 — DAILY LIFE QUOTES WITH AUTO SHUFFLE
+MYFINANCE V16.7.1 — FORCE FRONTEND UPDATE
 
-FRONTEND
-v16.6
+WHY YOUR DASHBOARD STILL SHOWED FE v16.6
+The browser/GitHub Pages is still serving an older index.html that points to app-v16-6.js,
+or only app-v16-7.js was uploaded while index.html remained cached/old.
+
+V16.7.1 USES A DOUBLE-SAFETY METHOD
+
+1. NEW index.html
+   - shows FE v16.7.1
+   - points to app-v16-7-1.js
+   - uses a fresh cache-busting URL
+   - includes no-cache meta tags
+
+2. COMPATIBILITY app-v16-6.js
+   - this is intentionally included
+   - it contains the SAME repaired V16.7.1 code
+   - if an older cached index.html still requests app-v16-6.js, it will nevertheless
+     load the latest repaired frontend and update the visible version to FE v16.7.1
+
+UPLOAD THESE FILES TO GITHUB TOGETHER
+REPLACE:
+- index.html
+- styles.css
+- app-v16-6.js   <-- IMPORTANT: replace the old V16.6 file
+
+ADD NEW:
+- app-v16-7-1.js
+
+KEEP:
+- config.js
 
 BACKEND
-v3.8.0
+Backend remains v3.8.0.
+No Apps Script redeployment is needed if BE already shows v3.8.0.
 
-NEW QUOTE PORTION
-A compact “QUOTE OF THE DAY” strip appears on Overview.
-
-It shows life quotes saved permanently in the Google Sheet tab:
-DailyQuotes
-
-BEHAVIOUR
-- A different starting quote is selected each calendar day.
-- While the dashboard is open, quotes auto-shuffle every 30 seconds.
-- Auto shuffle pauses when the browser tab is hidden or when you leave Overview.
-- “↻ Next” shows another quote immediately.
-- “Ⅱ Pause / ▶ Resume” controls auto shuffle.
-- “☰ Library” opens the saved Quote Library.
-
-QUOTE LIBRARY
-From the dashboard you can:
-- Add a quote
-- Add optional author/source
-- Search saved quotes
-- Edit a saved quote
-- Delete a saved quote
-
-The backend stores:
-Id | QuoteText | Author | Active | CreatedBy | CreatedAt | UpdatedAt
-
-FIRST INSTALL
-Backend v3.8 automatically creates:
-DailyQuotes
-
-It also adds 12 starter life quotes so the feature works immediately.
-They are ordinary rows in DailyQuotes and can be edited/deleted/replaced from the dashboard.
-
-IMPORTANT
-The existing market-price sheet named “Quotes” is NOT changed.
-Life quotes use the separate “DailyQuotes” sheet.
-
-INSTALL
-GITHUB
-1. Replace index.html
-2. Replace styles.css
-3. Upload app-v16-6.js as a NEW file
-4. Keep/replace config.js with the included file
-5. Commit together
-
-APPS SCRIPT
-1. Replace Code.gs with Code-v3.8.gs
-2. Save
-3. Deploy > Manage deployments > Edit
-4. Select New version
-5. Deploy
-6. Keep the same Web App /exec URL
-
-The direct /exec URL must show:
-"version":"3.8.0"
-
-OPEN
-https://saradasutar.github.io/MyFinance/?v=1660
+AFTER COMMIT
+Wait around 1 minute, then open:
+https://saradasutar.github.io/MyFinance/?v=1671
 
 Hard refresh:
 Mac: Command + Shift + R
 Windows: Ctrl + Shift + R
 
-All V16.5 freeze repairs and earlier filter/print/sticky/diary features are retained.
+EXPECTED:
+FE v16.7.1
+BE v3.8.0
+
+The app-v16-6.js compatibility replacement is what protects you even if GitHub/browser
+temporarily serves the older V16.6 index.html.
