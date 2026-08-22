@@ -1,56 +1,43 @@
-MYFINANCE V18.0 — AUTO-MOVING QUOTES
+MYFINANCE V18.1 — EASY PRINT WITHOUT POP-UP BLOCKING
 
-NEW
-Quotes now move automatically on the My Home dashboard.
+Your screenshot showed:
+“Print window was blocked. Please allow pop-ups for this site.”
 
-HOW IT WORKS
-- Quote of the Day changes automatically every 12 seconds.
-- Each new quote gently slides into view from the right.
-- The quote text has a very small slow movement between changes, so the card feels alive
-  without making the text difficult to read.
-- Hover over the quote card and the gentle movement stops while you read.
-- The existing “Another” button still moves immediately to the next quote.
-- The right-side Quote panel uses the same automatic rotation.
-- Pause / Resume in the right Quote panel controls automatic movement.
-- If the browser tab is hidden, quote movement does not waste resources.
-- If your device has Reduced Motion enabled, animations are automatically disabled.
+V18.1 removes that problem by not opening a separate print window.
 
-VISIBLE STATUS
-My Home now shows:
-  Auto move · 12s
+HOW TO USE
+1. Click Preview / Print in Holdings or Watchlist.
+2. A large preview opens inside MyFinance itself.
+3. Check the data.
+4. Click Print now.
+5. Chrome's normal Print dialog opens.
+6. Select your printer, or choose Save as PDF.
 
-COLOUR THEMES
-The previous rotating quote colours remain:
-Purple, Blue, Green, Amber, Rose and Teal.
+You no longer need to allow website pop-ups for MyFinance printing.
 
-ALL PREVIOUS FEATURES REMAIN
-- Holdings / Watchlist drag resize
-- Row-height and table-width sliders
-- Full screen
-- Holdings invested / present value / growth summary
-- Larger bold fonts
-- Diary
-- Targets / reminders
-- Print / filters / notes
+ESC or Close exits preview.
+
+The preview uses the current filters.
+Holdings and Watchlist print in landscape.
+Daily and Monthly Diary print in portrait.
 
 BACKEND
-Backend stays v3.8.0.
-No Apps Script redeployment required.
+Backend stays v3.8.0. No Apps Script redeployment required.
 
 INSTALL
 REPLACE:
 - index.html
 - styles.css
-- app-v17-9.js   (compatibility replacement)
+- app-v18-0.js (compatibility replacement)
 
 ADD:
-- app-v18-0.js
+- app-v18-1.js
 
 KEEP:
 - config.js
 
 OPEN:
-https://saradasutar.github.io/MyFinance/?v=1800
+https://saradasutar.github.io/MyFinance/?v=1810
 
 Hard refresh:
 Mac: Command + Shift + R

@@ -4861,3 +4861,52 @@ body.column-resize-active *{
     transform:none !important;
   }
 }
+
+
+/* =========================================================
+   V18.1 — SAME-PAGE PRINT PREVIEW
+   ========================================================= */
+body.print-preview-open{overflow:hidden!important}
+.print-preview-overlay{
+  position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:12px;
+  background:rgba(16,25,56,.64);backdrop-filter:blur(3px)
+}
+.print-preview-shell{
+  display:flex;flex-direction:column;width:min(1420px,98vw);height:min(920px,96vh);
+  overflow:hidden;border:1px solid #ccd4e5;border-radius:16px;background:#eef2f7;
+  box-shadow:0 30px 90px rgba(10,18,48,.35)
+}
+.print-preview-toolbar{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex:0 0 auto;
+  min-height:58px;padding:8px 12px;border-bottom:1px solid #d8dfeb;background:#fff
+}
+.print-preview-copy{display:flex;flex-direction:column;min-width:0}
+.print-preview-copy strong{color:#26334b;font-size:16px!important;font-weight:950!important}
+.print-preview-copy span{
+  overflow:hidden;color:#768197;font-size:10.5px!important;font-weight:700!important;
+  text-overflow:ellipsis;white-space:nowrap
+}
+.print-preview-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.print-preview-help{color:#168064;font-size:9.5px!important;font-weight:850!important}
+.print-preview-primary,.print-preview-close{
+  min-height:36px;padding:7px 12px;border-radius:10px;font-size:11px!important;
+  font-weight:950!important;cursor:pointer
+}
+.print-preview-primary{
+  border:0;color:#fff;background:linear-gradient(135deg,#525fd7,#7650d3);
+  box-shadow:0 7px 16px rgba(81,80,181,.20)
+}
+.print-preview-close{border:1px solid #d6dde8;color:#536078;background:#fff}
+.print-preview-frame-wrap{flex:1 1 auto;min-height:0;padding:10px;overflow:hidden}
+.print-preview-frame{
+  width:100%;height:100%;border:1px solid #d5dce7;border-radius:10px;background:#fff;
+  box-shadow:0 5px 20px rgba(33,44,81,.08)
+}
+@media(max-width:760px){
+  .print-preview-overlay{padding:3px}
+  .print-preview-shell{width:100vw;height:100vh;border-radius:0}
+  .print-preview-toolbar{align-items:flex-start;flex-direction:column}
+  .print-preview-actions{width:100%}
+  .print-preview-help{display:none}
+  .print-preview-primary,.print-preview-close{flex:1}
+}
