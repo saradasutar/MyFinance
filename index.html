@@ -10,7 +10,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260822-170">
+  <link rel="stylesheet" href="styles.css?v=20260822-172">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -36,7 +36,7 @@
         <p id="loginMessage" class="form-message" role="alert"></p>
         <div class="login-meta">
           <p class="tiny muted">Your password is never stored in the browser.</p>
-          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v17.0</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
+          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v17.2</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
         </div>
       </form>
     </div>
@@ -57,14 +57,14 @@
       <div class="sidebar-session-card">
         <span class="sidebar-session-label">SIGNED IN AS</span>
         <strong id="dashboardUsername">—</strong>
-        <span id="dashboardVersion">Frontend · v17.0</span><span id="dashboardBackendVersion">Backend · checking…</span>
+        <span id="dashboardVersion">Frontend · v17.2</span><span id="dashboardBackendVersion">Backend · checking…</span>
       </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v17.0</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v17.2</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -84,8 +84,89 @@
         <div class="quick-actions"><button id="importBtn" class="secondary-button">⇧ Import portfolio</button><button id="exportBtn" class="secondary-button">Export CSV</button></div>
       </div>
 
-      <section id="overviewSection" class="page-section">
-        <div id="masterLoadBanner" class="master-load-banner hidden">
+      
+<section id="overviewSection" class="page-section">
+  <div class="overview-mode-bar">
+    <div class="overview-mode-switcher" role="tablist" aria-label="Dashboard view">
+      <button id="personalHomeModeBtn" type="button" class="active" data-overview-mode="PERSONAL"><span>⌂</span> My Home</button>
+      <button id="investmentHomeModeBtn" type="button" data-overview-mode="INVESTMENT"><span>₹</span> Investments</button>
+    </div>
+    <button id="overviewSetDefaultBtn" type="button" class="overview-default-button" title="Use the current Overview mode whenever My Finance opens">✓ Default view</button>
+  </div>
+
+  <div id="personalHomeContent" class="personal-home-content">
+    <section class="personal-home-hero tint-lilac">
+      <div>
+        <p class="eyebrow">MY DAILY DASHBOARD</p>
+        <h2 id="personalHomeGreeting">Your day at a glance</h2>
+        <p>Diary, targets, reminders and a daily thought. Investment details stay hidden until you choose to view them.</p>
+      </div>
+      <div class="personal-home-actions">
+        <button id="homeDailyWriteBtn" type="button" class="primary-button">✎ Daily diary</button>
+        <button id="homeMonthlyWriteBtn" type="button" class="secondary-button">▣ Monthly diary</button>
+        <button id="homeAddTargetBtn" type="button" class="secondary-button">+ Target / reminder</button>
+      </div>
+    </section>
+
+    <div class="personal-home-grid">
+      <article class="personal-home-card diary-home-card tint-blue">
+        <div class="personal-card-head">
+          <div><p class="eyebrow">TODAY'S DIARY</p><h3>Write & remember</h3></div>
+          <span id="homeDiaryCount" class="personal-count-badge">0 today</span>
+        </div>
+        <div id="homeDiaryPreview" class="home-diary-preview">
+          <p class="personal-empty-copy">Nothing written today yet.</p>
+        </div>
+        <div class="personal-card-actions">
+          <button id="homeDiaryQuickBtn" type="button">+ Write now</button>
+          <button id="homeFullDiaryBtn" type="button">Open Diary</button>
+        </div>
+      </article>
+
+      <article class="personal-home-card target-home-card tint-yellow">
+        <div class="personal-card-head">
+          <div><p class="eyebrow">TARGETS & REMINDERS</p><h3>What needs attention</h3></div>
+          <span id="homeStickyCount" class="personal-count-badge target-count">0 active</span>
+        </div>
+        <div id="homeStickySummary" class="home-sticky-summary">
+          <div><strong id="homeStickyDueToday">0</strong><span>Due today</span></div>
+          <div><strong id="homeStickyOverdue">0</strong><span>Overdue</span></div>
+          <div><strong id="homeStickyUpcoming">0</strong><span>Upcoming</span></div>
+        </div>
+        <div id="homeStickyPreview" class="home-sticky-preview">
+          <p class="personal-empty-copy">No active target or reminder.</p>
+        </div>
+        <div class="personal-card-actions">
+          <button id="homeTargetAddBtn" type="button">+ Add</button>
+          <button id="homeTargetsOpenBtn" type="button">Open panel</button>
+        </div>
+      </article>
+
+      <article id="homeQuoteCard" class="personal-home-card quote-home-card quote-tone-0">
+        <div class="personal-card-head">
+          <div><p class="eyebrow">QUOTE OF THE DAY</p><h3>Pause for a thought</h3></div>
+          <span class="quote-mini-mark">“</span>
+        </div>
+        <blockquote id="homeQuoteText">Your saved life quote will appear here.</blockquote>
+        <div id="homeQuoteAuthor" class="home-quote-author">— Quote Library</div>
+        <div class="personal-card-actions">
+          <button id="homeQuoteNextBtn" type="button">↻ Another</button>
+          <button id="homeQuotesOpenBtn" type="button">Open Quotes</button>
+        </div>
+      </article>
+    </div>
+
+    <section class="personal-home-footer tint-green">
+      <div>
+        <strong>Investment details are hidden from your default Home view.</strong>
+        <span>Open Investments, Holdings or Watchlist only when you want financial details.</span>
+      </div>
+      <button id="homeShowInvestmentsBtn" type="button">₹ View investments</button>
+    </section>
+  </div>
+
+  <div id="investmentOverviewContent" class="investment-overview-content hidden">
+<div id="masterLoadBanner" class="master-load-banner hidden">
           <div>
             <p class="eyebrow">MASTER SPREADSHEET NOT YET APPLIED</p>
             <h3>Your dashboard is still showing the old portfolio data.</h3>
@@ -136,9 +217,10 @@
         </div>
 
         <article class="panel"><div class="panel-head"><div><p class="eyebrow">TOP HOLDINGS</p><h3>Largest current holdings</h3></div><button class="link-button" data-section-link="holdings">View all</button></div><div id="topHoldings" class="mini-holdings empty-state">Add investments to begin.</div></article>
-      </section>
+  </div>
+</section>
 
-      <section id="holdingsSection" class="page-section hidden">
+<section id="holdingsSection" class="page-section hidden">
         <article class="panel table-panel">
           <div class="panel-head responsive-head">
             <div><p class="eyebrow">PORTFOLIO DETAILS</p><h3 id="holdingsHeading">Mutual funds, stocks and ETFs</h3><p id="masterDataStatus" class="master-data-status">Master spreadsheet not loaded yet.</p></div>
@@ -547,6 +629,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v17-0.js?v=20260822-170" defer></script>
+  <script src="app-v17-2.js?v=20260822-172" defer></script>
 </body>
 </html>
