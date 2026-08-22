@@ -1,56 +1,64 @@
-MYFINANCE V18.9 / BACKEND V3.13.0 — RELIABLE TICKETED RELAY
+MYFINANCE V19.0 / BACKEND V3.14.0 — POST + JSONP POLLING FIX
 
-I found two problems in the previous connection code:
+WHY RELAY.HTML STILL TIMED OUT
+V18.9 still required the Apps Script response iframe to navigate back to GitHub relay.html.
+That cross-site iframe navigation is the fragile part.
 
-1. processApiRequest_ was returning Apps Script TextOutput objects for most actions, then the outer
-   transport tried to wrap those objects again. That is now corrected: API actions return plain data.
+V19.0 DOES NOT USE relay.html AT ALL.
 
-2. V18.8 depended on window.name surviving a cross-site Apps Script -> GitHub navigation.
-   That is not reliable enough in modern browsers.
+HOW IT WORKS
+1. MyFinance sends the login/data request to Apps Script using a hidden HTML form POST.
+   The browser is allowed to submit a cross-origin form.
+2. The frontend does NOT try to read the Apps Script POST response.
+3. Apps Script completes the request and stores the result temporarily against a random request ID.
+4. MyFinance polls for that result using a cross-origin <script> request (JSONP).
+5. When the result is ready, it is returned and immediately removed from temporary cache.
 
-V18.9 uses a ticketed relay instead:
-- Login/data request is still POSTed to Apps Script.
-- Password/token stays in the POST body, not in the URL.
-- Apps Script stores the response briefly under a random one-time relay ID.
-- The iframe returns only that random ID to GitHub relay.html.
-- GitHub retrieves the one-time result with a script/JSONP request, which does not depend on CORS.
-- Relay data expires after 3 minutes and is removed after successful retrieval.
+This avoids:
+- CORS fetch
+- postMessage between Apps Script and GitHub
+- nested Apps Script iframe communication
+- window.name
+- relay.html
+- redirecting an iframe back to GitHub
+
+SECURITY
+- Username/password/token stay in the POST body.
+- They are NOT placed in the URL.
+- Only a random request ID appears in polling URLs.
+- Results expire after 3 minutes and are removed after successful retrieval.
 
 BACKEND
-1. Replace the entire Apps Script Code.gs with Code-v3.13.gs
+1. Replace the entire Code.gs with Code-v3.14.gs
 2. Save
-3. Deploy > Manage deployments > Edit existing Web App
-4. Select New version
-5. Execute as: Me
-6. Who has access: Anyone
-7. Deploy
-8. Open the /exec URL directly and confirm:
-   "version":"3.13.0"
+3. Deploy > Manage deployments
+4. EDIT THE EXISTING DEPLOYMENT (do not create another new deployment)
+5. Version: New version
+6. Execute as: Me
+7. Who has access: Anyone
+8. Deploy
+9. Open the same /exec URL and confirm:
+   "version":"3.14.0"
+
+CURRENT CONFIGURED URL
+https://script.google.com/macros/s/AKfycbwNR8hIu-XdPwj90RwqsjjY1_ZvkBH6BHpzBOfYqU_ekcIr2JtUv0Feq_-uolj7oqkd/exec
 
 GITHUB
-Upload/replace ALL:
+Upload/replace:
 - index.html
 - styles.css
 - config.js
-- app-v18-9.js
-- app-v18-8.js   (compatibility)
-- relay.html     (required)
+- app-v19-0.js
+- app-v18-9.js  (compatibility)
 
-The package is already configured for:
-https://script.google.com/macros/s/AKfycbx9mq2u-rzOSsfzmUP52SpyIZbJE9gqA1gh5_sdDJmtVa0vCYCEcKsqRUZK278tw2-f/exec
+relay.html is no longer required and can be deleted.
 
-CHECK relay page:
-https://saradasutar.github.io/saradaniharika/relay.html
-A blank page is correct.
-
-OPEN:
-https://saradasutar.github.io/saradaniharika/?v=1890
+OPEN
+https://saradasutar.github.io/saradaniharika/?v=1900
 
 Hard refresh on Mac:
 Command + Shift + R
 
-EXPECTED:
-Frontend v18.9
-Backend v3.13.0
-
-All dashboard features from V18.8 are retained.
+EXPECTED
+Frontend v19.0
+Backend v3.14.0
