@@ -7,7 +7,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260822-161">
+  <link rel="stylesheet" href="styles.css?v=20260822-163">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -33,7 +33,7 @@
         <p id="loginMessage" class="form-message" role="alert"></p>
         <div class="login-meta">
           <p class="tiny muted">Your password is never stored in the browser.</p>
-          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v16.1</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
+          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v16.3</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
         </div>
       </form>
     </div>
@@ -53,14 +53,14 @@
       <div class="sidebar-session-card">
         <span class="sidebar-session-label">SIGNED IN AS</span>
         <strong id="dashboardUsername">—</strong>
-        <span id="dashboardVersion">Frontend · v16.1</span><span id="dashboardBackendVersion">Backend · checking…</span>
+        <span id="dashboardVersion">Frontend · v16.3</span><span id="dashboardBackendVersion">Backend · checking…</span>
       </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v16.1</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v16.3</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -93,6 +93,15 @@
           <div><p class="eyebrow">LIVE WEALTH DASHBOARD</p><h2 id="welcomeTitle">Combined portfolio</h2><p id="lastUpdatedText">Loading your latest portfolio…</p><div class="live-data-line"><span class="live-dot"></span><span>Portfolio + watchlist auto tracking</span></div></div>
           <div class="banner-chip" id="viewChip">Combined</div>
         </div>
+
+        <section class="sticky-notes-panel" aria-label="Sticky targets and reminders">
+          <div class="sticky-notes-head">
+            <div><p class="eyebrow">STICKY NOTES</p><h3>Targets & reminders</h3></div>
+            <div class="sticky-head-actions"><span id="stickyNotesCount">0 active</span><button id="addStickyNoteBtn" class="sticky-add-button" type="button">+ Add sticky</button></div>
+          </div>
+          <div id="stickyNotesList" class="sticky-notes-list"></div>
+          <div id="stickyNotesEmpty" class="sticky-empty">No active target or reminder. Add one when something needs your attention.</div>
+        </section>
 
         <div class="summary-grid">
           <article class="summary-card accent-blue"><div class="card-icon">₹</div><p id="sumInvestedLabel">Invested / cost value</p><strong id="sumInvested">₹0</strong><span id="sumAssetCount">0 holdings</span><div id="sumInvestedTrend" class="summary-trend neutral">Tracking growth…</div></article>
@@ -133,7 +142,7 @@
         <article class="panel table-panel">
           <div class="panel-head responsive-head">
             <div><p class="eyebrow">PORTFOLIO DETAILS</p><h3 id="holdingsHeading">Mutual funds, stocks and ETFs</h3><p id="masterDataStatus" class="master-data-status">Master spreadsheet not loaded yet.</p></div>
-            <div class="table-tools"><button id="replaceMasterDataBtn" class="master-data-button" type="button">⇄ Replace from Master Sheet</button><button id="showAllInvestmentsBtn" class="show-all-button" type="button">▦ Show All Investments</button><input id="holdingSearch" class="search-input" type="search" placeholder="Search holdings…"><select id="holdingTypeFilter" class="compact-select"><option value="ALL">All assets</option><option value="MF">Mutual funds</option><option value="STOCK">Stocks</option><option value="ETF">ETFs</option><option value="OTHER">Other</option></select><button id="viewAllNotesBtn" class="secondary-button">📝 All notes</button><button id="bulkImportBtn" class="secondary-button">⇧ Import</button><button id="addInvestmentTableBtn" class="primary-button">+ Add</button></div>
+            <div class="table-tools"><button id="replaceMasterDataBtn" class="master-data-button" type="button">⇄ Replace from Master Sheet</button><button id="showAllInvestmentsBtn" class="show-all-button" type="button">▦ Show All Investments</button><input id="holdingSearch" class="search-input" type="search" placeholder="Search holdings…"><select id="holdingTypeFilter" class="compact-select"><option value="ALL">All assets</option><option value="MF">Mutual funds</option><option value="STOCK">Stocks</option><option value="ETF">ETFs</option><option value="OTHER">Other</option></select><span id="holdingsFilterCount" class="filter-result-pill">0 visible</span><button id="printHoldingsBtn" class="print-view-button" type="button">⎙ Print view</button><button id="viewAllNotesBtn" class="secondary-button">📝 All notes</button><button id="bulkImportBtn" class="secondary-button">⇧ Import</button><button id="addInvestmentTableBtn" class="primary-button">+ Add</button></div>
           </div>
           <div class="performance-note">1D–10Y columns show the asset/scheme price or NAV performance for that period. XIRR is available for mutual funds imported from transaction statements.</div>
           <div class="table-wrap wide-table">
@@ -147,7 +156,7 @@
       </section>
 
       <section id="watchlistSection" class="page-section hidden"><div class="watchlist-live-strip"><div><span class="live-dot"></span><strong>Live watchlist tracking</strong><span id="watchlistLastAutoUpdate" class="muted">Waiting for update…</span></div><div class="watchlist-live-stats"><span>At target <b id="watchStripAtTarget">0</b></span><span>Near target <b id="watchStripNear">0</b></span><span>Avg gap <b id="watchStripGap">—</b></span></div></div>
-        <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div><div class="table-tools"><input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…"><button id="watchAllNotesBtn" class="secondary-button">📝 All notes</button><button id="addWatchBtn" class="primary-button">+ Add</button></div></div><div class="performance-note">Live price comes from the backend. Sheet columns retain the uploaded workbook’s valuation, growth, 52-week and performance details.</div><div class="table-wrap wide-table"><table class="watchlist-details-table"><thead><tr><th class="sticky-col asset-col">Asset</th><th>Live Price/NAV</th><th>Sheet Day %</th><th>Target</th><th>Distance</th><th>52W H/L</th><th>P/E or P/B</th><th>1M</th><th>1Y</th><th>3Y</th><th>5Y</th><th>10Y</th><th>Remark / Moat</th><th class="personal-note-head">Personal Note</th><th></th></tr></thead><tbody id="watchBody"></tbody></table></div><div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div></article>
+        <article class="panel table-panel"><div class="panel-head responsive-head"><div><p class="eyebrow">FUTURE IDEAS</p><h3>Investment watchlist</h3></div><div class="table-tools watch-filter-tools"><input id="watchSearch" class="search-input" type="search" placeholder="Search watchlist…"><select id="watchTypeFilter" class="compact-select"><option value="ALL">All types</option><option value="STOCK">Stocks</option><option value="ETF">ETFs</option><option value="MF">Mutual funds</option></select><select id="watchPriorityFilter" class="compact-select"><option value="ALL">All priority</option><option value="HIGH">High</option><option value="MEDIUM">Medium</option><option value="LOW">Low</option></select><select id="watchTargetFilter" class="compact-select"><option value="ALL">All target status</option><option value="AT">At / below target</option><option value="NEAR">Within 5%</option><option value="FAR">More than 5% away</option><option value="NO_TARGET">No target</option></select><span id="watchFilterCount" class="filter-result-pill">0 visible</span><button id="printWatchlistBtn" class="print-view-button" type="button">⎙ Print view</button><button id="watchAllNotesBtn" class="secondary-button">📝 All notes</button><button id="addWatchBtn" class="primary-button">+ Add</button></div></div><div class="performance-note">Live price comes from the backend. Sheet columns retain the uploaded workbook’s valuation, growth, 52-week and performance details.</div><div class="table-wrap wide-table"><table class="watchlist-details-table"><thead><tr><th class="sticky-col asset-col">Asset</th><th>Live Price/NAV</th><th>Sheet Day %</th><th>Target</th><th>Distance</th><th>52W H/L</th><th>P/E or P/B</th><th>1M</th><th>1Y</th><th>3Y</th><th>5Y</th><th>10Y</th><th>Remark / Moat</th><th class="personal-note-head">Personal Note</th><th></th></tr></thead><tbody id="watchBody"></tbody></table></div><div id="watchEmpty" class="empty-state hidden">No watchlist items match this search.</div></article>
       </section>
 
 
@@ -204,7 +213,7 @@
                 <div><p class="eyebrow">BROWSE & SEARCH</p><h3>Daily diary history</h3></div>
                 <div id="diaryViewSwitcher" class="range-switcher diary-view-switcher">
                   <button type="button" class="active" data-diary-view="DAILY">Day</button>
-                  <button type="button" data-diary-view="MONTHLY">Month</button>
+                  <button type="button" data-diary-view="MONTHLY">Month</button><button type="button" data-diary-view="RANGE">Range</button>
                 </div>
               </div>
 
@@ -212,6 +221,8 @@
                 <div class="diary-search-wrap"><input id="diarySearch" class="search-input diary-search" type="search" placeholder="Search title, entry or date…"><button id="diarySearchClearBtn" type="button" class="search-clear-button" title="Clear search">×</button></div>
                 <label id="diaryDayControl" class="diary-date-control">Day<input id="diaryBrowseDate" type="date"></label>
                 <label id="diaryMonthControl" class="diary-date-control hidden">Month<input id="diaryBrowseMonth" type="month"></label>
+                <div id="diaryRangeControl" class="diary-range-control hidden"><label>From<input id="diaryFromDate" type="date"></label><label>To<input id="diaryToDate" type="date"></label></div>
+                <button id="printDiaryBtn" class="print-view-button diary-print-button" type="button">⎙ Print filtered diary</button>
               </div>
 
               <div id="diarySummary" class="diary-summary"></div>
@@ -245,7 +256,7 @@
                 <option value="COMPLETED">Completed targets</option>
               </select></label>
             </div>
-            <input id="monthlySearch" class="search-input monthly-search" type="search" placeholder="Search monthly diary, plan, experience or target…">
+            <div class="monthly-search-actions"><input id="monthlySearch" class="search-input monthly-search" type="search" placeholder="Search monthly diary, plan, experience or target…"><button id="printMonthlyBtn" class="print-view-button" type="button">⎙ Print filtered view</button></div>
           </div>
 
           <div id="monthCompletionPanel" class="month-completion-panel">
@@ -427,6 +438,19 @@
 
     <div id="watchModal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">FUTURE INVESTMENT</p><h2>Add to watchlist</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="watchForm" class="form-grid"><input id="watchId" type="hidden"><label>Asset type<select id="watchType" required><option value="STOCK">Stock</option><option value="ETF">ETF</option><option value="MF">Mutual fund</option><option value="OTHER">Other</option></select></label><label>Asset name<input id="watchName" required maxlength="160"></label><label><span id="watchCodeLabel">Ticker symbol</span><input id="watchCode" required maxlength="40"></label><label id="watchExchangeLabel">Exchange<select id="watchExchange"><option value="NSE">NSE</option><option value="BOM">BSE (BOM)</option><option value="NASDAQ">NASDAQ</option><option value="NYSE">NYSE</option></select></label><label>Target buy price<input id="watchTarget" type="number" min="0" step="0.0001"></label><label>Manual current price <small>(optional)</small><input id="watchManualPrice" type="number" min="0" step="0.0001"></label><label>Priority<select id="watchPriority"><option value="HIGH">High</option><option value="MEDIUM" selected>Medium</option><option value="LOW">Low</option></select></label><label class="span-2">Personal Note <small>(optional)</small><textarea id="watchNotes" rows="4" maxlength="500" placeholder="Example: Buy below ₹1,500; wait for valuation correction; review after Q3 results…"></textarea></label><div id="watchMfHelp" class="info-box span-2 hidden">For Indian mutual funds, enter the numeric AMFI scheme code.</div><div class="form-actions span-2"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveWatchBtn" type="submit" class="primary-button">Save watch item</button></div></form></div>
 
+    <div id="stickyNoteModal" class="modal small-modal sticky-note-modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-head"><div><p class="eyebrow">DASHBOARD STICKY</p><h2 id="stickyNoteModalTitle">Add target or reminder</h2></div><button class="modal-close" data-close-modal>×</button></div>
+      <form id="stickyNoteForm" class="stack-form">
+        <input id="stickyNoteId" type="hidden">
+        <label>Type<select id="stickyNoteType"><option value="TARGET">Target</option><option value="REMINDER">Reminder</option></select></label>
+        <label>Title<input id="stickyNoteTitle" required maxlength="120" placeholder="What needs attention?"></label>
+        <label>Due date <small>(optional)</small><input id="stickyNoteDueDate" type="date"></label>
+        <label>Details<textarea id="stickyNoteText" rows="5" maxlength="1000" placeholder="Short details, next action, amount, person, etc."></textarea></label>
+        <p class="tiny muted">Click <strong>Done</strong> on the dashboard when completed. It will automatically be saved in your Daily Diary.</p>
+        <div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button id="saveStickyNoteBtn" type="submit" class="primary-button">Save sticky</button></div>
+      </form>
+    </div>
+
     <div id="passwordModal" class="modal small-modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">ACCOUNT SECURITY</p><h2>Change password</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="passwordForm" class="stack-form"><label>Current password<input id="currentPassword" type="password" required></label><label>New password<input id="newPassword" type="password" required minlength="10"></label><label>Confirm new password<input id="confirmPassword" type="password" required minlength="10"></label><p class="tiny muted">At least 10 characters with upper-case, lower-case, number and symbol.</p><div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button type="submit" class="primary-button">Update password</button></div></form></div>
 
     <div id="userModal" class="modal small-modal hidden" role="dialog" aria-modal="true"><div class="modal-head"><div><p class="eyebrow">ADMINISTRATION</p><h2>Create user</h2></div><button class="modal-close" data-close-modal>×</button></div><form id="userForm" class="stack-form"><label>Username<input id="newUsername" required maxlength="60" pattern="[A-Za-z0-9._-]+"></label><label>Display name<input id="newDisplayName" required maxlength="100"></label><label>Role<select id="newUserRole"><option value="USER">User</option><option value="ADMIN">Admin</option></select></label><label>Temporary password<input id="newUserPassword" type="password" required minlength="10"></label><div class="form-actions"><button type="button" class="secondary-button" data-close-modal>Cancel</button><button type="submit" class="primary-button">Create user</button></div></form></div>
@@ -456,6 +480,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v16-1.js?v=20260822-161" defer></script>
+  <script src="app-v16-3.js?v=20260822-163" defer></script>
 </body>
 </html>

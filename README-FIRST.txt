@@ -1,36 +1,77 @@
-MYFINANCE V16.1 — SCREENSHOT LAYOUT FIX
+MYFINANCE V16.3 — FILTER VIEW + PRINT
 
-1. QUICK DIARY PANEL
-- Fixed the left panel so it is fully visible.
-- It now opens from the true left edge of the browser.
-- Width is 380px on desktop and full-width on small screens.
-- Header/close button stays visible while scrolling.
-- No part of the form should remain off-screen.
-
-2. VIEW PORTFOLIO
-- Combined / Sarada / Niharika stay in ONE LINE on desktop.
-- Owner buttons no longer wrap into two rows.
-- At narrow mobile widths they become horizontally scrollable rather than breaking awkwardly.
-
-3. LIVE WEALTH DASHBOARD
-- The previous V16.0 compact rule used the wrong selector.
-- The real dashboard banner is .welcome-banner.
-- V16.1 now reduces the actual live wealth banner to a slim single-row strip:
-  LIVE WEALTH DASHBOARD | Combined portfolio | last update | tracking | Combined
-- Approx. 58px minimum height on desktop.
-- Decorative height/space greatly reduced.
-- The tab is NOT deleted because it can now be compacted correctly.
+FRONTEND
+- v16.3
 
 BACKEND
-Keep Backend v3.6.0. No Apps Script redeployment.
+- remains v3.7.0
+- NO backend redeployment required if v3.7.0 is already active
+
+INVESTMENTS
+Existing filters are retained:
+- Investor: Combined / Sarada / Niharika
+- Investment Type: All / Mutual Funds / Stocks & ETFs
+- Search
+- Asset Type
+
+New:
+- Visible-record count
+- “Print view”
+- Printing uses ONLY the currently filtered investments
+
+WATCHLIST
+New filter view:
+- Search
+- Type: Stocks / ETFs / Mutual Funds
+- Priority: High / Medium / Low
+- Target status:
+  At/below target
+  Within 5%
+  More than 5% away
+  No target
+- Visible-record count
+- “Print view”
+
+The printed watchlist includes key price/target/performance/remark fields.
+
+DAILY DIARY
+Filter view now supports:
+- Day
+- Month
+- Date Range
+- Global diary search
+- “Print filtered diary”
+
+Date Range defaults to the first day of the current month through today.
+
+MONTHLY DIARY / PLAN / EXPERIENCE
+Existing filter view remains:
+- Year
+- Month
+- Type
+- Target status
+- Search
+
+New:
+- “Print filtered view”
+
+PRINT BEHAVIOUR
+- Opens a clean printable page
+- Prints only records matching the current filters
+- Investment and Watchlist print in landscape
+- Diary and Monthly Diary print in portrait
+- Includes My Finance frontend version and print date/time
 
 INSTALL
-1. Upload app-v16-1.js as a NEW GitHub file.
-2. Replace index.html.
-3. Replace styles.css.
-4. Keep config.js unchanged.
-5. Open:
-   https://saradasutar.github.io/MyFinance/?v=1610
-6. Hard refresh:
+1. GitHub:
+   - upload app-v16-3.js as a NEW file
+   - replace index.html
+   - replace styles.css
+   - keep the included/current config.js
+2. Backend:
+   - keep Code-v3.7.gs already deployed
+3. Open:
+   https://saradasutar.github.io/MyFinance/?v=1630
+4. Hard refresh:
    Mac: Command + Shift + R
    Windows: Ctrl + Shift + R
