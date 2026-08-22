@@ -4339,3 +4339,161 @@ table td strong,
 #holdingsSection #replaceMasterDataBtn{
   display:none !important;
 }
+
+
+/* =========================================================
+   V17.6 — HOLDINGS SUMMARY MATRIX
+   Combined / Sarada / Niharika × Total / MF / Stocks & ETFs
+   ========================================================= */
+.holdings-summary-panel{
+  margin:0 0 10px;
+  padding:12px;
+  border:1px solid #dce3ef;
+  border-radius:16px;
+  background:linear-gradient(145deg,#fbfcff,#f7f9fd);
+  box-shadow:0 7px 17px rgba(37,48,93,.045);
+}
+.holdings-summary-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:8px;
+}
+.holdings-summary-head h3{
+  margin:2px 0 0;
+  color:#27354d;
+  font-size:17px !important;
+  font-weight:950 !important;
+}
+.holdings-summary-note{
+  color:#798599;
+  font-size:10px !important;
+  font-weight:750 !important;
+  white-space:nowrap;
+}
+.holdings-summary-matrix{
+  display:grid;
+  gap:6px;
+}
+.holdings-summary-row{
+  display:grid;
+  grid-template-columns:130px repeat(3,minmax(0,1fr));
+  gap:6px;
+  align-items:stretch;
+}
+.summary-owner-label{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  min-height:70px;
+  padding:9px 11px;
+  border:1px solid #dce3ef;
+  border-radius:11px;
+}
+.summary-owner-label strong{
+  color:#27354d;
+  font-size:14px !important;
+  font-weight:950 !important;
+}
+.summary-owner-label span{
+  margin-top:2px;
+  color:#7b8799;
+  font-size:9.5px !important;
+  font-weight:700 !important;
+}
+.summary-row-combined .summary-owner-label{
+  background:linear-gradient(145deg,#ecefff,#f5f3ff);
+}
+.summary-row-sarada .summary-owner-label{
+  background:linear-gradient(145deg,#edf8ff,#f3fbff);
+}
+.summary-row-niharika .summary-owner-label{
+  background:linear-gradient(145deg,#fff5e8,#fffaf2);
+}
+.holdings-mini-card{
+  min-width:0;
+  min-height:70px;
+  padding:9px 11px;
+  border:1px solid #dfe5ef;
+  border-radius:11px;
+  background:#fff;
+}
+.holdings-mini-card.total{
+  background:linear-gradient(145deg,#fff,#f0f3ff);
+}
+.holdings-mini-card.mf{
+  background:linear-gradient(145deg,#fff,#ecfaf3);
+}
+.holdings-mini-card.stock{
+  background:linear-gradient(145deg,#fff,#fff3e9);
+}
+.holdings-mini-card>span{
+  display:block;
+  color:#6f7b90;
+  font-size:10px !important;
+  font-weight:850 !important;
+}
+.holdings-mini-card>strong{
+  display:block;
+  margin-top:3px;
+  overflow:hidden;
+  color:#243149;
+  font-size:18px !important;
+  font-weight:950 !important;
+  line-height:1.05;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.holdings-mini-card>small{
+  display:block;
+  margin-top:4px;
+  overflow:hidden;
+  color:#768297;
+  font-size:9.5px !important;
+  font-weight:750 !important;
+  line-height:1.2;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.holdings-mini-card>small.positive{color:#138260!important}
+.holdings-mini-card>small.negative{color:#d14f5d!important}
+
+/* Full-screen Holdings keeps the summary visible but compact */
+#holdingsSection.data-fullscreen-active .holdings-summary-panel{
+  flex:0 0 auto;
+  margin-bottom:6px;
+  padding:8px;
+}
+#holdingsSection.data-fullscreen-active .holdings-summary-row{
+  grid-template-columns:115px repeat(3,minmax(0,1fr));
+}
+#holdingsSection.data-fullscreen-active .summary-owner-label,
+#holdingsSection.data-fullscreen-active .holdings-mini-card{
+  min-height:58px;
+  padding:7px 9px;
+}
+#holdingsSection.data-fullscreen-active .holdings-mini-card>strong{
+  font-size:16px !important;
+}
+
+/* Responsive */
+@media(max-width:980px){
+  .holdings-summary-row{
+    grid-template-columns:110px repeat(3,minmax(145px,1fr));
+    min-width:650px;
+  }
+  .holdings-summary-matrix{
+    overflow-x:auto;
+    padding-bottom:3px;
+  }
+}
+@media(max-width:620px){
+  .holdings-summary-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .holdings-summary-note{
+    white-space:normal;
+  }
+}
