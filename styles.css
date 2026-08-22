@@ -5360,3 +5360,88 @@ body.print-preview-open{overflow:hidden!important}
     font-size:20px !important;
   }
 }
+
+
+/* =========================================================
+   V19.1 — CLEAR PROFIT / LOSS COLOURS
+   Profit = GREEN, Loss = RED, Zero = muted
+   Late overrides intentionally win over typography rules.
+   ========================================================= */
+:root{
+  --profit-green:#078a5b;
+  --profit-green-bg:#e8f8f0;
+  --loss-red:#d63f52;
+  --loss-red-bg:#fff0f2;
+}
+
+/* Global semantic values */
+.positive,
+.positive strong,
+strong.positive,
+td.positive,
+td.positive strong{
+  color:var(--profit-green) !important;
+}
+.negative,
+.negative strong,
+strong.negative,
+td.negative,
+td.negative strong{
+  color:var(--loss-red) !important;
+}
+
+/* Holdings table: make Gain/Loss, Gain %, XIRR and performance unmistakable */
+#holdingsSection table td.positive,
+#holdingsSection table td.positive strong{
+  color:var(--profit-green) !important;
+  font-weight:950 !important;
+}
+#holdingsSection table td.negative,
+#holdingsSection table td.negative strong{
+  color:var(--loss-red) !important;
+  font-weight:950 !important;
+}
+#holdingsSection table td.perf.positive{
+  background:linear-gradient(90deg,transparent,var(--profit-green-bg)) !important;
+}
+#holdingsSection table td.perf.negative{
+  background:linear-gradient(90deg,transparent,var(--loss-red-bg)) !important;
+}
+
+/* Holdings Summary: fixes V18.6 typography selector overriding green/red */
+#holdingsSection .holdings-value-growth-matrix .summary-metric.growth>strong.positive{
+  color:var(--profit-green) !important;
+}
+#holdingsSection .holdings-value-growth-matrix .summary-metric.growth>strong.negative{
+  color:var(--loss-red) !important;
+}
+
+/* Main KPI and analysis cards */
+#sumGain.positive,
+.growth-kpi strong.positive,
+.growth-kpi small.positive,
+.investor-card .positive,
+.drawer-metric strong.positive,
+.drawer-gain-chip.positive{
+  color:var(--profit-green) !important;
+}
+#sumGain.negative,
+.growth-kpi strong.negative,
+.growth-kpi small.negative,
+.investor-card .negative,
+.drawer-metric strong.negative,
+.drawer-gain-chip.negative{
+  color:var(--loss-red) !important;
+}
+
+/* Small chips use matching soft background */
+.summary-trend.positive,
+.drawer-gain-chip.positive{
+  color:var(--profit-green) !important;
+  background:var(--profit-green-bg) !important;
+}
+.summary-trend.negative,
+.drawer-gain-chip.negative{
+  color:var(--loss-red) !important;
+  background:var(--loss-red-bg) !important;
+}
