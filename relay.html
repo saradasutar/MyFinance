@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex,nofollow">
+  <title>MyFinance Relay</title>
+</head>
+<body>
+<script>
+(function(){
+  try{
+    var raw=window.name||'';
+    window.name='';
+    if(!raw)return;
+    var data=JSON.parse(raw);
+    if(window.parent&&window.parent!==window){
+      window.parent.postMessage(data,window.location.origin);
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

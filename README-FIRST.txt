@@ -1,68 +1,35 @@
-MYFINANCE V18.7 / BACKEND V3.11.0 — RELIABLE BACKEND BRIDGE
+MYFINANCE V18.8 / BACKEND V3.12.0 — SAME-ORIGIN RELAY FIX
 
-WHY THE PREVIOUS FIXES STILL TIMED OUT
-The direct /exec URL could show the backend version correctly, but GitHub Pages still could
-not reliably complete request/response communication through Apps Script POST + iframe redirects.
+Your v18.7 screenshot confirms the frontend is loading, but the Apps Script browser bridge is not starting.
+V18.8 replaces that bridge with a same-origin relay.
 
-V18.7 changes the connection architecture.
+BACKEND
+- Replace Code.gs with Code-v3.12.gs
+- Save
+- Deploy > Manage deployments > Edit existing Web App
+- Choose New version
+- Execute as: Me
+- Who has access: Anyone
+- Deploy
+- Open /exec directly and confirm "version":"3.12.0"
 
-NEW CONNECTION METHOD
-1. MyFinance loads one tiny hidden Apps Script HTML bridge.
-2. That bridge runs inside Apps Script HtmlService.
-3. The bridge uses Google's supported google.script.run API to call backend functions.
-4. A browser MessageChannel is created by the bridge and transferred to the GitHub page.
-5. All later login / bootstrap / save / edit / delete requests travel through that persistent channel.
-
-This avoids:
-- normal cross-origin fetch
-- CORS response reading
-- repeated form POST iframe redirects
-- the nested iframe response problem
-
-Google officially supports google.script.run for asynchronous calls from HTML-service pages.
-
-BACKEND UPDATE REQUIRED
-1. Open MyFinance Apps Script.
-2. Replace all Code.gs with Code-v3.11.gs.
-3. Save.
-4. Deploy > Manage deployments.
-5. Edit the SAME Web App deployment.
-6. Select New version.
-7. Execute as: Me.
-8. Who has access: Anyone.
-9. Deploy.
-
-CHECK
-Open the /exec URL directly.
-It must show:
-"version":"3.11.0"
-
-GITHUB UPDATE
-Replace:
+GITHUB
+Upload/replace:
 - index.html
 - styles.css
 - config.js
-- app-v18-6.js (compatibility file)
-
-Add:
+- app-v18-8.js
 - app-v18-7.js
+- relay.html   (NEW AND REQUIRED)
 
-You may keep app-v18-5.js temporarily, but it is no longer required by the new index.
+Your current site name saradaniharika is handled automatically.
 
-OPEN
-https://saradasutar.github.io/MyFinance/?v=1870
+Open:
+https://saradasutar.github.io/saradaniharika/?v=1880
 
-Hard refresh:
-Mac: Command + Shift + R
+Hard refresh on Mac:
+Command + Shift + R
 
-EXPECTED
-Frontend v18.7
-Backend v3.11.0
-
-All previous features remain:
-- Custom Holdings / Watchlist columns
-- Add / edit / delete parameter values
-- Saved drag widths
-- Print preview adjustments
-- Larger Holdings Summary
-- Quotes / Diary / Targets / Reminders
+Expected:
+Frontend v18.8
+Backend v3.12.0
