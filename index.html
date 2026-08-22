@@ -10,7 +10,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260822-176">
+  <link rel="stylesheet" href="styles.css?v=20260822-177">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -36,7 +36,7 @@
         <p id="loginMessage" class="form-message" role="alert"></p>
         <div class="login-meta">
           <p class="tiny muted">Your password is never stored in the browser.</p>
-          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v17.6</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
+          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v17.7</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
         </div>
       </form>
     </div>
@@ -57,14 +57,14 @@
       <div class="sidebar-session-card">
         <span class="sidebar-session-label">SIGNED IN AS</span>
         <strong id="dashboardUsername">—</strong>
-        <span id="dashboardVersion">Frontend · v17.6</span><span id="dashboardBackendVersion">Backend · checking…</span>
+        <span id="dashboardVersion">Frontend · v17.7</span><span id="dashboardBackendVersion">Backend · checking…</span>
       </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v17.6</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v17.7</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -224,67 +224,94 @@
         <section class="holdings-summary-panel" aria-label="Investment summary">
           <div class="holdings-summary-head">
             <div>
-              <p class="eyebrow">INVESTMENT SUMMARY</p>
-              <h3>Combined · Sarada · Niharika</h3>
+              <p class="eyebrow">HOLDINGS SUMMARY</p>
+              <h3>Invested · Present Value · Growth</h3>
             </div>
-            <span class="holdings-summary-note">Invested amount · Current value · Gain/Loss</span>
+            <span class="holdings-summary-note">Combined and investor-wise comparison</span>
           </div>
 
-          <div class="holdings-summary-matrix">
+          <div class="holdings-summary-matrix holdings-value-growth-matrix">
             <div class="holdings-summary-row summary-row-combined">
-              <div class="summary-owner-label"><strong>Combined</strong><span>Whole portfolio</span></div>
-              <article class="holdings-mini-card total">
-                <span>Total investment</span>
-                <strong id="holdSumCombinedTotal">₹0</strong>
-                <small id="holdSumCombinedTotalMeta">Current ₹0 · Gain ₹0</small>
-              </article>
-              <article class="holdings-mini-card mf">
-                <span>Mutual funds</span>
-                <strong id="holdSumCombinedMf">₹0</strong>
-                <small id="holdSumCombinedMfMeta">Current ₹0 · Gain ₹0</small>
-              </article>
-              <article class="holdings-mini-card stock">
-                <span>Stocks &amp; ETFs</span>
-                <strong id="holdSumCombinedStock">₹0</strong>
-                <small id="holdSumCombinedStockMeta">Current ₹0 · Gain ₹0</small>
-              </article>
-            </div>
+              <div class="summary-owner-label">
+                <strong>Combined</strong>
+                <span>Whole portfolio</span>
+              </div>
 
-            <div class="holdings-summary-row summary-row-sarada">
-              <div class="summary-owner-label"><strong>Sarada</strong><span>Individual portfolio</span></div>
               <article class="holdings-mini-card total">
-                <span>Total investment</span>
-                <strong id="holdSumSaradaTotal">₹0</strong>
-                <small id="holdSumSaradaTotalMeta">Current ₹0 · Gain ₹0</small>
+                <span class="summary-card-title">Total Portfolio</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumCombinedTotalInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumCombinedTotalCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumCombinedTotalGrowth">₹0 · 0.00%</strong></div>
               </article>
+
               <article class="holdings-mini-card mf">
-                <span>Mutual funds</span>
-                <strong id="holdSumSaradaMf">₹0</strong>
-                <small id="holdSumSaradaMfMeta">Current ₹0 · Gain ₹0</small>
+                <span class="summary-card-title">Mutual Funds</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumCombinedMfInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumCombinedMfCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumCombinedMfGrowth">₹0 · 0.00%</strong></div>
               </article>
+
               <article class="holdings-mini-card stock">
-                <span>Stocks &amp; ETFs</span>
-                <strong id="holdSumSaradaStock">₹0</strong>
-                <small id="holdSumSaradaStockMeta">Current ₹0 · Gain ₹0</small>
+                <span class="summary-card-title">Stocks &amp; ETFs</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumCombinedStockInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumCombinedStockCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumCombinedStockGrowth">₹0 · 0.00%</strong></div>
               </article>
             </div>
 
             <div class="holdings-summary-row summary-row-niharika">
-              <div class="summary-owner-label"><strong>Niharika</strong><span>Individual portfolio</span></div>
+              <div class="summary-owner-label">
+                <strong>Niharika</strong>
+                <span>Individual portfolio</span>
+              </div>
+
               <article class="holdings-mini-card total">
-                <span>Total investment</span>
-                <strong id="holdSumNiharikaTotal">₹0</strong>
-                <small id="holdSumNiharikaTotalMeta">Current ₹0 · Gain ₹0</small>
+                <span class="summary-card-title">Total Portfolio</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumNiharikaTotalInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumNiharikaTotalCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumNiharikaTotalGrowth">₹0 · 0.00%</strong></div>
               </article>
+
               <article class="holdings-mini-card mf">
-                <span>Mutual funds</span>
-                <strong id="holdSumNiharikaMf">₹0</strong>
-                <small id="holdSumNiharikaMfMeta">Current ₹0 · Gain ₹0</small>
+                <span class="summary-card-title">Mutual Funds</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumNiharikaMfInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumNiharikaMfCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumNiharikaMfGrowth">₹0 · 0.00%</strong></div>
               </article>
+
               <article class="holdings-mini-card stock">
-                <span>Stocks &amp; ETFs</span>
-                <strong id="holdSumNiharikaStock">₹0</strong>
-                <small id="holdSumNiharikaStockMeta">Current ₹0 · Gain ₹0</small>
+                <span class="summary-card-title">Stocks &amp; ETFs</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumNiharikaStockInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumNiharikaStockCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumNiharikaStockGrowth">₹0 · 0.00%</strong></div>
+              </article>
+            </div>
+
+            <div class="holdings-summary-row summary-row-sarada">
+              <div class="summary-owner-label">
+                <strong>Sarada</strong>
+                <span>Individual portfolio</span>
+              </div>
+
+              <article class="holdings-mini-card total">
+                <span class="summary-card-title">Total Portfolio</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumSaradaTotalInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumSaradaTotalCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumSaradaTotalGrowth">₹0 · 0.00%</strong></div>
+              </article>
+
+              <article class="holdings-mini-card mf">
+                <span class="summary-card-title">Mutual Funds</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumSaradaMfInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumSaradaMfCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumSaradaMfGrowth">₹0 · 0.00%</strong></div>
+              </article>
+
+              <article class="holdings-mini-card stock">
+                <span class="summary-card-title">Stocks &amp; ETFs</span>
+                <div class="summary-metric"><span>Invested</span><strong id="holdSumSaradaStockInvested">₹0</strong></div>
+                <div class="summary-metric"><span>Present value</span><strong id="holdSumSaradaStockCurrent">₹0</strong></div>
+                <div class="summary-metric growth"><span>Growth</span><strong id="holdSumSaradaStockGrowth">₹0 · 0.00%</strong></div>
               </article>
             </div>
           </div>
@@ -698,6 +725,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v17-6.js?v=20260822-176" defer></script>
+  <script src="app-v17-7.js?v=20260822-177" defer></script>
 </body>
 </html>

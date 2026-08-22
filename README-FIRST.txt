@@ -1,66 +1,55 @@
-MYFINANCE V17.6 — HOLDINGS INVESTMENT SUMMARY
+MYFINANCE V17.7 — HOLDINGS INVESTED / PRESENT VALUE / GROWTH
 
-NEW INSIDE HOLDINGS
+Inside Holdings, the summary is now clearer and more detailed.
 
-A compact 3 x 3 summary matrix now appears above the Holdings table.
+FOR COMBINED PORTFOLIO
+You can see separately:
+- Total Portfolio: Invested, Present Value, Growth ₹ and Growth %
+- Mutual Funds: Invested, Present Value, Growth ₹ and Growth %
+- Stocks & ETFs: Invested, Present Value, Growth ₹ and Growth %
 
-ROWS:
-1. Combined
-2. Sarada
-3. Niharika
+FOR NIHARIKA
+You can see separately:
+- Total Portfolio: Invested, Present Value, Growth ₹ and Growth %
+- Mutual Funds: Invested, Present Value, Growth ₹ and Growth %
+- Stocks & ETFs: Invested, Present Value, Growth ₹ and Growth %
 
-COLUMNS:
-1. Total investment
-2. Mutual funds
-3. Stocks & ETFs
+FOR SARADA
+The same Total / Mutual Funds / Stocks & ETFs comparison is also retained.
 
-Each card shows:
-- Invested amount prominently
-- Current value
-- Gain/Loss
-- Number of holdings in that category
+Growth is displayed as:
++₹ gain/loss · +percentage
 
-The summary is calculated from ALL Holdings and is not changed by the current search/filter,
-so you can always compare the complete Combined / Sarada / Niharika portfolio.
+The summary always uses the complete holdings dataset and does not change when you search the table.
 
-The Holdings table below continues to support:
-- Investor filters
-- Investment Type filters
-- Search
-- Print
-- Full screen
-- Notes
-- Add / Edit
-- Import
-
-“Replace from Master Sheet” remains hidden as requested.
-
-FONTS
-The larger and bolder V17.4/V17.5 typography is retained.
+All previous features remain:
+- Larger bold fonts
+- Replace from Master Sheet hidden
+- Portfolio controls only in Holdings
+- Full-screen Holdings/Watchlist
+- Print / Filters / Notes
+- Personal Home with Diary / Targets / Quotes
+- Quote colour themes
 
 BACKEND
-Backend remains v3.8.0.
-No Apps Script redeployment is required.
+Backend stays v3.8.0.
+No Apps Script redeployment required.
 
 INSTALL
 REPLACE:
 - index.html
 - styles.css
-- app-v17-5.js   (compatibility replacement)
+- app-v17-6.js  (compatibility replacement)
 
 ADD:
-- app-v17-6.js
+- app-v17-7.js
 
 KEEP:
 - config.js
 
-OPEN:
-https://saradasutar.github.io/MyFinance/?v=1760
+OPEN
+https://saradasutar.github.io/MyFinance/?v=1770
 
 Hard refresh:
 Mac: Command + Shift + R
 Windows: Ctrl + Shift + R
-
-EXPECTED:
-FE v17.6
-BE v3.8.0

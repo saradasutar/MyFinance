@@ -4497,3 +4497,94 @@ table td strong,
     white-space:normal;
   }
 }
+
+
+/* =========================================================
+   V17.7 — CLEAR INVESTED / PRESENT VALUE / GROWTH SUMMARY
+   ========================================================= */
+.holdings-value-growth-matrix .holdings-summary-row{
+  grid-template-columns:125px repeat(3,minmax(0,1fr)) !important;
+}
+.holdings-value-growth-matrix .holdings-mini-card{
+  min-height:118px !important;
+  padding:10px 11px !important;
+}
+.holdings-value-growth-matrix .summary-card-title{
+  display:block;
+  margin-bottom:7px;
+  color:#39475f !important;
+  font-size:12px !important;
+  font-weight:950 !important;
+  letter-spacing:.01em;
+}
+.holdings-value-growth-matrix .summary-metric{
+  display:grid;
+  grid-template-columns:88px minmax(0,1fr);
+  align-items:baseline;
+  gap:6px;
+  padding:4px 0;
+  border-top:1px solid rgba(126,139,165,.13);
+}
+.holdings-value-growth-matrix .summary-metric:first-of-type{
+  border-top:0;
+}
+.holdings-value-growth-matrix .summary-metric>span{
+  color:#7a869a;
+  font-size:10px !important;
+  font-weight:800 !important;
+}
+.holdings-value-growth-matrix .summary-metric>strong{
+  overflow:hidden;
+  color:#243149;
+  font-size:14px !important;
+  font-weight:950 !important;
+  line-height:1.15;
+  text-align:right;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.holdings-value-growth-matrix .summary-metric.growth>strong.positive{color:#0b835e !important}
+.holdings-value-growth-matrix .summary-metric.growth>strong.negative{color:#cf4657 !important}
+.holdings-value-growth-matrix .summary-metric.growth>strong.neutral{color:#69758a !important}
+
+/* Make the Combined row visually strongest */
+.summary-row-combined .holdings-mini-card{
+  border-color:#cfd7ee !important;
+  box-shadow:0 4px 11px rgba(70,82,142,.055);
+}
+.summary-row-combined .summary-owner-label strong{
+  font-size:15px !important;
+}
+
+/* Niharika row distinct */
+.summary-row-niharika .holdings-mini-card.total{background:linear-gradient(145deg,#fff,#f1f5ff)!important}
+.summary-row-niharika .holdings-mini-card.mf{background:linear-gradient(145deg,#fff,#ebfaf3)!important}
+.summary-row-niharika .holdings-mini-card.stock{background:linear-gradient(145deg,#fff,#fff1e6)!important}
+
+/* Sarada row distinct */
+.summary-row-sarada .holdings-mini-card.total{background:linear-gradient(145deg,#fff,#f6f1ff)!important}
+.summary-row-sarada .holdings-mini-card.mf{background:linear-gradient(145deg,#fff,#edf9f5)!important}
+.summary-row-sarada .holdings-mini-card.stock{background:linear-gradient(145deg,#fff,#fff6e9)!important}
+
+/* Full screen: summary remains readable but not too tall */
+#holdingsSection.data-fullscreen-active .holdings-value-growth-matrix .holdings-mini-card{
+  min-height:96px !important;
+  padding:7px 9px !important;
+}
+#holdingsSection.data-fullscreen-active .holdings-value-growth-matrix .summary-metric{
+  padding:3px 0;
+}
+#holdingsSection.data-fullscreen-active .holdings-value-growth-matrix .summary-metric>strong{
+  font-size:13px !important;
+}
+
+/* Responsive horizontal scroll for matrix, preserving readable values */
+@media(max-width:1050px){
+  .holdings-value-growth-matrix{
+    overflow-x:auto;
+    padding-bottom:4px;
+  }
+  .holdings-value-growth-matrix .holdings-summary-row{
+    min-width:820px;
+  }
+}
