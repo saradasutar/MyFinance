@@ -3997,3 +3997,345 @@ body.section-overview .topbar h1{
   }
   #holdingsSection #holdingsHeading::-webkit-scrollbar{display:none}
 }
+
+
+/* =========================================================
+   V17.4 — LARGER + BOLDER READABLE TYPOGRAPHY
+   Keeps the compact layout, but removes tiny text.
+   ========================================================= */
+
+/* Global readability */
+body{
+  font-size:15px !important;
+  font-weight:600;
+}
+main, .main-content{
+  font-size:15px !important;
+}
+
+/* Sidebar */
+.sidebar-brand strong{
+  font-size:16px !important;
+  font-weight:900 !important;
+}
+.sidebar-brand span{
+  font-size:10px !important;
+  font-weight:700 !important;
+}
+.nav-item{
+  font-size:13px !important;
+  font-weight:850 !important;
+  letter-spacing:.005em;
+}
+.nav-item span{
+  font-size:14px !important;
+  font-weight:900 !important;
+}
+.sidebar-footer,
+.sidebar-user-card,
+.sidebar-user-card span{
+  font-size:11px !important;
+  font-weight:700 !important;
+}
+
+/* Top bar */
+.topbar h1{
+  font-size:29px !important;
+  font-weight:950 !important;
+  letter-spacing:-.025em;
+}
+.eyebrow,
+.topbar .eyebrow{
+  font-size:10px !important;
+  font-weight:950 !important;
+  letter-spacing:.13em !important;
+}
+
+/* Buttons, filters, controls */
+button,
+select,
+input{
+  font-size:12.5px !important;
+  font-weight:800 !important;
+}
+textarea{
+  font-size:13.5px !important;
+  font-weight:650 !important;
+  line-height:1.5 !important;
+}
+.switch-label{
+  font-size:10px !important;
+  font-weight:950 !important;
+}
+.portfolio-filter-bar .owner-pill,
+#assetViewSwitcher .owner-pill{
+  font-size:12px !important;
+  font-weight:900 !important;
+}
+.portfolio-filter-bar .quick-actions button,
+.fullscreen-view-button,
+.print-view-button,
+.secondary-button,
+.primary-button,
+.master-data-button,
+.show-all-button{
+  font-size:11.5px !important;
+  font-weight:900 !important;
+}
+
+/* Page / panel headings */
+.panel-head h3,
+.personal-card-head h3,
+.utility-drawer-head h3{
+  font-size:17px !important;
+  font-weight:950 !important;
+}
+.panel-head h2,
+.modal-head h2{
+  font-size:20px !important;
+  font-weight:950 !important;
+}
+.panel-subcopy,
+.performance-note,
+.tiny,
+.muted,
+.master-data-status{
+  font-size:11px !important;
+  font-weight:650 !important;
+  line-height:1.45 !important;
+}
+
+/* Holdings title: one line and much easier to read */
+#holdingsSection #holdingsHeading{
+  font-size:20px !important;
+  font-weight:950 !important;
+}
+#holdingsSection .holdings-title-label{
+  font-size:11.5px !important;
+  font-weight:950 !important;
+}
+
+/* Tables */
+table th{
+  font-size:11.5px !important;
+  font-weight:950 !important;
+  letter-spacing:.035em !important;
+  line-height:1.3 !important;
+}
+table td{
+  font-size:13px !important;
+  font-weight:650 !important;
+  line-height:1.4 !important;
+}
+table td strong,
+.asset-cell strong,
+.investor-card strong,
+.mini-holding strong{
+  font-weight:950 !important;
+}
+.asset-cell span,
+.price-note,
+.personal-note-cell,
+.watch-source-remark{
+  font-size:11.5px !important;
+  font-weight:650 !important;
+}
+.small-button{
+  font-size:10.5px !important;
+  font-weight:900 !important;
+}
+
+/* Full-screen Holdings / Watchlist: strongest readability */
+.data-fullscreen-active table th{
+  font-size:12.5px !important;
+  font-weight:950 !important;
+  padding:9px 10px !important;
+}
+.data-fullscreen-active table td{
+  font-size:14px !important;
+  font-weight:700 !important;
+  padding:9px 10px !important;
+}
+.data-fullscreen-active .table-tools button,
+.data-fullscreen-active .table-tools select,
+.data-fullscreen-active .table-tools input{
+  font-size:12px !important;
+  font-weight:850 !important;
+}
+.data-fullscreen-active .performance-note{
+  font-size:11px !important;
+  font-weight:700 !important;
+}
+
+/* Personal Home */
+.personal-home-hero h2{
+  font-size:24px !important;
+  font-weight:950 !important;
+}
+.personal-home-hero p:not(.eyebrow){
+  font-size:13px !important;
+  font-weight:650 !important;
+}
+.personal-card-head h3{
+  font-size:18px !important;
+}
+.personal-count-badge{
+  font-size:10.5px !important;
+  font-weight:950 !important;
+}
+.home-diary-item strong,
+.home-sticky-item strong{
+  font-size:13px !important;
+  font-weight:950 !important;
+}
+.home-diary-item p,
+.personal-empty-copy{
+  font-size:12px !important;
+  font-weight:650 !important;
+}
+.home-sticky-summary strong{
+  font-size:19px !important;
+  font-weight:950 !important;
+}
+.home-sticky-summary span,
+.home-sticky-item small{
+  font-size:10px !important;
+  font-weight:750 !important;
+}
+.personal-card-actions button,
+.personal-home-actions button,
+.personal-home-footer button{
+  font-size:11.5px !important;
+  font-weight:900 !important;
+}
+.personal-home-footer strong{
+  font-size:13px !important;
+  font-weight:950 !important;
+}
+.personal-home-footer span{
+  font-size:11px !important;
+  font-weight:650 !important;
+}
+
+/* Quote: larger, bold, high contrast */
+.quote-home-card blockquote,
+.utility-drawer .life-quote-panel blockquote{
+  font-size:19px !important;
+  font-weight:800 !important;
+  line-height:1.55 !important;
+}
+.home-quote-author,
+.utility-drawer .life-quote-author{
+  font-size:11.5px !important;
+  font-weight:850 !important;
+}
+.quote-mini-mark,
+.utility-drawer .life-quote-mark{
+  font-size:38px !important;
+  font-weight:900 !important;
+}
+
+/* Sticky notes */
+.utility-drawer .sticky-note-card h4{
+  font-size:14px !important;
+  font-weight:950 !important;
+}
+.utility-drawer .sticky-note-card p{
+  font-size:12px !important;
+  font-weight:650 !important;
+  line-height:1.45 !important;
+}
+.sticky-note-type,
+.sticky-due{
+  font-size:10.5px !important;
+  font-weight:900 !important;
+}
+.sticky-note-actions button{
+  font-size:10.5px !important;
+  font-weight:900 !important;
+}
+
+/* Investment summary / charts, if opened */
+#investmentOverviewContent .welcome-banner h2{
+  font-size:17px !important;
+  font-weight:950 !important;
+}
+#investmentOverviewContent .welcome-banner p:not(.eyebrow),
+#investmentOverviewContent .welcome-banner .live-data-line{
+  font-size:10px !important;
+  font-weight:700 !important;
+}
+#investmentOverviewContent .summary-card p{
+  font-size:11px !important;
+  font-weight:800 !important;
+}
+#investmentOverviewContent .summary-card strong{
+  font-size:24px !important;
+  font-weight:950 !important;
+}
+#investmentOverviewContent .summary-card > span{
+  font-size:10px !important;
+  font-weight:750 !important;
+}
+#investmentOverviewContent .summary-card .summary-trend{
+  font-size:9.5px !important;
+  font-weight:850 !important;
+}
+#investmentOverviewContent .growth-kpi span,
+#investmentOverviewContent .watch-pulse-card span{
+  font-size:9.5px !important;
+  font-weight:800 !important;
+}
+#investmentOverviewContent .growth-kpi strong,
+#investmentOverviewContent .watch-pulse-card strong{
+  font-size:15px !important;
+  font-weight:950 !important;
+}
+#investmentOverviewContent .growth-kpi small{
+  font-size:9.5px !important;
+  font-weight:750 !important;
+}
+#investmentOverviewContent .chart-legend{
+  font-size:10px !important;
+  font-weight:700 !important;
+}
+
+/* Diary */
+#diarySection h2,
+#diarySection h3{
+  font-weight:950 !important;
+}
+#diarySection label{
+  font-size:12px !important;
+  font-weight:850 !important;
+}
+.diary-entry,
+.monthly-item{
+  font-size:12.5px !important;
+  font-weight:650 !important;
+}
+.diary-entry strong,
+.monthly-item strong{
+  font-size:13.5px !important;
+  font-weight:950 !important;
+}
+
+/* Mobile: still readable */
+@media(max-width:760px){
+  body{font-size:14px !important}
+  .topbar h1{font-size:24px !important}
+  table th{font-size:11px !important}
+  table td{font-size:12.5px !important}
+  .quote-home-card blockquote,
+  .utility-drawer .life-quote-panel blockquote{
+    font-size:17px !important;
+  }
+}
+
+
+/* =========================================================
+   V17.5 — Hide master replacement control from Holdings
+   ========================================================= */
+#holdingsSection #replaceMasterDataBtn{
+  display:none !important;
+}
