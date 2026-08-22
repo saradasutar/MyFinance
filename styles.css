@@ -3889,3 +3889,111 @@ table td{font-size:11px!important;line-height:1.35!important}
   .personal-home-card{min-height:195px}
   .personal-home-footer{align-items:flex-start;flex-direction:column}
 }
+
+
+/* =========================================================
+   V17.3 — PORTFOLIO CONTROLS ONLY IN HOLDINGS
+   ========================================================= */
+
+/* Overview is now purely Diary / Targets / Quotes.
+   The global portfolio selector is shown only after Holdings is opened. */
+.portfolio-filter-bar{
+  display:none !important;
+}
+body.section-holdings .portfolio-filter-bar{
+  display:grid !important;
+}
+
+/* The top Add Investment action is also relevant only in Holdings. */
+#addInvestmentBtn{
+  display:none !important;
+}
+body.section-holdings #addInvestmentBtn{
+  display:inline-flex !important;
+}
+
+/* Never expose the old Investments mode inside Overview. */
+.overview-investment-mode-hidden{
+  display:none !important;
+}
+.overview-mode-switcher{
+  grid-template-columns:1fr !important;
+}
+.overview-mode-switcher #personalHomeModeBtn{
+  min-width:120px;
+}
+
+/* The old investment Overview DOM is retained only for compatibility/rendering,
+   but is not available as a visible Overview mode. */
+#investmentOverviewContent{
+  display:none !important;
+}
+
+/* Holdings heading stays on one clear line and toolbar moves underneath. */
+#holdingsSection .panel-head.responsive-head{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) !important;
+  gap:8px !important;
+  align-items:start !important;
+}
+#holdingsSection .holdings-title-block{
+  min-width:0;
+  width:100%;
+}
+#holdingsSection #holdingsHeading{
+  display:flex !important;
+  align-items:baseline !important;
+  gap:7px !important;
+  width:100%;
+  margin:0 !important;
+  white-space:nowrap !important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:#25334a;
+  font-size:17px !important;
+  line-height:1.2 !important;
+}
+#holdingsSection .holdings-title-label{
+  flex:0 0 auto;
+  color:#5966c9;
+  font-size:10px !important;
+  font-weight:950;
+  letter-spacing:.10em;
+}
+#holdingsSection .holdings-title-sep{
+  flex:0 0 auto;
+  color:#a1a9b8;
+}
+#holdingsSection .master-data-status{
+  display:inline-block;
+  margin:4px 0 0 !important;
+  max-width:100%;
+  font-size:9.5px !important;
+  line-height:1.25 !important;
+}
+#holdingsSection .table-tools{
+  width:100%;
+  justify-content:flex-start !important;
+  flex-wrap:wrap !important;
+  gap:6px !important;
+}
+
+/* In full screen keep title in one line too. */
+#holdingsSection.data-fullscreen-active #holdingsHeading{
+  font-size:16px !important;
+}
+
+/* Overview heading should not imply portfolio. */
+body.section-overview .topbar h1{
+  max-width:520px;
+}
+
+/* Mobile: portfolio details line remains one row and can scroll rather than stacking words. */
+@media(max-width:760px){
+  #holdingsSection #holdingsHeading{
+    overflow-x:auto;
+    text-overflow:clip;
+    scrollbar-width:none;
+  }
+  #holdingsSection #holdingsHeading::-webkit-scrollbar{display:none}
+}
