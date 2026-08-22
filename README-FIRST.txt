@@ -1,41 +1,24 @@
-MYFINANCE V15.9 — FIXED HORIZONTAL SCROLLER VISIBILITY FIX
+MYFINANCE V16.0 — COMPACT WEALTH + QUICK DIARY
 
-WHY V15.8 COULD DISAPPEAR
-V15.8 only displayed the fixed horizontal scroller when JavaScript immediately detected:
-table.scrollWidth > table.clientWidth.
+1. LIVE WEALTH DASHBOARD
+- Reduced to less than half its previous visual height.
+- Same information retained in a much more compact banner.
 
-When a hidden Holdings/Watchlist section is first opened, some browsers calculate its
-dimensions slightly later. The first measurement could therefore report no overflow,
-causing the fixed scroller to stay hidden.
-
-V15.9 FIX
-- The fixed horizontal controller is ALWAYS visible while you are in Holdings or Watchlist.
-- It no longer depends on the first overflow measurement to decide whether it should appear.
-- Uses a reliable horizontal RANGE slider instead of a nested fake scrollbar.
-- Slider position is synchronized with the actual table.
-- Moving the table itself updates the slider.
-- Left / right arrow buttons remain available.
-- Shows horizontal position as 0% to 100%.
-- Rechecks table size several times after changing tabs or rendering rows.
-- On Overview / Diary / Users it hides automatically because those sections do not need it.
-- Works on desktop and mobile.
+2. QUICK DIARY ON LEFT SIDE
+- New Quick Diary button directly under Diary in the left sidebar.
+- Opens a left-side writing panel without leaving Overview / Holdings / Watchlist.
+- Daily Diary: date, title, entry and direct Save.
+- Monthly Diary: month, type (Diary / Plan / Experience / Target), title, details and direct Save.
+- Saves into the existing Daily/Monthly Diary backend.
+- Full Diary remains available for search, filters, target completion and completed-month archive.
 
 BACKEND
-Backend remains v3.6.0.
-This is FRONTEND ONLY — do not redeploy Apps Script if Backend v3.6.0 is already active.
+Keep Backend v3.6.0. No Apps Script redeployment needed.
 
 INSTALL
-1. GitHub:
-   - upload app-v15-9.js as a NEW file
-   - replace index.html
-   - replace styles.css
-   - keep config.js unchanged
-2. Open:
-   https://saradasutar.github.io/MyFinance/?v=1590
-3. Hard refresh:
-   Mac: Command + Shift + R
-   Windows: Ctrl + Shift + R
-4. Click Holdings.
-   The fixed horizontal controller should appear at the bottom immediately.
-5. Click Watchlist.
-   The same controller should remain available.
+1. Upload app-v16-0.js as a NEW GitHub file.
+2. Replace index.html.
+3. Replace styles.css.
+4. Keep config.js unchanged.
+5. Open https://saradasutar.github.io/MyFinance/?v=1600
+6. Hard refresh.

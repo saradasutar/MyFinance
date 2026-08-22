@@ -7,7 +7,7 @@
   <meta name="description" content="Private family stock and mutual fund portfolio dashboard">
   <title>My Finance</title>
   <link rel="preconnect" href="https://script.google.com">
-  <link rel="stylesheet" href="styles.css?v=20260821-159">
+  <link rel="stylesheet" href="styles.css?v=20260822-160">
 </head>
 <body>
   <noscript>This dashboard requires JavaScript.</noscript>
@@ -33,7 +33,7 @@
         <p id="loginMessage" class="form-message" role="alert"></p>
         <div class="login-meta">
           <p class="tiny muted">Your password is never stored in the browser.</p>
-          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v15.9</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
+          <div class="version-pair"><span id="loginVersion" class="version-badge">Frontend · v16.0</span><span id="loginBackendVersion" class="version-badge backend-version">Backend · checking…</span></div>
         </div>
       </form>
     </div>
@@ -47,19 +47,20 @@
         <button class="nav-item" data-section="holdings"><span>▥</span>Holdings</button>
         <button class="nav-item" data-section="watchlist"><span>☆</span>Watchlist</button>
         <button class="nav-item" data-section="diary"><span>✎</span>Diary</button>
+        <button id="quickDiaryBtn" class="nav-item quick-diary-nav" type="button"><span>✚</span>Quick Diary</button>
         <button class="nav-item admin-only hidden" data-section="users"><span>♙</span>Users</button>
       </nav>
       <div class="sidebar-session-card">
         <span class="sidebar-session-label">SIGNED IN AS</span>
         <strong id="dashboardUsername">—</strong>
-        <span id="dashboardVersion">Frontend · v15.9</span><span id="dashboardBackendVersion">Backend · checking…</span>
+        <span id="dashboardVersion">Frontend · v16.0</span><span id="dashboardBackendVersion">Backend · checking…</span>
       </div>
       <div class="sidebar-foot"><button id="changePasswordBtn" class="nav-item"><span>⌁</span>Change password</button><button id="logoutBtn" class="nav-item danger-text"><span>↪</span>Log out</button></div>
     </aside>
 
     <main class="main-content">
       <header class="topbar">
-        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v15.9</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
+        <div><div class="topbar-title-line"><div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Portfolio overview</h1></div><div class="dashboard-version-pair"><span id="dashboardVersionTop" class="dashboard-version-chip">FE v16.0</span><span id="dashboardBackendVersionTop" class="dashboard-version-chip backend-chip">BE …</span></div></div></div>
         <div class="top-actions"><div class="auto-refresh-control" title="Automatically refresh portfolio and watchlist prices while this dashboard is open"><span class="auto-pulse"></span><div class="auto-refresh-copy"><strong>Auto update</strong><span id="autoRefreshCountdown">15 min</span></div><select id="autoRefreshSelect" aria-label="Auto update interval"><option value="5">5 min</option><option value="15" selected>15 min</option><option value="30">30 min</option><option value="60">60 min</option><option value="0">Off</option></select></div><div class="sync-status" id="syncStatus"><span class="status-dot"></span><span>Ready</span></div><button id="refreshBtn" class="icon-button" title="Refresh prices and NAVs">↻</button><button id="addInvestmentBtn" class="primary-button">+ Add investment</button><button id="profileButton" class="avatar-button"><span id="avatarInitial">A</span></button></div>
       </header>
 
@@ -316,6 +317,38 @@
       </section>
     </main>
 
+    <aside id="quickDiaryPanel" class="quick-diary-panel" aria-hidden="true">
+      <div class="quick-diary-head">
+        <div><p class="eyebrow">QUICK DIARY</p><h3>Write without leaving dashboard</h3></div>
+        <button id="quickDiaryCloseBtn" class="icon-button" type="button" aria-label="Close quick diary">×</button>
+      </div>
+      <div class="quick-diary-tabs">
+        <button type="button" class="active" data-quick-diary-mode="DAILY">Daily Diary</button>
+        <button type="button" data-quick-diary-mode="MONTHLY">Monthly Diary</button>
+      </div>
+      <form id="quickDailyForm" class="quick-diary-form">
+        <label>Date<input id="quickDailyDate" type="date" required></label>
+        <label>Title<input id="quickDailyTitle" type="text" maxlength="120" placeholder="Optional title"></label>
+        <label>Entry<textarea id="quickDailyText" rows="8" maxlength="5000" required placeholder="Write your daily diary…"></textarea></label>
+        <div class="quick-diary-meta"><span id="quickDailyStatus">Ready</span><span id="quickDailyCount">0 / 5000</span></div>
+        <button id="quickDailySaveBtn" class="primary-button" type="submit">Save daily entry</button>
+      </form>
+      <form id="quickMonthlyForm" class="quick-diary-form hidden">
+        <label>Month<input id="quickMonthlyMonth" type="month" required></label>
+        <label>Type<select id="quickMonthlyType">
+          <option value="DIARY">Monthly Diary</option>
+          <option value="PLAN">Plan</option>
+          <option value="EXPERIENCE">Experience</option>
+          <option value="TARGET">Target</option>
+        </select></label>
+        <label>Title<input id="quickMonthlyTitle" type="text" maxlength="140" placeholder="Optional title"></label>
+        <label>Details<textarea id="quickMonthlyText" rows="8" maxlength="5000" required placeholder="Write monthly diary / plan / experience / target…"></textarea></label>
+        <div class="quick-diary-meta"><span id="quickMonthlyStatus">Ready</span><span id="quickMonthlyCount">0 / 5000</span></div>
+        <button id="quickMonthlySaveBtn" class="primary-button" type="submit">Save monthly item</button>
+      </form>
+      <button id="openFullDiaryBtn" class="secondary-button quick-full-diary" type="button">Open full Diary</button>
+    </aside>
+
     <div id="dashboardHScroll" class="dashboard-hscroll hidden" aria-label="Horizontal dashboard scroller">
       <button id="dashboardHScrollLeft" class="dashboard-hscroll-arrow" type="button" title="Scroll left">‹</button>
       <div class="dashboard-hscroll-center">
@@ -325,7 +358,7 @@
       <button id="dashboardHScrollRight" class="dashboard-hscroll-arrow" type="button" title="Scroll right">›</button>
     </div>
 
-    <nav class="mobile-nav"><button class="mobile-nav-item active" data-section="overview"><span>◫</span>Overview</button><button class="mobile-nav-item" data-section="holdings"><span>▥</span>Holdings</button><button class="mobile-nav-item" data-section="watchlist"><span>☆</span>Watchlist</button><button class="mobile-nav-item" data-section="diary"><span>✎</span>Diary</button></nav>
+    <nav class="mobile-nav"><button class="mobile-nav-item active" data-section="overview"><span>◫</span>Overview</button><button class="mobile-nav-item" data-section="holdings"><span>▥</span>Holdings</button><button class="mobile-nav-item" data-section="watchlist"><span>☆</span>Watchlist</button><button class="mobile-nav-item" data-section="diary"><span>✎</span>Diary</button><button id="quickDiaryMobileBtn" class="mobile-nav-item" type="button"><span>✚</span>Quick</button></nav>
   </div>
 
   <div id="modalBackdrop" class="modal-backdrop hidden" aria-hidden="true">
@@ -423,6 +456,6 @@
 
   <div id="toastRegion" class="toast-region" aria-live="polite"></div>
   <script src="config.js?v=20260808-4"></script>
-  <script src="app-v15-9.js?v=20260821-159" defer></script>
+  <script src="app-v16-0.js?v=20260822-160" defer></script>
 </body>
 </html>

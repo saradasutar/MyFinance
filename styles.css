@@ -1899,3 +1899,35 @@ body{background:radial-gradient(circle at 72% -10%,rgba(105,85,226,.14),transpar
   }
   .dashboard-hscroll-labels{font-size:8px}
 }
+
+
+/* V16.0 — compact Live Wealth Dashboard hero */
+.portfolio-hero{min-height:0!important;padding:9px 18px!important;border-radius:17px!important}
+.portfolio-hero h2,.portfolio-hero h1{margin:1px 0 3px!important;font-size:23px!important;line-height:1.05!important}
+.portfolio-hero p{margin:2px 0!important;font-size:9.5px!important;line-height:1.22!important}
+.portfolio-hero .eyebrow{margin-bottom:1px!important;font-size:7.5px!important}
+.portfolio-hero .portfolio-chip,.portfolio-hero .hero-chip{min-height:26px!important;padding:4px 10px!important}
+
+/* V16.0 — Quick Diary panel from left */
+.quick-diary-panel{
+  position:fixed;top:0;left:278px;bottom:0;z-index:90;width:min(420px,calc(100vw - 294px));
+  padding:18px;overflow-y:auto;border-right:1px solid #dce2ef;background:rgba(251,252,255,.98);
+  box-shadow:16px 0 40px rgba(28,38,82,.18);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transform:translateX(-110%);transition:transform .22s ease
+}
+.quick-diary-panel.open{transform:translateX(0)}
+.quick-diary-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.quick-diary-head h3{margin:3px 0 0;color:#26344e;font-size:17px}
+.quick-diary-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;padding:4px;border-radius:12px;background:#eef2f8}
+.quick-diary-tabs button{min-height:36px;border:0;border-radius:9px;color:#6a758a;background:transparent;font-size:10px;font-weight:900;cursor:pointer}
+.quick-diary-tabs button.active{color:#fff;background:linear-gradient(135deg,#5268dc,#8255d4);box-shadow:0 6px 14px rgba(65,68,160,.18)}
+.quick-diary-form{display:grid;gap:11px}
+.quick-diary-form label{display:grid;gap:5px;color:#59647a;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.045em}
+.quick-diary-form input,.quick-diary-form select,.quick-diary-form textarea{width:100%;box-sizing:border-box;border:1px solid #dfe4ee;border-radius:11px;padding:10px 11px;color:#263349;background:#fff;font:inherit;font-size:11px;outline:none}
+.quick-diary-form textarea{min-height:180px;resize:none;line-height:1.55;overflow-y:hidden}
+.quick-diary-form input:focus,.quick-diary-form select:focus,.quick-diary-form textarea:focus{border-color:#8d88df;box-shadow:0 0 0 3px rgba(91,92,226,.08)}
+.quick-diary-meta{display:flex;justify-content:space-between;gap:10px;color:#8b95a7;font-size:8.5px;font-weight:800}
+.quick-full-diary{width:100%;margin-top:12px}
+.quick-diary-nav{color:#d8dcff!important}.quick-diary-nav span:first-child{color:#7ef0cf}
+@media(max-width:1100px){.quick-diary-panel{left:0;width:min(420px,92vw)}}
+@media(max-width:760px){.quick-diary-panel{left:0;width:100vw;max-width:none;padding:15px}.quick-diary-form textarea{min-height:160px}}
