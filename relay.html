@@ -9,12 +9,16 @@
 <script>
 (function(){
   try{
-    var raw=window.name||'';
-    window.name='';
-    if(!raw)return;
-    var data=JSON.parse(raw);
+    var q=new URLSearchParams(window.location.search);
+    var rid=q.get('rid')||'';
+    var requestId=q.get('requestId')||'';
+    if(!rid||!requestId)return;
     if(window.parent&&window.parent!==window){
-      window.parent.postMessage(data,window.location.origin);
+      window.parent.postMessage({
+        __myfinanceRelayTicket:true,
+        rid:rid,
+        requestId:requestId
+      },window.location.origin);
     }
   }catch(e){}
 })();
