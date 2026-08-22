@@ -1,77 +1,31 @@
-MYFINANCE V16.3 — FILTER VIEW + PRINT
+MYFINANCE V16.4 — BUTTON FREEZE FIX
 
-FRONTEND
-- v16.3
+CAUSE
+V16.3 passes syntax checks, but it still used many direct event bindings.
+If GitHub Pages served a mixed pair of files (for example old index.html + new app-v16-3.js),
+one missing control could stop bindEvents() and make later dashboard buttons appear frozen.
+
+V16.4 FIX
+- Safe event binding for dashboard controls.
+- Missing optional controls no longer stop all buttons.
+- Navigation is protected.
+- Initialization is protected.
+- Adds a visible runtime warning if a component fails.
+- Warns when Backend is below v3.7.0.
+- Keeps V16.3 filter/print, sticky notes, Quick Diary and horizontal scroller.
+
+INSTALL MATCHED FILES TOGETHER
+1. Replace index.html
+2. Replace styles.css
+3. Upload app-v16-4.js as a NEW file
+4. Keep/replace config.js with the included one
+5. Commit all files together
 
 BACKEND
-- remains v3.7.0
-- NO backend redeployment required if v3.7.0 is already active
+Sticky Notes require Backend v3.7.0 / Code-v3.7.gs.
+If your backend shows v3.6.0, deploy Code-v3.7.gs as a NEW Apps Script version.
 
-INVESTMENTS
-Existing filters are retained:
-- Investor: Combined / Sarada / Niharika
-- Investment Type: All / Mutual Funds / Stocks & ETFs
-- Search
-- Asset Type
+OPEN
+https://saradasutar.github.io/MyFinance/?v=1640
 
-New:
-- Visible-record count
-- “Print view”
-- Printing uses ONLY the currently filtered investments
-
-WATCHLIST
-New filter view:
-- Search
-- Type: Stocks / ETFs / Mutual Funds
-- Priority: High / Medium / Low
-- Target status:
-  At/below target
-  Within 5%
-  More than 5% away
-  No target
-- Visible-record count
-- “Print view”
-
-The printed watchlist includes key price/target/performance/remark fields.
-
-DAILY DIARY
-Filter view now supports:
-- Day
-- Month
-- Date Range
-- Global diary search
-- “Print filtered diary”
-
-Date Range defaults to the first day of the current month through today.
-
-MONTHLY DIARY / PLAN / EXPERIENCE
-Existing filter view remains:
-- Year
-- Month
-- Type
-- Target status
-- Search
-
-New:
-- “Print filtered view”
-
-PRINT BEHAVIOUR
-- Opens a clean printable page
-- Prints only records matching the current filters
-- Investment and Watchlist print in landscape
-- Diary and Monthly Diary print in portrait
-- Includes My Finance frontend version and print date/time
-
-INSTALL
-1. GitHub:
-   - upload app-v16-3.js as a NEW file
-   - replace index.html
-   - replace styles.css
-   - keep the included/current config.js
-2. Backend:
-   - keep Code-v3.7.gs already deployed
-3. Open:
-   https://saradasutar.github.io/MyFinance/?v=1630
-4. Hard refresh:
-   Mac: Command + Shift + R
-   Windows: Ctrl + Shift + R
+Then hard refresh.

@@ -2451,3 +2451,22 @@ table td{
   }
   .monthly-search-actions .print-view-button{width:100%}
 }
+
+
+/* V16.4 — runtime hardening */
+.runtime-warning{
+  position:fixed;
+  top:68px;
+  left:294px;
+  right:18px;
+  z-index:190;
+  padding:9px 12px;
+  border:1px solid #f0c8a8;
+  border-radius:11px;
+  color:#7b4c18;
+  background:#fff6e9;
+  box-shadow:0 8px 20px rgba(105,72,31,.12);
+  font-size:9.5px;
+  font-weight:800;
+}
+@media(max-width:1100px){.runtime-warning{left:14px;right:14px}}
