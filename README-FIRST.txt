@@ -1,22 +1,29 @@
-MYFINANCE V18.6 + BACKEND V3.10.1 — BACKEND RESPONSE FIX
+MYFINANCE V18.7 / BACKEND V3.11.0 — RELIABLE BACKEND BRIDGE
 
-SYMPTOM
-Frontend v18.6 loads, direct /exec shows backend v3.10.0, but login says:
-“The backend did not respond.”
+WHY THE PREVIOUS FIXES STILL TIMED OUT
+The direct /exec URL could show the backend version correctly, but GitHub Pages still could
+not reliably complete request/response communication through Apps Script POST + iframe redirects.
 
-ROOT CAUSE FIXED
-The hidden iframe transport was reaching Apps Script, but the HTML response used an
-incorrect escaped closing script tag. The browser therefore did not execute the response
-message back to MyFinance, so the frontend waited until timeout.
+V18.7 changes the connection architecture.
 
-V3.10.1 fixes the response HTML.
+NEW CONNECTION METHOD
+1. MyFinance loads one tiny hidden Apps Script HTML bridge.
+2. That bridge runs inside Apps Script HtmlService.
+3. The bridge uses Google's supported google.script.run API to call backend functions.
+4. A browser MessageChannel is created by the bridge and transferred to the GitHub page.
+5. All later login / bootstrap / save / edit / delete requests travel through that persistent channel.
 
-YOU ONLY NEED TO UPDATE APPS SCRIPT
-Your current Frontend v18.6 can stay as it is.
+This avoids:
+- normal cross-origin fetch
+- CORS response reading
+- repeated form POST iframe redirects
+- the nested iframe response problem
 
-STEPS
-1. Open the existing MyFinance Apps Script project.
-2. Replace the entire Code.gs with Code-v3.10.1.gs.
+Google officially supports google.script.run for asynchronous calls from HTML-service pages.
+
+BACKEND UPDATE REQUIRED
+1. Open MyFinance Apps Script.
+2. Replace all Code.gs with Code-v3.11.gs.
 3. Save.
 4. Deploy > Manage deployments.
 5. Edit the SAME Web App deployment.
@@ -25,24 +32,37 @@ STEPS
 8. Who has access: Anyone.
 9. Deploy.
 
-IMPORTANT
-Keep the same /exec URL if you edit the existing deployment.
-No config.js change is needed when the URL stays the same.
-
-TEST
+CHECK
 Open the /exec URL directly.
-It should show:
-"version":"3.10.1"
+It must show:
+"version":"3.11.0"
 
-Then open:
-https://saradasutar.github.io/MyFinance/?v=1861
+GITHUB UPDATE
+Replace:
+- index.html
+- styles.css
+- config.js
+- app-v18-6.js (compatibility file)
 
-Hard refresh on Mac:
-Command + Shift + R
+Add:
+- app-v18-7.js
+
+You may keep app-v18-5.js temporarily, but it is no longer required by the new index.
+
+OPEN
+https://saradasutar.github.io/MyFinance/?v=1870
+
+Hard refresh:
+Mac: Command + Shift + R
 
 EXPECTED
-Frontend v18.6
-Backend v3.10.1
-Login should respond instead of timing out.
+Frontend v18.7
+Backend v3.11.0
 
-All custom columns, print layout, saved table widths, quotes and larger Holdings Summary remain unchanged.
+All previous features remain:
+- Custom Holdings / Watchlist columns
+- Add / edit / delete parameter values
+- Saved drag widths
+- Print preview adjustments
+- Larger Holdings Summary
+- Quotes / Diary / Targets / Reminders
