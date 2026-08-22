@@ -4910,3 +4910,32 @@ body.print-preview-open{overflow:hidden!important}
   .print-preview-help{display:none}
   .print-preview-primary,.print-preview-close{flex:1}
 }
+
+
+/* =========================================================
+   V18.2 — SAVED TABLE LAYOUT STATUS
+   ========================================================= */
+.layout-saved-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:3px 7px;
+  border:1px solid #cce5da;
+  border-radius:999px;
+  color:#08785b;
+  background:#eef9f4;
+  font-size:9.5px !important;
+  font-weight:900 !important;
+  white-space:nowrap;
+  transition:all .18s ease;
+}
+.layout-saved-status.saving{
+  color:#786214;
+  border-color:#eadfaf;
+  background:#fff9df;
+}
+.layout-saved-status.saved{
+  color:#08785b;
+  border-color:#cce5da;
+  background:#eef9f4;
+}
