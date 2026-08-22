@@ -1,62 +1,99 @@
-MYFINANCE V18.2 — DRAGGED TABLE VIEW IS SAVED
+MYFINANCE V18.4 / BACKEND V3.9 — CUSTOM COLUMNS & PARAMETERS
 
-YES. Holdings and Watchlist now explicitly SAVE the layout you adjust.
+NEW BUTTON
+Holdings:
+  ⚙ Columns
 
-SAVED AUTOMATICALLY
-For Holdings and Watchlist separately, MyFinance remembers:
-- Row height slider setting
-- Overall column/table width slider setting
-- Every individually dragged column width
-- Horizontal scroll position
+Watchlist:
+  ⚙ Columns
 
-WHEN YOU RETURN
-After refresh, login again, switching sections, or reopening the dashboard in the same
-browser, the saved Holdings / Watchlist layout is restored automatically.
+WHAT YOU CAN DO
 
-VISIBLE CONFIRMATION
-The Table size bar now shows:
-  Saving…
-then
-  ✓ Saved
+STANDARD COLUMNS
+- Rename the displayed heading
+- Hide / show optional standard columns
+- Required Asset/Investor columns remain protected
+- Reset standard names and visibility
 
-So you can see that the dragged view has been stored.
+CUSTOM COLUMNS / PARAMETERS
+You can:
+- Add a new column
+- Edit its name
+- Choose a unique Parameter Key
+- Choose data type:
+  Text
+  Number
+  Currency ₹
+  Percentage %
+  Date
+- Set its display order
+- Delete the custom column
 
-RESET
-Reset now clears:
-- Row height adjustment
-- Overall width adjustment
-- Individual dragged column widths
-- Saved horizontal position
+EXAMPLES
+Holdings:
+- Risk Level
+- Target Allocation %
+- Review Date
+- Goal
+- Advisor Remark
+- Exit Price
 
-and saves the normal 100% layout again.
+Watchlist:
+- Conviction
+- Buy Zone
+- Expected CAGR %
+- Review Date
+- Sector
+- Trigger
 
-IMPORTANT
-The layout is saved in the browser's local storage. This means:
-- It survives page refresh and normal browser reopening.
-- Holdings and Watchlist are saved independently.
-- A different browser/device has its own layout unless a future backend-sync feature is added.
+EDITING VALUES
+After a custom column is created, it appears directly in the Holdings / Watchlist table.
+Click the custom cell in any row to enter or edit its value.
+Leave it blank and Save to clear the value.
 
-All V18.1 features remain, including the no-pop-up Print Preview.
+PRINT
+Custom columns are automatically included in Preview / Print.
+Your V18.3 print row-height and print-column drag resizing remains available.
 
-BACKEND
-Backend remains v3.8.0.
-No Apps Script redeployment required.
+STORAGE
+This version adds two backend Google Sheet tabs automatically:
+- CustomColumns
+- CustomValues
 
-INSTALL
+Therefore BACKEND V3.9.0 IS REQUIRED.
+
+DEPLOY BACKEND FIRST
+1. Open your existing Apps Script project.
+2. Replace Code.gs with Code-v3.9.gs.
+3. Deploy > Manage deployments.
+4. Edit your EXISTING Web App deployment.
+5. Select New version.
+6. Deploy.
+
+Keep the SAME /exec URL in config.js.
+
+The schema upgrade to V9 runs automatically on the first frontend request and creates the
+CustomColumns and CustomValues tabs.
+
+THEN UPDATE GITHUB
 REPLACE:
 - index.html
 - styles.css
-- app-v18-1.js  (compatibility replacement)
+- app-v18-3.js  (compatibility replacement)
 
 ADD:
-- app-v18-2.js
+- app-v18-4.js
 
 KEEP:
 - config.js
 
-OPEN:
-https://saradasutar.github.io/MyFinance/?v=1820
+OPEN
+https://saradasutar.github.io/MyFinance/?v=1840
 
 Hard refresh:
 Mac: Command + Shift + R
 Windows: Ctrl + Shift + R
+
+EXPECTED
+Frontend v18.4
+Backend v3.9.0
