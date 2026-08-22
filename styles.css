@@ -4588,3 +4588,276 @@ table td strong,
     min-width:820px;
   }
 }
+
+
+/* =========================================================
+   V17.8 — USER-ADJUSTABLE TABLE ROW HEIGHT + COLUMN WIDTH
+   ========================================================= */
+.table-view-size-bar{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:38px;
+  margin:0 0 6px;
+  padding:5px 8px;
+  overflow-x:auto;
+  border:1px solid #e0e5ef;
+  border-radius:10px;
+  background:linear-gradient(180deg,#fbfcff,#f6f8fc);
+  scrollbar-width:thin;
+  white-space:nowrap;
+}
+.table-view-size-bar>strong{
+  margin-right:3px;
+  color:#3d4a62;
+  font-size:11px !important;
+  font-weight:950 !important;
+}
+.size-group-label{
+  color:#6e7a90;
+  font-size:10px !important;
+  font-weight:850 !important;
+}
+.size-step-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:28px;
+  min-width:28px;
+  height:28px;
+  padding:0 !important;
+  border:1px solid #d4dbea;
+  border-radius:8px;
+  color:#4d59a9;
+  background:#fff;
+  font-size:17px !important;
+  font-weight:950 !important;
+  cursor:pointer;
+}
+.size-step-button:hover{
+  border-color:#b9c0df;
+  background:#f0f1ff;
+}
+.size-value-label{
+  min-width:42px;
+  color:#334059;
+  font-size:10.5px !important;
+  font-weight:950 !important;
+  text-align:center;
+}
+.size-divider{
+  width:1px;
+  height:22px;
+  margin:0 2px;
+  background:#dfe4ed;
+}
+.size-reset-button{
+  min-height:28px !important;
+  padding:4px 8px !important;
+  border:1px solid #d5dce9;
+  border-radius:8px;
+  color:#68748a;
+  background:#fff;
+  font-size:9.5px !important;
+  font-weight:900 !important;
+  cursor:pointer;
+}
+
+/* User row-height control applies to both header and body */
+#holdingsSection .holdings-table th,
+#holdingsSection .holdings-table td,
+#watchlistSection .watchlist-details-table th,
+#watchlistSection .watchlist-details-table td{
+  padding-top:var(--user-row-pad,10px) !important;
+  padding-bottom:var(--user-row-pad,10px) !important;
+  padding-left:var(--user-col-pad,11px) !important;
+  padding-right:var(--user-col-pad,11px) !important;
+}
+
+/* User column-width control changes total table width, so the whole table can
+   become tighter or wider while keeping horizontal scrolling available. */
+#holdingsSection .holdings-table{
+  min-width:var(--user-table-width,2050px) !important;
+}
+#watchlistSection .watchlist-details-table{
+  min-width:var(--user-table-width,1850px) !important;
+}
+
+/* Keep user sizing effective in Full Screen too */
+#holdingsSection.data-fullscreen-active .holdings-table th,
+#holdingsSection.data-fullscreen-active .holdings-table td,
+#watchlistSection.data-fullscreen-active .watchlist-details-table th,
+#watchlistSection.data-fullscreen-active .watchlist-details-table td{
+  padding-top:var(--user-row-pad,10px) !important;
+  padding-bottom:var(--user-row-pad,10px) !important;
+  padding-left:var(--user-col-pad,11px) !important;
+  padding-right:var(--user-col-pad,11px) !important;
+}
+
+@media(max-width:760px){
+  .table-view-size-bar{
+    margin-left:0;
+    margin-right:0;
+  }
+}
+
+
+/* =========================================================
+   V17.9 — DRAG / SLIDER TABLE RESIZING
+   ========================================================= */
+.size-drag-slider{
+  width:105px;
+  min-width:90px;
+  height:24px;
+  margin:0 3px;
+  accent-color:#6466d6;
+  cursor:ew-resize;
+}
+.drag-hint{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  padding:3px 7px;
+  border:1px dashed #c8d0df;
+  border-radius:8px;
+  color:#66748b;
+  background:#fff;
+  font-size:9.5px !important;
+  font-weight:800 !important;
+}
+
+/* Header edge drag handles */
+#holdingsSection .holdings-table thead th,
+#watchlistSection .watchlist-details-table thead th{
+  position:sticky;
+}
+.column-resize-handle{
+  position:absolute;
+  top:0;
+  right:-4px;
+  bottom:0;
+  z-index:30;
+  width:9px;
+  cursor:col-resize;
+  touch-action:none;
+  user-select:none;
+}
+.column-resize-handle::after{
+  content:"";
+  position:absolute;
+  top:20%;
+  bottom:20%;
+  left:4px;
+  width:2px;
+  border-radius:2px;
+  background:transparent;
+  transition:background .12s ease, box-shadow .12s ease;
+}
+thead th:hover .column-resize-handle::after,
+.column-resize-handle:hover::after{
+  background:#7076dc;
+  box-shadow:0 0 0 2px rgba(112,118,220,.10);
+}
+body.column-resize-active{
+  cursor:col-resize !important;
+  user-select:none !important;
+}
+body.column-resize-active *{
+  cursor:col-resize !important;
+}
+
+/* During direct resize, allow explicit width to win over historical min widths */
+#holdingsSection .holdings-table th,
+#holdingsSection .holdings-table td,
+#watchlistSection .watchlist-details-table th,
+#watchlistSection .watchlist-details-table td{
+  box-sizing:border-box;
+}
+
+/* Keep custom dragged widths valid in fullscreen */
+.data-fullscreen-active .column-resize-handle{
+  z-index:40;
+}
+
+/* Slider usability on smaller screens */
+@media(max-width:900px){
+  .size-drag-slider{
+    width:86px;
+    min-width:76px;
+  }
+  .drag-hint{
+    display:none;
+  }
+}
+
+
+/* =========================================================
+   V18.0 — AUTO-MOVING QUOTE CAROUSEL
+   ========================================================= */
+.quote-head-tools{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.quote-auto-status{
+  display:inline-flex;
+  align-items:center;
+  min-height:23px;
+  padding:3px 7px;
+  border:1px solid rgba(117,104,190,.20);
+  border-radius:999px;
+  color:#6d60a6;
+  background:rgba(255,255,255,.62);
+  font-size:9px !important;
+  font-weight:900 !important;
+  white-space:nowrap;
+}
+
+/* Each automatic/manual quote change slides gently into view. */
+.quote-auto-transition blockquote{
+  animation:quoteSlideInV18 .72s cubic-bezier(.22,.7,.25,1) both;
+}
+.quote-auto-transition .home-quote-author,
+.quote-auto-transition .life-quote-author{
+  animation:quoteAuthorInV18 .72s .08s cubic-bezier(.22,.7,.25,1) both;
+}
+@keyframes quoteSlideInV18{
+  0%{opacity:0;transform:translateX(34px) translateY(3px)}
+  55%{opacity:1}
+  100%{opacity:1;transform:translateX(0) translateY(0)}
+}
+@keyframes quoteAuthorInV18{
+  0%{opacity:0;transform:translateX(18px)}
+  100%{opacity:1;transform:translateX(0)}
+}
+
+/* Very subtle living motion between changes, without making reading difficult. */
+#homeQuoteCard blockquote{
+  transform-origin:center;
+}
+#homeQuoteCard:not(:hover) blockquote{
+  animation:quoteGentleFloatV18 8s ease-in-out infinite alternate;
+}
+#homeQuoteCard.quote-auto-transition blockquote{
+  animation:quoteSlideInV18 .72s cubic-bezier(.22,.7,.25,1) both !important;
+}
+@keyframes quoteGentleFloatV18{
+  from{transform:translateX(0)}
+  to{transform:translateX(5px)}
+}
+
+/* Pause subtle motion while hovering so text is perfectly still for reading. */
+#homeQuoteCard:hover blockquote{
+  animation:none;
+}
+
+/* Respect operating-system reduced-motion preference. */
+@media(prefers-reduced-motion:reduce){
+  #homeQuoteCard blockquote,
+  .quote-auto-transition blockquote,
+  .quote-auto-transition .home-quote-author,
+  .quote-auto-transition .life-quote-author{
+    animation:none !important;
+    transform:none !important;
+  }
+}

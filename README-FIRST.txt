@@ -1,35 +1,37 @@
-MYFINANCE V17.7 — HOLDINGS INVESTED / PRESENT VALUE / GROWTH
+MYFINANCE V18.0 — AUTO-MOVING QUOTES
 
-Inside Holdings, the summary is now clearer and more detailed.
+NEW
+Quotes now move automatically on the My Home dashboard.
 
-FOR COMBINED PORTFOLIO
-You can see separately:
-- Total Portfolio: Invested, Present Value, Growth ₹ and Growth %
-- Mutual Funds: Invested, Present Value, Growth ₹ and Growth %
-- Stocks & ETFs: Invested, Present Value, Growth ₹ and Growth %
+HOW IT WORKS
+- Quote of the Day changes automatically every 12 seconds.
+- Each new quote gently slides into view from the right.
+- The quote text has a very small slow movement between changes, so the card feels alive
+  without making the text difficult to read.
+- Hover over the quote card and the gentle movement stops while you read.
+- The existing “Another” button still moves immediately to the next quote.
+- The right-side Quote panel uses the same automatic rotation.
+- Pause / Resume in the right Quote panel controls automatic movement.
+- If the browser tab is hidden, quote movement does not waste resources.
+- If your device has Reduced Motion enabled, animations are automatically disabled.
 
-FOR NIHARIKA
-You can see separately:
-- Total Portfolio: Invested, Present Value, Growth ₹ and Growth %
-- Mutual Funds: Invested, Present Value, Growth ₹ and Growth %
-- Stocks & ETFs: Invested, Present Value, Growth ₹ and Growth %
+VISIBLE STATUS
+My Home now shows:
+  Auto move · 12s
 
-FOR SARADA
-The same Total / Mutual Funds / Stocks & ETFs comparison is also retained.
+COLOUR THEMES
+The previous rotating quote colours remain:
+Purple, Blue, Green, Amber, Rose and Teal.
 
-Growth is displayed as:
-+₹ gain/loss · +percentage
-
-The summary always uses the complete holdings dataset and does not change when you search the table.
-
-All previous features remain:
+ALL PREVIOUS FEATURES REMAIN
+- Holdings / Watchlist drag resize
+- Row-height and table-width sliders
+- Full screen
+- Holdings invested / present value / growth summary
 - Larger bold fonts
-- Replace from Master Sheet hidden
-- Portfolio controls only in Holdings
-- Full-screen Holdings/Watchlist
-- Print / Filters / Notes
-- Personal Home with Diary / Targets / Quotes
-- Quote colour themes
+- Diary
+- Targets / reminders
+- Print / filters / notes
 
 BACKEND
 Backend stays v3.8.0.
@@ -39,16 +41,16 @@ INSTALL
 REPLACE:
 - index.html
 - styles.css
-- app-v17-6.js  (compatibility replacement)
+- app-v17-9.js   (compatibility replacement)
 
 ADD:
-- app-v17-7.js
+- app-v18-0.js
 
 KEEP:
 - config.js
 
-OPEN
-https://saradasutar.github.io/MyFinance/?v=1770
+OPEN:
+https://saradasutar.github.io/MyFinance/?v=1800
 
 Hard refresh:
 Mac: Command + Shift + R
